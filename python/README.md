@@ -7,7 +7,7 @@ The [Python sample code](../downloads/python.html) contains the following files:
 - import.ph: a script that loads Flare objects from a JSON file and imports them into the server
 - flogger.py: a test script that lists for all notifications and logs them to the console
 
-# Setup
+## Setup
 
 Get started by downloading the latest version of [Python](https://www.python.org/downloads/). The Flare sample code was developed using Python 3.5 and may not function correctly on version 2.X.
 
@@ -19,7 +19,7 @@ python3 --version
 ```
 To test what version of Python you have installed, you can call:
 
-# Dependencies 
+## Dependencies 
 
 The flare.py module depends on two libraries, [requests](http://www.python-requests.org/en/latest/) for accessing the REST interface, and [socketIO_client](https://pypi.python.org/pypi/socketIO-client) for accessing the Socket.IO interface. You can install them like this:
 
@@ -28,13 +28,13 @@ sudo pip3 install requests
 sudo pip3 install socketIO-client
 ```
 
-# Flare module 
+## Flare module 
 
 The flare.py script has wrappers for both the REST and Socket.IO API interfaces. See the [Flare API](api.html#python) page for complete documentation.
 
 You can configure the host and port of your Flare server at the top of the script. The default setting is to connect to localhost on port 1234. 
 
-# REST 
+## REST 
 
 ```python
 def getEnvironments(location={})
@@ -60,7 +60,7 @@ for environment in flare.getEnvironments():
 ```
 For example, here is a short script that prints the ID and name of all environments, zones, things and devices in the database.
 
-# Socket.IO
+## Socket.IO
 
 ```python
 def subscribe(message, all=False)

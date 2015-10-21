@@ -4,24 +4,24 @@ If you have a UNIX-based operating system such as OS X or Linux, you can run the
 
 If you have a Windows computer, want to run Flare on a server, or just don't want to configure your own runtime environment, you can run Flare in a virtual machine using Vagrant.
 
-# On your computer
+## On your computer
 
-## Install Node.js
+### Install Node.js
 
 Install the [Node.js](https://nodejs.org/download) runtime environment. Node.js is a tool that is used to run the Flare server, which is implemented as a JavaScript script. 
 
-## Install MongoDB
+### Install MongoDB
 
 Install the [MongoDB](https://www.mongodb.org/downloads) database. MongoDB is used to store data for the Flare server, and must be running in order for the Flare server to connect to it. 
 
-## Change to Flare directory
+### Change to Flare directory
 
 ```all
 cd ~/Downloads/flare
 ```
 Open a terminal and change to the Flare API directory, wherever you have downloaded it.
 
-## Install node modules
+### Install node modules
 
 ```all
 npm install
@@ -35,7 +35,7 @@ mongod --dbpath data/db
 ```
 In a separate terminal window or tab, launch the MongoDB sever. You can specify the database path using the dbpath flag. The default directory data/db has already been created for you, but you can create a different directory and use that if you want to.
 
-## Initialize the database
+### Initialize the database
 
 ```all
 node import.js model.json
@@ -44,42 +44,42 @@ You can initialize the database using the import.js script with some default env
 
 For production use, you'll want to use your own data. See the [environments](environments.html) page for further instructions on setting up your environments. 
 
-## Start the server
+### Start the server
 
 ```all
 node flare.js
 ```
 In a separate terminal window or tab, start the Flare server. This will tell Node.js to run the flare.js script and wait for incoming HTTP requests and Socket.IO messages.
 
-## Start page
+### Start page
 
 You can open the start page by going to [http://localhost:1234/](http://localhost:1234/) in your browser. Substitute the name of your computer to connect from other devices. 
 
-# Virtual machine
+## Virtual machine
 
-## Install Vagrant
+### Install Vagrant
 
 Install [Vagrant](https://www.vagrantup.com/downloads.html) to configure the virtualization environment.
 
-## Install VirtualBox
+### Install VirtualBox
 
 Install the [VirtualBox](https://www.virtualbox.org/wiki/Downloads) vitualization application.
 
-## Change to Flare directory
+### Change to Flare directory
 
 ```all
 cd ~/Downloads/flare
 ```
 Open a terminal and change to the Flare API directory.
 
-## Choose a virtual box
+### Choose a virtual box
 
 ```all
 vagrant init hashicorp/precise32
 ```
 This command will download a virtual machine image to your computer and set up vagrant to use it.
 
-## Start a virtual machine:
+### Start a virtual machine:
 
 ```all
 vagrant up

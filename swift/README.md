@@ -2,7 +2,7 @@
 
 This folder contains sample code in Swift for OS X, iOS and watchOS.
 
-# Setup
+## Setup
 
 To get started, open the Flare.xcworkspace to view all the projects in one window. 
 
@@ -10,7 +10,7 @@ The SocketIO framework is written in Swift and works on OS X, iOS and watchOS.
 
 The Flare framework is written in Swift, and works on OS X, iOS and watchOS. Beacon localization services depend on Bluetooth hardware and work only on iOS. The Swift framework depends on the SocketIO framework. 
 
-# Mac
+## Mac
 
 The [Explorer app](explorermac.html) runs on OS X and provides an overview of all environments, zones, things and devices in the database. It depends on both the SocketIO and the Flare frameworks. 
 
@@ -18,7 +18,7 @@ To build for Mac, first build the SocketIO framework, then build the Flare frame
 
 By default, the app connects to the server on localhost at port 1234. You can specify another server or port in the Preferences. 
 
-# iOS
+## iOS
 
 To build for iOS, first build the SocketIO framework, then the Flare framework, then the [Trilateral app](trilateral-ios.md). 
 
@@ -36,7 +36,7 @@ The iOS frameworks have a build script that can produce a framework for both dev
 
 By default, the app connects to the server on localhost at port 1234. That works fine in the simulator, but on a device you'll need to specify the server and port in the Settings app.
 
-# Framework documentation 
+## Framework documentation 
 
 The Flare framework contains several classes:
 
@@ -78,29 +78,29 @@ BeaconManager is a class allows an iOS device to calculate its position in the e
 
 Extensions.swift contains a number of useful extensions, which allow you to do things like subtract one CGPoint from another to find the diagonal distance. Swift is a highly extensible language, and many operators are overridden on particular pairs of types. 
 
-# Using FlareManager
+## Using FlareManager
 
 You can use the FlareManager to calling both the Flare REST API (for describing objects in the environment) and the Flare Socket.IO API (for realtime communication between objects). 
 
-## Init
+### Init
 ```swift
 var flareManager = FlareManager(host, port)
 ```
 Provide the host and port when initializing the FlareManager.
 	
-## Set delegate
+### Set delegate
 ```swift
 flareManager.delegate = self
 ```
 Set the delegate to receive SocketIO message callbacks.
 
-## Connect
+### Connect
 ```swift
 flareManager.connect()
 ```
 Connect to the server before calling the SocketIO interface.
 	
-## REST interface
+### REST interface
 ```swift
 flareManager.getEnvironments() {jsonArray in 
 	for json in jsonArray {
@@ -120,7 +120,7 @@ flareManager.listZones("123") {jsonArray in
 ```
 To call a REST method.
 	
-## Socket.IO interface
+### Socket.IO interface
 ```swift
 flareManager.getData(environment)
 ```
@@ -135,7 +135,7 @@ Implement a delegate method to receive SocketIO message callbacks.
 	
 For more examples, see the [Socket.IO tutorial](socketio-tutorial.html?swift).
 
-# Using BeaconManager
+## Using BeaconManager
 
 You can use the BeaconManager to determine the location of the user's device based on the distances from the beacons in the environment.
 

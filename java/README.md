@@ -2,7 +2,7 @@
 
 The Java sample code contains an [Android Studio](http://developer.android.com/tools/studio/) project with several modules. The flare module contains the FlareManager client, as well as classes for Environment, Zone, Thing and Device. 
 
-# Dependencies
+## Dependencies
 
 ```all
 repositories {
@@ -24,7 +24,7 @@ The Flare library has a few dependencies:
 
 You can include them in your build.gradle file.
 
-## Lambda support
+### Lambda support
 
 ```java
 buildscript {
@@ -56,7 +56,7 @@ Unfortunately, Android does not yet (as of version 5.1) support Java 8 for appli
 
 Make sure that you have installed both the [Java 7 JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html) (for Android development) and the [Java 8 JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (for lambda support). 
 
-# Library documentation 
+## Library documentation 
 
 The Flare library contains several classes:
 
@@ -66,17 +66,17 @@ The Environment, Zone, Thing and Device classes all inherit common variables and
 
 BeaconManager is a class allows an Android device to calculate its position in the environment based on the distance to three or more beacons. 
 
-# Using FlareManager
+## Using FlareManager
 
 You can use the FlareManager to calling both the Flare REST API (for describing objects in the environment) and the Flare Socket.IO API (for realtime communication between objects). 
 
-## Init
+### Init
 ```java
 var flareManager = new FlareManager(host, port);
 ```
 Provide the host and port when initializing the FlareManager.
 
-## Set delegate
+### Set delegate
 ```java
 flareManager.setActivity(this);
 flareManager.setDelegate(this);
@@ -85,13 +85,13 @@ Set the activity, which is used by Volley to create a request queue.
 
 Set the delegate (which should implement the FlareManager.Delegate interface) to receive SocketIO message callbacks.
 	
-## Connect
+### Connect
 ```java
 flareManager.connect();
 ```
 Connect to the server before calling the SocketIO interface:
 	
-## REST interface
+### REST interface
 ```java
 flareManager.listEnvironments((jsonArray) -> {
 	for (JSONObject json : jsonArray) {
@@ -107,7 +107,7 @@ To call a REST method:
 
 These methods use lambdas for asynchronous requests. When the response has been received, the lambda is called with a JSONObject or an array of JSONObjects. 
 					
-## Socket.IO interface
+### Socket.IO interface
 ```java
 flareManager.getData(environment);
 ```
@@ -122,7 +122,7 @@ Implement a delegate method to receive SocketIO message callbacks.
 
 For more examples, see the [Socket.IO tutorial](socketio-tutorial.html?java).
 
-# Using FlareBeaconManager
+## Using FlareBeaconManager
 
 You can use the BeaconManager to determine the location of the user's device based on the distances from the beacons in the environment.
 

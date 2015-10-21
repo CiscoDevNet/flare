@@ -2,7 +2,7 @@
 
 By default the sample web apps are served by the Flare server, and connect to it on localhost. You can find them in the public directory.
 
-# Setup
+## Setup
 
 First, make sure you've got the [Flare server](../) running. 
 
@@ -13,7 +13,7 @@ You can run the sample apps on your own computer by connecting to the Flare serv
 
 You can find the source code for these examples in the public directory inside the Flare folder. 
 
-# Dependencies 
+## Dependencies 
 
 ```all
 <script src="js/socket.io-1.0.0.js"></script>
@@ -29,7 +29,7 @@ The Flare web apps depend on a few JavaScript libraries:
 
 These are included in the public/js folder, and can be added to web pages as shown.
 
-## Flare script 
+### Flare script 
 
 ```all
 <script src="js/flare.js"></script>
@@ -38,7 +38,7 @@ The flare.js script includes wrapper functions for all Flare REST and Socket.IO 
 
 By default, it is assumed that Flare web apps will be served by the Flare server itself, so by default the flare.js script makes connections to the same server that is serving the current page, on the same port.
 
-# REST 
+## REST 
 
 ```javascript
 function getEnvironments(callback)
@@ -75,7 +75,7 @@ getEnvironments(function(environments) {
 ```
 For example, here is a short script that gets the ID and name of all environments, zones, things in the database. Note that since the nested functions are called asynchronously, the various statements could be called in any order.
 
-# Socket.IO
+## Socket.IO
 
 ```javascript
 function subscribe(message, all)
