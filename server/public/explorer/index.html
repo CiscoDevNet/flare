@@ -1,0 +1,137 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Explorer</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var outline;
+
+function outlineItem(object, type, target, params) {
+	var name = object.name;
+	if (name == undefined) name = "Untitled"; 
+	return ($('<li>').append($('<a>').attr('href', type + '.html?' + $.param(params)).attr('target', target).append(name))/*.append('<span class="gray"> - ' + target + '</span>')*/);
+}
+
+$(function() {
+	outline = $('ul#outline');
+	appendEnvironments(outline);
+	
+	function appendEnvironments(environmentsList) {
+		getEnvironments(function(environments) {
+			for (var i = 0; i < environments.length; i++) {
+				var environment = environments[i];
+				var environmentItem = outlineItem(environment, 'environment', environment._id, {environment:environment._id});
+				environmentsList.append(environmentItem);    
+				var zonesList = $('<ul/>');
+				environmentItem.append(zonesList);
+				
+				appendZones(environment._id, zonesList);
+				appendDevices(environment._id, zonesList);
+			}
+		});
+	}
+	
+	function appendZones(environment_id, zonesList) {
+		getZones(environment_id, function(zones) {
+			for (var i = 0; i < zones.length; i++) {
+				var zone = zones[i];
+				var zoneItem = outlineItem(zone, 'zone', zone._id, {environment:environment_id, zone:zone._id});
+				zonesList.append(zoneItem);    
+				var thingsList = $('<ul/>');
+				zoneItem.append(thingsList);
+				appendThings(environment_id, zone._id, thingsList);
+			}
+		});
+	}
+
+	function appendThings(environment_id, zone_id, thingsList) {
+		getThings(environment_id, zone_id, function(things) {
+			for (var i = 0; i < things.length; i++) {
+				var thing = things[i];
+				var thingItem = outlineItem(thing, 'thing', thing._id, {environment:environment_id, zone:zone_id, thing:thing._id});
+				thingsList.append(thingItem);    
+			}
+		});
+	}
+
+	function appendDevices(environment_id, devicesList) {
+		getDevices(environment_id, function(devices) {
+			if (devices.length > 0) {
+				var devicesHeader = $('<li>').append('Devices');
+				devicesList.append(devicesHeader);
+			
+				var sublist = $('<ul/>');
+				devicesHeader.append(sublist);
+
+				for (var i = 0; i < devices.length; i++) {
+					var device = devices[i];
+					var deviceItem = outlineItem(device, 'device', device._id, {environment:environment_id, device:device._id});
+					sublist.append(deviceItem);    
+				}
+			}
+		});
+	}
+	
+});
+
+function addEnvironment() {
+	var data = {
+		"angle": 0,
+        "description": "Description",
+        "geofence": {
+            "latitude": 0,
+            "longitude": 0,
+            "radius": 300
+        },
+        "name": "Untitled",
+        "data": {},
+        "perimeter": {
+            "origin": {"x": 0, "y": 0},
+            "size": {"height": 10, "width": 10}
+        }
+	}; 
+	
+	newEnvironment(data, function(environment) {
+		var environmentItem = outlineItem(environment, 'environment', environment._id, {environment:environment._id});
+		outline.append(environmentItem);    
+	});
+}
+
+</script>
+
+<body bgcolor="white">
+
+<h2>Flare Explorer</h2>
+
+<p class="description">This outline shows all the environments, zones, things and devices in the database. Click any object to see more information about an object. (If you use a tabbed browser, it may be helpful to open pages in separate windows so you can see them all at the same time.)</p>
+
+<ul id="outline">
+	
+</ul>
+
+<input type="button" id="newEnvironment" onclick="return addEnvironment();" value="New Environment" />
+
+<h3>Instructions</h3>
+
+<p>When you click on an object, it will open a window that shows information about an object, including its ID, name, description, data values, and position. Flare objects have a flexible key/value data store that can hold various objects of any JSON type. For this demo, things have color and brightness data values, and devices have an angle data value. 
+
+<p>As a simple test, open two windows for the same thing. Try typing "red" or "green" into the color field, and you'll see that the data value is synchronized between the two windows. You can also set the brightness to a number between 0.0 and 1.0, or change the position coordinates.</p>
+
+<p>You can also perform actions on Flare objects. For example, if you click the rainbow button, it will cycle through the colors of the rainbow and you'll see the results in all open windows for the object. Similarly you can adjust the brightness with the darker and lighter buttons.</p>
+
+<p>Now try opening windows for several things and at least one device in a particular environment. Note the coordinates of all the things and the device. You can use the directional buttons to move each device around in the environment's coordinate space.</p>
+
+<p>A device is considered <i>near</i> to a thing when it is within a certain distance, in this case at most one coordinate unit in each direction. For example, a device at (2,3) is considered near a thing at (3,4). When a device moves near to a thing, they will become paired. The device will show information about the thing, and the thing will show information about the device. You can modify the data values and click the action buttons, and you'll see the results all synced up. When they move apart, they will be unpaired.</p> 
+
+<p>In this short demo, you've seen how a device can discover things in its environment, find out when it is near a particular thing, synchronize data values in both directions, and perform actions. 
+
+<p>How does it all work? The Flare API page explains all the messages that are sent back and forth, and the the Socket.IO tutorial has instructions on how to build an app with similar functionality, using the platform of your choice.</p>
+
+</body>
+</html>

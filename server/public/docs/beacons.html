@@ -1,0 +1,134 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Overview</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<body bgcolor="white">
+<h2 id="beacons">Beacons</h2>
+<p>Flare can use several different technologies for calculating the indoor location of devices. Beacons are the fastest and cheapest way to get started.</p>
+<p>Beacons are tiny devices that transmit a signal over Bluetooth at regular intervals. A device can measure the signal strength of three or more beacons at known locations to determine its own location. The device can then send its location to the Flare server, which can then push the location to other things. </p>
+<p>The Flare sample code for iOS uses Apple&#39;s <a href="https://developer.apple.com/ibeacon/">iBeacon</a> standard, while the sample code for Android uses <a href="http://www.radiusnetworks.com">Radius Networks</a>&#39; <a href="http://altbeacon.org">AltBeacon</a> standard. We recommend beacons from Radius Networks that are compatible with both standards.</p>
+<h3 id="placement">Placement</h3>
+<p>Environments have a coordinate space that extends across the entire plane of a single location, such as one floor of a building. Environments can be divided into zones, corresponding to rooms or sections of an open space. </p>
+<p>Each zone should have beacons distributed as evenly as possible along a grid, starting with the far corners. For example, if you have four beacons you could place them in the corners only. If you have eight beacons, you could also put a beacon in the middle of each edge. If you have sixteen beacons, you could make a 4 x 4 pattern, etc. </p>
+<p>Note that all beacons in an environment can be used to determine the user&#39;s position and which zone they are currently in, so beacons can be placed along the common edges of two zones.</p>
+<h3 id="configuration">Configuration</h3>
+<p>Beacons broadcast a signal that has three data values: </p>
+<ul>
+<li>A UUID that must be known by the client to find the beacon</li>
+<li>A major value</li>
+<li>A minor value</li>
+</ul>
+<p>These values can be configured with software from the manufacturer of the beacons. For example, here&#39;s a screenshot of <a href="http://store.radiusnetworks.com/products/radbeacon-config">RadBeacon</a> from Radius Networks. </p>
+
+<img src="images/RadBeacon.png" width="750" />
+
+<p>In Flare, these values should be configured as follows:</p>
+<ul>
+<li>Each environment has a uuid data value. The UUID should be the same for all beacons in the environemnt. It does not have to be unique from other environments. </li>
+<li>Each zone has a major data value. The major value should be the same for all beacons in the zone. It does not have to be unique for all zones in the environment. </li>
+<li>Each thing that is a beacon has a minor data value. The minor value must be unique for all beacons in the environment. </li>
+</ul>
+<p>Here is an example:</p>
+<pre><code>{
+    &quot;name&quot;: &quot;Building&quot;,
+    &quot;data&quot;: {&quot;uuid&quot;: &quot;2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6&quot;},
+    &quot;perimeter&quot;: {
+        &quot;origin&quot;: {&quot;x&quot;: -1, &quot;y&quot;: -1},
+        &quot;size&quot;: {&quot;height&quot;: 12, &quot;width&quot;: 12}
+    },
+    &quot;zones&quot;: [
+        {
+            &quot;data&quot;: {&quot;major&quot;: 1},
+            &quot;name&quot;: &quot;Open Space&quot;,
+            &quot;perimeter&quot;: {
+                &quot;origin&quot;: {&quot;x&quot;: 0, &quot;y&quot;: 0},
+                &quot;size&quot;: {&quot;height&quot;: 10, &quot;width&quot;: 10}
+            },
+            &quot;things&quot;: [
+                {
+                    &quot;data&quot;: {&quot;minor&quot;: 1},
+                    &quot;name&quot;: &quot;Northwest&quot;,
+                    &quot;position&quot;: {&quot;x&quot;: 0, &quot;y&quot;: 10}
+                },
+                {
+                    &quot;data&quot;: {&quot;minor&quot;: 2},
+                    &quot;name&quot;: &quot;Northeast&quot;,
+                    &quot;position&quot;: {&quot;x&quot;: 10, &quot;y&quot;: 10}
+                },
+                {
+                    &quot;data&quot;: {&quot;minor&quot;: 3},
+                    &quot;name&quot;: &quot;Southwest&quot;,
+                    &quot;position&quot;: {&quot;x&quot;: 0, &quot;y&quot;: 0}
+                },
+                {
+                    &quot;data&quot;: {&quot;minor&quot;: 4},
+                    &quot;name&quot;: &quot;Southeast&quot;,
+                    &quot;position&quot;: {&quot;x&quot;: 10, &quot;y&quot;: 0}
+                }
+            ]
+        }
+    ]
+}
+</code></pre>
+
+<p>The values above will generate an environment like this:</p>
+
+<img src="images/beacons.png" width="479" height="478" />
+
+<h3 id="calculating-position-on-ios">Calculating position on iOS</h3>
+<p>You can find the distance to nearby beacons on iOS using the CoreLocation framework. The BeaconManager class in the Flare framework handles most of these tasks for you.</p>
+<pre><code>import Flare
+import CoreLocation
+
+class ViewController: UIViewController, FlareManagerDelegate, BeaconManagerDelegate {
+    var flareManager = FlareManager(host: host, port: 1234)
+    var beaconManager = BeaconManager()
+
+    var environment: Environment?
+    var device: Device?
+
+    override func viewDidLoad() {
+        flareManager.delegate = self
+        beaconManager.delegate = self
+
+        flareManager.connect()
+
+        flareManager.getEnvironment(&quot;123&quot;) {json in
+            self.environment = Environment(json: json)
+            self.beaconManager.loadEnvironment(self.environment)
+            self.beaconManager.start()
+        }
+
+        flareManager.getDevice(&quot;789&quot;, environmentId: &quot;123&quot;) {json in
+            self.device = Device(json: json)
+        }
+    }
+
+    override func viewDidAppear(animated: Bool) {
+        beaconManager.start()
+        flareManager.connect()
+    }
+
+    override func viewDidDisappear(animated: Bool) {
+        beaconManager.stop()
+        flareManager.disconnect()
+    }
+
+    func devicePositionDidChange(position: CGPoint) {
+        if device != nil {
+            device!.position = position
+            flareManager.setPosition(device!, position: position)
+        }
+    }
+}
+</code></pre><p>In the code sample above, the ViewController class is a delegate of both the FlareManager and the BeaconManager. The FlareManager connects to the Flare API, while the BeaconManager scans for nearby beacons and calculates the position of the device. </p>
+<p>When an environment has been loaded from the FlareManager, the app calls loadEnvironment() to tell the BeaconManager which beacons to scan for, and where they are located. It then calls start() to start scanning.</p>
+<p>When the BeaconManager determines the device&#39;s position, it calls the delegate method devicePositionDidChange() with the new position. Normally this happens once per second. The app can then tell the FlareManager to notify the server that the device&#39;s position has changed. </p>
+<p>When the app is moved into the background, it disconnects the FlareManager and stops the BeaconManager. When it returns to the foreground, it re-connects the FlareManager and re-starts the BeaconManager.</p>
+
+
+</body>
+</html>

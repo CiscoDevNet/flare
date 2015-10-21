@@ -1,0 +1,227 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Socket.IO API</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<body bgcolor="white">
+<h2 id="flare-socket-io-api">Flare Socket.IO API</h2>
+<p>While the Flare REST API is used to model the hierarchy of environment, zone, thing and device objects, the Flare Socket.IO API is used for real-time communication between the objects. </p>
+	
+<p>It uses <a href="http://socket.io">Socket.IO</a>, a library that enables real-time bidirectional event-based communication and works on every platform, browser and device.</p>
+
+<p>In the object-oriented programming paradigm, objects have data and code. Similarly, the Flare Socket.IO API lets an application get or set data values, and perform actions. </p>
+<p>Unline REST APIs that use the HTTP request/response loop, Socket.IO messages are one-way and can be sent from the client to the server, or from the server to the client. </p>
+<h3 id="object-ids">Object IDs</h3>
+<p>The Flare Socket.IO APIs relate to Flare objects, including environments, zones, things or devices. In any case, it is necessary for all messages to specify the ID of the object that it refers to. The object is specified using its type and ID, for example:</p>
+<pre><code>subscribe {&quot;environment&quot;: &quot;123&quot;} 
+subscribe {&quot;zone&quot;: &quot;456&quot;}
+subscribe {&quot;thing&quot;: &quot;789&quot;}
+subscribe {&quot;device&quot;: &quot;234&quot;}
+</code></pre><h3 id="subscriptions">Subscriptions</h3>
+<p>When an application launches or a web page loads, it creates a socket and connects to the server. Each client can subscribe to one or more Flare objects to receive relevant messages about them. Clients can send a <a href="#subscribe">subscribe</a> message to start receiving messages about an object, and later send an <a href="#unsubscribe">unsubscribe</a> message to stop receiving messages about the object. The connection is stateful, so the server remembers which clients have subscribed to which objects. This prevents clients from receiving messages about objects that they don&#39;t care about. </p>
+<p>Clients apps can have a socket connection that subscribes to one or more objects. Typically, a client represents a single Flare object: a native app on a mobile phone can represent a device object, and a web app on a computer attached to a big screen could represent a thing. In each case, the app would normally subscribe to the object it represents when it starts up. It is not always necessary to unsubscribe, as closing a connection will unsubscribe automatically and the server will clean up its internal state. </p>
+<p>Clients may also subscribe to other objects for a short time. For example, the app for a device may subscribe to a thing when the device is physically near to the thing, or when the user wants to interact with it. When the device is no longer near the thing or the user has finished interacting, then the app can unsubscribe from that thing. While devices can be notified when they are near or far from a thing, subscribing and unsubscribing is the responsibility of the app and is not automatic. </p>
+<p>If apps on your mobile platform are put to sleep when they are in the background, it may not be possible for them to receive notifications. If that is the case, then it would be better to disconnect the socket before entering the background (which will unsubscribe automatically), and to reconnect and subscribe again when the app returns to the foreground. </p>
+<p>Clients that subscribe to an object will not necessarily receive all messages about the object:</p>
+<ul>
+<li>When a client gets a data value for an object, a data message will be sent back to that client only. </li>
+<li>When a client changes a data value of an object, all other subscribers will receive a notification. However, the client that sent the original message will not receive a notification because it would be redundant; presumably it already has the latest information. </li>
+<li>Events that originate from the server (as the result of an action, or as a side effect of a device&#39;s position changing) will be sent to all subscribers. </li>
+</ul>
+<h2 id="client-to-server-">Client to server:</h2>
+<p>These messages are sent from the client to the server. </p>
+
+<ul>
+	<li><a href="#subscribe">subscribe</a></li>
+	<li><a href="#unsubscribe">unsubscribe</a></li>
+	<li><a href="#getData">getData</a></li>
+	<li><a href="#setData">setData</a></li>
+	<li><a href="#getPosition">getPosition</a></li>
+	<li><a href="#setPosition">setPosition</a></li>
+	<li><a href="#performAction">performAction</a></li>
+</ul>
+
+<a name="subscribe"></a>
+<h3 id="subscribe">subscribe</h3>
+<p>When: Sent by the client when it wants to subscribe to an object.</p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string (required)
+all: boolean (optional)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;zone&quot;: &quot;456&quot;} 
+</code></pre><p>Result: The client will receive notifications about the object, for example when a data value or the position is changed, or when an action is performed on the object (and not handled by the server). </p>
+<p> If all is true, messages will also be broadcast to all of an environment's zones, things and devices; and to all of a zone's things.</p>
+
+<a name="unsubscribe"></a>
+<h3 id="unsubscribe">unsubscribe</h3>
+<p>When: Sent by the client when it wants to unsubscribe from an object. </p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string (required)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;zone&quot;: &quot;456&quot;} 
+</code></pre><p>Result: The client will no longer receive notifications about the object. </p>
+<p>Note: It is not necessary to unsubscribe when the client app wants to receive notifications about an object until the connection is closed.</p>
+
+<a name="getData"></a>
+<h3 id="getdata">getData</h3>
+<p>When: Sent by the client when it wants to get some or all data values for an object. </p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string (required)
+key: string (optional)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;zone&quot;: &quot;456&quot;} 
+{&quot;thing&quot;: &quot;789&quot;, &quot;key&quot;: &quot;color&quot;}     
+</code></pre><p>Result: The client will be sent a <a href="#data">data</a> message containing some or all data values for the object. If a key is included in the message, then only the corresponding key/value pair will be returned. Otherwise, all key/value pairs will be returned. For example:</p>
+<pre><code>{&quot;zone&quot;: &quot;456&quot;, &quot;data&quot;: {&quot;page&quot;: 3, &quot;mood&quot;: &quot;chill&quot;}} 
+{&quot;thing&quot;: &quot;789&quot;, &quot;data&quot;: {&quot;color&quot;: &quot;red&quot;}}
+</code></pre><p>Note: This is equivalent to calling <a href="../api-console/index.html?raml=/docs/flare-rest.raml"> /environments/{environment_id}/zones/{zone_id}/things/{thing_id}/data</a> to get all data about a thing, or <a href="../api-console/index.html?raml=/docs/flare-rest.raml"> /environments/{environment_id}/zones/{zone_id}/things/{thing_id}/data/{key}</a> to get a specific field. An app can use the Socket.IO or REST interfaces for getting data, depending upon what is more convenient. </p>
+
+<a name="setData"></a>
+<h3 id="setdata">setData</h3>
+<p>When: Sent by the client when it wants to change a data value for an object. </p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string (required)
+key: string (required)
+value: mixed (required)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;thing&quot;: &quot;789&quot;, &quot;key&quot;: &quot;color&quot;, &quot;value&quot;: &quot;purple&quot;}     
+</code></pre><p>Result: Other subscribers to the object will receive a <a href="#data">data</a> message with the key/value pair that has been changed. </p>
+<pre><code>{&quot;thing&quot;: &quot;789&quot;, &quot;data&quot;: {&quot;color&quot;: &quot;purple&quot;}}
+</code></pre><p>Note: The client that sent the original <a href="#setData">setData</a> message will not receive a notification because it would be redundant; presumably it already has the latest information. </p>
+
+<a name="getPosition"></a>
+<h3 id="getposition">getPosition</h3>
+<p>When: Sent by the client when it wants to get the position of a thing or device.</p>
+<p>Schema: </p>
+<pre><code>thing | device: string (required)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;} 
+</code></pre><p>Result: The client will be sent a <a href="#position">position</a> message containing the position of the object. For example:</p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;position&quot;: {&quot;x&quot;: 2.3, &quot;y&quot;: 3.4}}
+</code></pre><p>Note: This is equivalent to calling the GET /environments/{environment_id}/zones/{zone_id}/things/{thing_id}/position to get the position of a thing. An app can use the Socket.IO or REST interfaces for getting data, depending upon what is more convenient. </p>
+
+<a name="setPosition"></a>
+<h3 id="setposition">setPosition</h3>
+<p>When: Sent by the client when it wants to change the position of an object. </p>
+<p>Schema: </p>
+<pre><code>thing | device: string (required)
+position: object (required)
+    x: number (required)
+    y: number (required)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;position&quot;: {&quot;x&quot;: 4.5, &quot;y&quot;: 5.6}}
+</code></pre><p>Result: Other subscribers to the object will receive a <a href="#position">position</a> message with the new position. For example:</p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;position&quot;: {&quot;x&quot;: 4.5, &quot;y&quot;: 5.6}}
+</code></pre><p>Note: The client that sent the original <a href="#setPosition">setPosition</a> message will not receive a notification because it would be redundant; presumably it already has the latest information. </p>
+<p>This may trigger a <a href="#near">near</a> or <a href="#far">far</a> message if a device becomes near to a thing, or is no longer near to a thing. See the documentation below for those messages. </p>
+
+<a name="performAction"></a>
+<h3 id="performaction">performAction</h3>
+<p>When: Sent by the client when it wants to perform an action on an object. Actions are identified by strings, and the list of possible actions for an object is contained in the actions property, accessible using the REST API. </p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string (required)
+action: string (required)
+</code></pre><p>Example: </p>
+<pre><code>{&quot;zone&quot;: &quot;234&quot;, &quot;action&quot;: &quot;next&quot;}
+</code></pre><p>Result: The action can be handled by the server or the client. For the server to handle the action, a function with the name of the action should be defined in the file actions.js on the server. The function can interact with the specified object or other objects (by manipulating them directly), and may case other messages to be sent. </p>
+<p>If the server does not handle the action, then a <a href="#handleAction">handleAction</a> message will be sent to all subscribers of the object, including the sender. For example:</p>
+<pre><code>{&quot;zone&quot;: &quot;234&quot;, &quot;action&quot;: &quot;next&quot;}
+</code></pre><p>The client can then interact with the specified object or other objects (by sending more messages to the server). </p>
+<p>Note: Actions do not have input or output values, but they can operate on data values. For example, an action can optionally use one or more data values as input, and can optionally use one or more data values as output. For example, a &quot;next&quot; message could increment the &quot;page&quot; value, which would cause a data message to be sent to subscribers of the object. </p>
+<p>You don&#39;t need to use an action to simply change a data value. You can use <a href="#setData">setData</a> to set the value directly, and any subscribers for the object will be notified of the change. For example, if the current page is 3, instead of performing a next action you could call <a href="#setData">setData</a> like this:</p>
+<pre><code>{&quot;zone&quot;: &quot;234&quot;, &quot;key&quot;: &quot;page&quot;, &quot;value&quot;: 4}</code></pre><h2 id="server-to-client-">Server to client:</h2>
+<p>These messages are sent from the server to the client, usually in response to other messages that have been sent to the server. Depending upon the event that triggered the message, the could be sent to the sender of the original message, to all other subscribers of an object, or to all subscribers of an object (including the sender).</p>
+
+<ul>
+	<li><a href="#data">data</a></li>
+	<li><a href="#position">position</a></li>
+	<li><a href="#enter">enter</a></li>
+	<li><a href="#exit">exit</a></li>
+	<li><a href="#near">near</a></li>
+	<li><a href="#far">far</a></li>
+	<li><a href="#handleAction">handleAction</a></li>
+</ul>
+
+<a name="data"></a>
+<h3 id="data">data</h3>
+<p>When: Sent by the server to a client who has requested the current data by sending a <a href="#getData">getData</a> message, <i>or</i> to all other subscribers when a client has changed a data value by sending a <a href="#setData">setData</a> message. </p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string
+data: object
+</code></pre><p>Example: </p>
+<pre><code>{&quot;zone&quot;: &quot;456&quot;, &quot;data&quot;: {&quot;page&quot;: 3, &quot;mood&quot;: &quot;chill&quot;}} 
+{&quot;thing&quot;: &quot;789&quot;, &quot;data&quot;: {&quot;color&quot;: &quot;red&quot;}}
+</code></pre><p>Note: If a key was included in the <a href="#getData">getData</a> message, then only the corresponding key/value pair will be returned. Otherwise, all key/value pairs will be returned.</p>
+
+<a name="position"></a>
+<h3 id="position">position</h3>
+<p>When: Sent by the server to a client who has requested the current position by sending a <a href="#getPosition">getPosition</a> message, <i>or</i> to all other subscribers when a client has changed the current position by sending a <a href="#setPosition">setPosition</a> message.</p>
+<p>Schema: </p>
+<pre><code>thing | device: string
+position: object
+    x: number
+    y: number
+</code></pre><p>Example: </p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;position&quot;: {&quot;x&quot;: 2.3, &quot;y&quot;: 3.4}}
+</code></pre>
+
+<a name="enter"></a>
+<h3 id="enter">enter</h3>
+<p>When: Sent by the server when a device has entered the perimeter of a zone, as a result of a <a href="#setPosition">setPosition</a> call for the device. The message is sent to all subscribers of the device <i>and</i> all subscribers of the zone.</p>
+<p>Schema:</p>
+<pre><code>device: string
+zone: string
+</code></pre><p>Example:</p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;zone&quot;: &quot;456&quot;} 
+</code></pre><p>Note: A device is only considered to be inside one zone at a time. If a device is inside the perimeter of two zones that overlap, the device may be considered to be inside one zone or the other. A zone, on the other hand, may have several devices that are inside it. </p>
+<p>The device may continue to move around inside a zone. An <a href="#enter">enter</a> message will only be sent when a device enters the zone, and an <a href="#exit">exit</a> message will only be sent when the device leaves the zone. </p>
+
+<a name="exit"></a>
+<h3 id="exit">exit</h3>
+<p>When: Sent by the server when a device is no longer near to a thing, as a result of a <a href="#setPosition">setPosition</a> call for the device. The message is sent to all subscribers of the device <i>and</i> all subscribers of the thing.</p>
+<p>Schema:</p>
+<pre><code>device: string
+zone: string
+</code></pre><p>Example:</p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;thing&quot;: &quot;789&quot;} 
+</code></pre>
+
+<a name="near"></a>
+<h3 id="near">near</h3>
+<p>When: Sent by the server when a device has become near to a thing, as a result of a <a href="#setPosition">setPosition</a> call for the device. The message is sent to all subscribers of the device <i>and</i> all subscribers of the thing. A device is considered near to a device when the diagonal distance is less than a certain threshold defined by the server (by default, 1 meter).</p>
+<p>Schema:</p>
+<pre><code>device: string
+thing: string
+distance: number
+</code></pre><p>Example:</p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;thing&quot;: &quot;789&quot;, &quot;distance&quot;: 0.91} 
+</code></pre><p>Note: When a device and a thing are nearby, they can interact. Typically, the client representing the device can subscribe to the thing, and the client representing the thing can subscribe to the device. </p>
+<p>A device is only considered to be near to one thing at a time, so if it is within the given threshold of several devices, it is considered to only be near to the closest one. A thing, on the other hand, may have several devices that are near it. </p>
+<p>The device may continue to move around inside a circle around the thing defined by the minimum threshold. A <a href="#near">near</a> message will only be sent when a device enters the circle, and a <a href="#far">far</a> message will only be sent when the device leaves the circle (unless the device becomes closer to another thing). </p>
+<p>The distance value in the <a href="#near">near</a> message is the distance between the device and the thing at the time that the server received a <a href="#setPosition">setPosition</a> message that caused it to become near to the thing. If the client representing the thing subscribes to the device, then it can continue to receive <a href="#position">position</a> updates for the device as it moves around. It should check the ID of the object in the <a href="#position">position</a> message to know if it applies to the thing or a nearby device. </p>
+
+<a name="far"></a>
+<h3 id="far">far</h3>
+<p>When: Sent by the server when a device is no longer near to a thing, as a result of a <a href="#setPosition">setPosition</a> call for the device. The message is sent to all subscribers of the device <i>and</i> all subscribers of the thing.</p>
+<p>Schema:</p>
+<pre><code>device: string
+thing: string
+</code></pre><p>Example:</p>
+<pre><code>{&quot;device&quot;: &quot;234&quot;, &quot;thing&quot;: &quot;789&quot;} 
+</code></pre><p>Note: When a device and a thing are no longer nearby, they may not want to interact anymore. Typically, the client representing the device can unsubscribe from the thing, and the client representing the thing can unsubscribe from the device. </p>
+
+<a name="handleAction"></a>
+<h3 id="handleaction">handleAction</h3>
+<p>When: Sent by the server to all subscribers of an object when a client has sent a <a href="#performAction">performAction</a> message, <i>and</i> the server did not handle the message. The client may then take any appropriate action. </p>
+<p>Schema: </p>
+<pre><code>environment | zone | thing | device: string
+action: string
+</code></pre><p>Example: </p>
+<pre><code>{&quot;thing&quot;: &quot;789&quot;, &quot;action&quot;: &quot;buy&quot;} 
+</code></pre>
+
+
+</body>
+</html>

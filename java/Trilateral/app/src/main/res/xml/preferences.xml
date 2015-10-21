@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Flare Server"
+        android:key="pref_flare_server">
+        <EditTextPreference
+            android:key="pref_flare_host"
+            android:title="Server"
+            android:summary=""
+            android:dialogTitle="Flare Server"
+            android:defaultValue="localhost" />
+        <EditTextPreference
+            android:key="pref_flare_port"
+            android:title="Port"
+            android:summary=""
+            android:dialogTitle="Flare Server"
+            android:defaultValue="1234" />
+    </PreferenceCategory>
+</PreferenceScreen>

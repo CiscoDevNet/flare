@@ -1,0 +1,270 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Socket.IO API tutorial</title>
+  </head>
+<link href="../../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<h2 id="flare-sequences">Socket.IO API tutorial</h2>
+<p>This page explains how an app can use the Flare Socket.IO API to discover and interact with things in an environment. There are also platform-specific tutorials for <a href="socketio-javascript.html">JavaScript</a>, <a href="socketio-swift.html">Swift</a>, and <a href="socketio-java.html">Java</a>.</p>
+
+<ul>
+	<li><a href="#device-setup">Device setup</a></li>
+	<li><a href="#thing-setup">Thing setup</a></li>
+	<li><a href="#when-device-position-changes">When device position changes</a></li>
+	<li><a href="#when-a-device-has-become-near-to-a-thing">When a device has become near to a thing</a></li>
+	<li><a href="#when-thing-data-changes">When thing data changes</a></li>
+	<li><a href="#when-device-data-changes">When device data changes</a></li>
+	<li><a href="#when-performing-an-action-on-the-thing">When performing an action on the thing</a></li>
+	<li><a href="#when-performing-an-action-on-the-device">When performing an action on the device</a></li>
+	<li><a href="#when-thing-position-changes">When thing position changes</a></li>
+	<li><a href="#when-device-position-changes-again">When device position changes again</a></li>
+	<li><a href="#when-a-device-is-no-longer-near-to-a-thing">When a device is no longer near to a thing</a></li>
+</ul>
+
+<h3 id="device-setup">Sequence diagram</h3>
+
+<p>This diagram has many arrows and should make everything clear:</p>
+
+<img src="sequences.png" width="646" height="1640" />
+
+<a name="device-setup"></a>
+<h3 id="device-setup">Device setup</h3>
+<p>The device client makes a <a href="../../api-console/index.html?raml=/docs/flare-rest.raml">REST API</a> call to the server to get information about the device:</p>
+<div class="code"><code>GET /environments/123/devices/234
+</code></div>
+
+<p>The server&#39;s response contains the name, description, etc. for the device:    </p>
+<pre><code>{
+    &quot;environment&quot;: &quot;123&quot;,
+    &quot;_id&quot;: &quot;234&quot;,
+    &quot;name&quot;: &quot;Andrew&#39;s iPhone&quot;,
+    &quot;description&quot;: &quot;iPhone 6 (32 GB)&quot;,
+    &quot;data&quot;: {
+        &quot;angle&quot;: 60
+    },
+    &quot;position&quot;: {
+        &quot;x&quot;: 2,
+        &quot;y&quot;: 1
+    }
+}
+</code></pre>
+
+<p>The client then subscribes to the device so that it will receive any notifications about it:</p>
+<div class="code"><code><a href="../flare-socketio.html#subscribe" target="docs">subscribe</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+<p>Then it requests the most recent data:    </p>
+<div class="code"><code><a href="../flare-socketio.html#getData" target="docs">getData</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+<p>The server replies by sending back the data:</p>
+<div class="code"><code><a href="../flare-socketio.html#data" target="docs">data</a> {&quot;device&quot;:&quot;234&quot;, &quot;data&quot;:{&quot;angle&quot;: 60}}
+</code></div>
+
+<p>The client requests the most recent position:</p>
+<div class="code"><code><a href="../flare-socketio.html#getPosition" target="docs">getPosition</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+<p>The server replies by sending back the position:</p>
+<div class="code"><code><a href="../flare-socketio.html#position" target="docs">position</a> {&quot;device&quot;:&quot;234&quot;, &quot;position&quot;:{&quot;x&quot;:2, &quot;y&quot;:1}}
+</code></div>
+
+<a name="thing-setup"></a>
+<h3 id="thing-setup">Thing setup</h3>
+<p>The thing client makes a <a href="../../api-console/index.html?raml=/docs/flare-rest.raml">REST API</a> call call to the server to get information about the thing:</p>
+<div class="code"><code>GET /environments/123/zones/456/things/789
+</code></div>
+
+<p>The server&#39;s response contains the name, description, etc. for the thing:    </p>
+<pre><code>{
+    &quot;environment&quot;: &quot;123&quot;,
+    &quot;zone&quot;: &quot;456&quot;
+    &quot;_id&quot;: &quot;789&quot;,
+    &quot;name&quot;: &quot;Window&quot;,
+    &quot;description&quot;: &quot;In traditional Japanese architecture, 
+        a shōji (障子) is a door, window or room divider 
+        consisting of translucent paper over a lattice of bamboo.&quot;,
+    &quot;data&quot;: {
+        &quot;brightness&quot;: 0.7,
+        &quot;color&quot;: &quot;blue&quot;
+    },
+    &quot;position&quot;: {
+        &quot;x&quot;: 10,
+        &quot;y&quot;: 0
+    },
+}
+</code></pre>
+
+<p>The client then subscribes to the thing so that it will receive any notifications about it:</p>
+<div class="code"><code><a href="../flare-socketio.html#subscribe" target="docs">subscribe</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>Then it requests the most recent data:    </p>
+<div class="code"><code><a href="../flare-socketio.html#getData" target="docs">getData</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>The server replies by sending back the data:</p>
+<div class="code"><code><a href="../flare-socketio.html#data" target="docs">data</a> {&quot;thing&quot;:&quot;789&quot;, &quot;data&quot;:{&quot;brightness&quot;:0.7, &quot;color&quot;:&quot;blue&quot;}}
+</code></div>
+
+<p>The client requests the most recent position:</p>
+<div class="code"><code><a href="../flare-socketio.html#getPosition" target="docs">getPosition</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>The server replies by sending back the position:</p>
+<div class="code"><code><a href="../flare-socketio.html#position" target="docs">position</a> {&quot;thing&quot;:&quot;789&quot;, &quot;position&quot;:{&quot;x&quot;:10, &quot;y&quot;:0}}
+</code></div>
+
+<a name="when-device-position-changes"></a>
+<h3 id="when-device-position-changes">When device position changes</h3>
+<p>When the device&#39;s position changes, it sends a message to the server:</p>
+<div class="code"><code><a href="../flare-socketio.html#setPosition" target="docs">setPosition</a> {&quot;device&quot;:&quot;234&quot;, &quot;position&quot;:{&quot;x&quot;:9, &quot;y&quot;:1}}
+</code></div>
+
+<p>The server will then notify all <em>other</em> clients that have subscribed to the device. Note that it won&#39;t send a message back to the client that sent the original message, because it already has the latest information. </p>
+
+<a name="when-a-device-has-become-near-to-a-thing"></a>
+<h3 id="when-a-device-has-become-near-to-a-thing">When a device has become near to a thing</h3>
+<p>If the server calculates that a device has become near to a thing because the distance between their positions is less than a certain threshold, it will broadcast a near message to all clients that have subscribed to the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#near" target="docs">near</a> {&quot;device&quot;:&quot;234&quot;, &quot;thing&quot;:&quot;789&quot;, &quot;distance&quot;:1.414}
+</code></div>
+
+<p>The device client can then get information about the thing:</p>
+<div class="code"><code>GET /environments/123/zones/-/things/789
+</code></div>
+
+<p>Note: If the device client doesn&#39;t know what zone the thing is in, it can just use a dash. The REST URL syntax is verbose, but the thing ID what matters. The response will be similar to the one above.</p>
+<p>The device client subscribes to the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#subscribe" target="docs">subscribe</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>It gets the latest data:</p>
+<div class="code"><code><a href="../flare-socketio.html#getData" target="docs">getData</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>The server replies by sending back the data:</p>
+<div class="code"><code><a href="../flare-socketio.html#data" target="docs">data</a> {&quot;thing&quot;:&quot;789&quot;, &quot;data&quot;:{&quot;brightness&quot;:0.7, &quot;color&quot;:&quot;blue&quot;}}
+</code></div>
+
+<p>The client requests the most recent position:</p>
+<div class="code"><code><a href="../flare-socketio.html#getPosition" target="docs">getPosition</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>The server replies by sending back the position:</p>
+<div class="code"><code><a href="../flare-socketio.html#position" target="docs">position</a> {&quot;thing&quot;:&quot;789&quot;, &quot;position&quot;:{&quot;x&quot;:10, &quot;y&quot;:0}}
+</code></div>
+
+<p>The server will also broadcast the same near message to all clients that have subscribed to the device: </p>
+<div class="code"><code><a href="../flare-socketio.html#near" target="docs">near</a> {&quot;device&quot;:&quot;234&quot;, &quot;thing&quot;:&quot;789&quot;, &quot;distance&quot;:1.414}
+</code></div>
+
+<p>The thing client can then get information about the device:</p>
+<div class="code"><code>GET /environments/123/devices/234
+</code></div>
+
+<p>The response will be similar to the one above. </p>
+<p>The thing client subscribes to the device:</p>
+<div class="code"><code><a href="../flare-socketio.html#subscribe" target="docs">subscribe</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+<p>It gets the latest data:</p>
+<div class="code"><code><a href="../flare-socketio.html#getData" target="docs">getData</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+<p>The server replies by sending back the data:</p>
+<div class="code"><code><a href="../flare-socketio.html#data" target="docs">data</a> {&quot;device&quot;:&quot;234&quot;, &quot;data&quot;:{&quot;angle&quot;: 60}}
+</code></div>
+
+<p>The client requests the most recent position:</p>
+<div class="code"><code><a href="../flare-socketio.html#getPosition" target="docs">getPosition</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+<p>The server replies by sending back the position:</p>
+<div class="code"><code><a href="../flare-socketio.html#position" target="docs">position</a> {&quot;device&quot;:&quot;234&quot;, &quot;position&quot;:{&quot;x&quot;:9, &quot;y&quot;:1}}
+</code></div>
+
+<a name="when-thing-data-changes"></a>
+<h3 id="when-thing-data-changes">When thing data changes</h3>
+<p>Either client can change the thing&#39;s data:</p>
+<div class="code"><code><a href="../flare-socketio.html#setData" target="docs">setData</a> {&quot;thing&quot;:&quot;789&quot;, &quot;key&quot;:&quot;color&quot;, &quot;value&quot;:&quot;purple&quot;}
+</code></div>
+
+<p>The server will then notify all <em>other</em> clients that have subscribed to the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#data" target="docs">data</a> {&quot;thing&quot;:&quot;789&quot;, &quot;data&quot;:{&quot;color&quot;:&quot;purple&quot;}}
+</code></div>
+
+<a name="when-device-data-changes"></a>
+<h3 id="when-device-data-changes">When device data changes</h3>
+<p>Either client can change the device&#39;s data:</p>
+<div class="code"><code><a href="../flare-socketio.html#setData" target="docs">setData</a> {&quot;device&quot;:&quot;234&quot;, &quot;key&quot;:&quot;angle&quot;, &quot;value&quot;:120}
+</code></div>
+
+<p>The server will then notify all other clients that have subscribed to the device:</p>
+<div class="code"><code><a href="../flare-socketio.html#data" target="docs">data</a> {&quot;device&quot;:&quot;234&quot;, &quot;data&quot;:{&quot;angle&quot;:120}}
+</code></div>
+
+<a name="when-performing-an-action-on-the-thing"></a>
+<h3 id="when-performing-an-action-on-the-thing">When performing an action on the thing</h3>
+<p>Any client can perform an action on the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#performAction" target="docs">performAction</a> {&quot;thing&quot;:&quot;789&quot;, &quot;action&quot;:&quot;rainbow&quot;}
+</code></div>
+
+<p>The action can be handled by the server or any client. If it is not handled by the server, a message will be broadcast to all <em>other</em> clients subscribed to the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#handleAction" target="docs">handleAction</a> {&quot;thing&quot;:&quot;789&quot;, &quot;action&quot;:&quot;rainbow&quot;}
+</code></div>
+
+<a name="when-performing-an-action-on-the-device"></a>
+<h3 id="when-performing-an-action-on-the-device">When performing an action on the device</h3>
+<p>Any client can perform an action on the device:</p>
+<div class="code"><code><a href="../flare-socketio.html#performAction" target="docs">performAction</a> {&quot;device&quot;:&quot;234&quot;, &quot;action&quot;:&quot;counterclockwise&quot;}
+</code></div>
+
+<p>Similarly, if the action is not handled by the server, a message will be broadcast to all <em>other</em> clients subscribed to the device:</p>
+<div class="code"><code><a href="../flare-socketio.html#handleAction" target="docs">handleAction</a> {&quot;device&quot;:&quot;234&quot;, &quot;action&quot;:&quot;counterclockwise&quot;}
+</code></div>
+
+<a name="when-thing-position-changes"></a>
+<h3 id="when-thing-position-changes">When thing position changes</h3>
+<p>If the thing&#39;s position changes, it can send a message to the server:</p>
+<div class="code"><code><a href="../flare-socketio.html#setPosition" target="docs">setPosition</a> {&quot;thing&quot;:&quot;789&quot;, &quot;position&quot;:{&quot;x&quot;:10, &quot;y&quot;:1}}
+</code></div>
+
+<p>The server will then notify all other clients that have subscribed to the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#position" target="docs">position</a> {&quot;thing&quot;:&quot;789&quot;, &quot;position&quot;:{&quot;x&quot;:10, &quot;y&quot;:1}}
+</code></div>
+
+<p>Note: <a href="../flare-socketio.html#near">near</a> and <a href="../flare-socketio.html#far">far</a> messages are only triggered when the device&#39;s position changes.</p>
+
+<a name="when-device-position-changes-again"></a>
+<h3 id="when-device-position-changes-again">When device position changes again</h3>
+<p>If the device&#39;s position changes again, it will send a message to the server:</p>
+<div class="code"><code><a href="../flare-socketio.html#setPosition" target="docs">setPosition</a> {&quot;device&quot;:&quot;234&quot;, &quot;position&quot;:{&quot;x&quot;:4, &quot;y&quot;:5}}
+</code></div>
+
+<p>You get the idea by now:</p>
+<div class="code"><code><a href="../flare-socketio.html#position" target="docs">position</a> {&quot;device&quot;:&quot;234&quot;, &quot;position&quot;:{&quot;x&quot;:4, &quot;y&quot;:5}}
+</code></div>
+
+<a name="when-a-device-is-no-longer-near-to-a-thing"></a>
+<h3 id="when-a-device-is-no-longer-near-to-a-thing">When a device is no longer near to a thing</h3>
+<p>The server will notice when the device is no longer near to the thing, and notify all clients subscribed to the device:</p>
+<div class="code"><code><a href="../flare-socketio.html#far" target="docs">far</a> {&quot;device&quot;:&quot;234&quot;, &quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>The device can then unsubscribe from the thing, and then it won&#39;t receive notifications about the thing anymore. </p>
+<div class="code"><code><a href="../flare-socketio.html#unsubscribe" target="docs">unsubscribe</a> {&quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>The server will send the same message to all clients subscribed to the thing:</p>
+<div class="code"><code><a href="../flare-socketio.html#docs" target="docs">far</a> {&quot;device&quot;:&quot;234&quot;, &quot;thing&quot;:&quot;789&quot;}
+</code></div>
+
+<p>And the thing can unsubscribe from the device as well:</p>
+<div class="code"><code><a href="../flare-socketio.html#unsubscribe" target="docs">unsubscribe</a> {&quot;device&quot;:&quot;234&quot;}
+</code></div>
+
+
+
+</body>
+</html>

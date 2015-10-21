@@ -1,0 +1,101 @@
+# Flare Overview
+
+Flare allows users with mobile devices to discover and interact with things in an environment. It combines multiple location technologies with a realtime communications architecture, to enable new kinds of user interactions. The Flare experience is:
+
+- Mobile: the experience goes with the user and their devices
+- Spatially aware: devices and things are aware of their location in the environment
+- Glanceable: experiences can scale from simple glances to rich interactions 
+- Interactive: information and actions flow in both directions between users and things
+- Generic: the same interaction model can be applied to multiple use cases
+
+For example, when a user walks into a retail store holding a mobile phone or wearing a smart watch, their device could indicate the location of various products and interactive displays in the store. When they approach one of those things, their device can automatically pair with it, allowing them to get more information about a product or control an interactive display.
+
+### Flare API
+
+The Flare API moves the intelligence of the Internet of Things into the network. It enables a kind of distributed object-oriented programming where the network takes the complexity out of building innovative applications incorporating many different kinds of devices. 
+
+The Flare model defines environments that are divided into zones, each of which can contain numerous things: displays, beacons, lights, or even objects that don't have any electronics. These are all arranged in a spacial grid, so the API knows the location of every thing in the environment.
+
+The Flare API is highly object-oriented. Environments, zones, things and personal devices are all Flare objects, and inherit many of the same properties and behaviors. Flare objects have data values that can be read and written using the network, with state synchronized between devices using push notifications. Flare objects can also respond to actions, which can be custom-tailored for each application. 
+
+Flare uses this common foundation to enable a variety of types of use cases. When a user enters an environment, their device can discover other things around them, and display an interface that shows the distance and direction of those things. When they approach a thing, they can have a variety of interactions: they can see more information about the thing on their device, they can communicate with the device and cause it to change, and they can perform actions that affect the thing, the zone that contains it, or the entire environment.
+
+### Discovery
+
+The Flare API stores information about the location and size of environments, and the position of things inside zones in the environment. Environments each have a geofence that enables GPS-equipped devices to determine when they are inside of a particular environment.  
+
+Personal devices can establish their location in an environment using a variety of technologies. Devices can sense their proximity to Bluetooth-enabled beacons, CMX access points can detect the location of devices over Wi-Fi, or other methods can be used. Flare handles the location of personal devices as dynamic data that is synchronized using the network: a device that calculates its own location using beacons can tell other things where it is, and similarly systems that sense the device can tell the device where it is. 
+
+Once a device knows its location in the environment, it can determine what zone it is in, and determine its spacial relationship to other things in the environment. It could then communicate this information to the user in several ways:
+
+- Display a map of the environment or the current zone, including the position of the device and things around it
+- Indicate the direction and distance towards nearby things
+- Display an alert when in close proximity to a thing
+
+The user device can determine its own position relative to things, and the server can also notify things and devices when they are in close proximity to each other using the Flare notification system. 
+
+### Interaction 
+
+A user can then interact with a thing in a variety of ways:
+
+- Getting object metadata: The user can find out basic information about the object such as its name, type, description, current location, etc. The user may interact with the object in different ways depending upon its type, e.g. beacon, basketball, etc.
+
+- Getting the state of the object: Each object can have any number of variable properties, depending on the type of object and its capabilities. For example, the user can find out that the object is turned on, the volume is set to 10, the color is green, etc. 
+
+- Changing the state of the object: The user can interact with objects by changing their variable properties. For example, they can turn the object on or off, set the volume to 11, change the color to purple, etc. 
+
+- Getting actions: The user can find out what they can do with the object. Different kinds of objects have different types of possible interactions. These actions could be defined by the manufacturer or extended by the current owner, and could be based on the type of object or specific to a particular object. 
+
+- Performing actions: The user can perform one of the actions that they have discovered in the previous step. These actions could use the state variables as input and/or output, such as turning up the volume or going to the next page. Actions could also connect to other systems, allowing the user to buy the object, add it to their favorites, share it on a social network, etc. 
+
+In addition to interacting with individual things in the environment, the user can also get/set state variables or perform actions that apply to the current zone or the entire environment. For example, if the user sets the mood of the zone to ‘chill out’, each thing in the zone could react in its own way without the user having to tell each thing specifically what to do.
+
+What happens when an action message is sent depends upon the capabilities of the thing. Things could be full-fledged computing devices, smaller connected devices with limited capabilities, or things with no electronics at all. The thing may respond directly to the action, it may receive an instruction over a custom interface, or the action could be handled by another server.
+
+### Components
+
+The Flare architecture consists of the following components:
+
+- The Flare Server can be located either locally or in the cloud, and coordinates spacial information and messages between devices.
+
+- User Devices may include mobile devices, wearable devices, or any device with a web browser. They can run Flare-enabled applications consisting of sample code provided by Cisco that has been extended for the specific use case.
+
+- Things are objects in the environment that the user can interact with. They may have their own interfaces, such as a smart display; be electronic devices with other kinds of features, such as a beacon or a thermostat; or non-electronic devices, such as a piece of furniture or a box. 
+
+- Sensors in the environment, such as CMX-enabled access points, can detect the postiion of user devices. When CMX detects that the location of a device has changed, it can send a message to the Flare server, which can broadcast the message to the device and other things. 
+
+### Model
+
+All Flare objects have a certain number of properties in common, such as ID, name, description, and date updated. Flare objects also have a data object that acts as a key/value store for arbitrary data (including strings, numbers, arrays, objects).
+
+Environments model a space such as a floor of a building. They have latitude/longitude coordinates, a bounding rectangle, and a compass orientation of the coordinate system. 
+
+Zones are spacial divisions inside of an environment, and have a perimeter rectangle. 
+
+Things are interesting objects inside a zone. They can be displays, beacons, lights, or even things that don't have any electronics. Things have a location inside the environment's coordinate system. 
+
+User devices are transient, and can exist inside of an environment. For example, when a user brings their mobile phone into an environment, it can create a device object. This object may be automatically deleted after a period of time with no updates.  
+
+### API
+
+The Flare API has both REST and Socket.IO interfaces. 
+
+The REST API supports CRUD (create, read, update, delete) operations on all object types. It is generally used when setting up the environment. 
+
+- Create an object
+- Get an object by ID
+- Get all children of an object (such as zones in an environment or things in a zone)
+- Update an object by ID
+- Deleting an object by ID
+
+See the <<<Rest Interface>>> for a list of all REST API calls. 
+
+The Socket.IO interface is used for realtime interactions inside the environment. It supports getting and setting data values, sending action messages, as well as receiving push notifications that are used for synchronizing state across devices. 
+
+- Get a data value for an object
+- Set a data value for an object
+- Perform a named action
+- Subscribe to notification about objects
+- Receive change notifications about objects
+
+See the <<<Socket.IO Interface>>>  below for a list of all Socket.IO calls. 

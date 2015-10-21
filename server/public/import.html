@@ -1,0 +1,114 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Socket.IO Console</title>
+  </head>
+<link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
+
+<script src="js/socket.io-1.0.0.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/flare.js"></script>
+
+<script>
+
+var filename = './model.json';
+
+function importData() {
+	appendToResults('Starting import.');
+	
+	$.getJSON(filename, function(data) {
+		var environments = data.environments;
+		for (var i = 0; i < environments.length; i++) {
+			importEnvironment(environments[i]);
+		}
+	});
+}
+
+/* These functions iterate over the objects in the JSON file, create new objects by copying one property at a time, and upload them to the Flare server. You can modify the JSON file with your own data, or modify the script to import data from a different data source. */ 
+
+function importEnvironment(source) {
+	var environment = {}; 
+	environment.name = source.name;
+	environment.description = source.description;
+	environment.geofence = source.geofence; // latitude, longitude, radius (in meters)
+	environment.perimeter = source.perimeter; // origin.x, origin.y, size.height, size.width
+	environment.data = source.data ? source.data : {};
+	environment.angle = source.angle ? source.angle : 0;
+	
+	newEnvironment(environment, function(result) {
+		var environmentId = result._id;
+		appendToResults('Imported environment ' + result.name);
+	
+		if (source.zones) {
+			for (var i = 0; i < source.zones.length; i++) {
+				importZone(environmentId, source.zones[i]);
+			}
+		}
+
+		if (source.devices) {
+			for (var i = 0; i < source.devices.length; i++) {
+				importDevice(environmentId, source.devices[i]);
+			}
+		}
+	});
+}
+
+function importZone(environmentId, source) {
+	var zone = {}; 
+	zone.name = source.name;
+	zone.description = source.description;
+	zone.perimeter = source.perimeter; // origin.x, origin.y, size.height, size.width
+	zone.data = source.data ? source.data : {};
+	
+	newZone(environmentId, zone, function(result) {
+		var zoneId = result._id;
+		appendToResults('&nbsp;&nbsp;Imported zone ' + result.name);
+	
+		if (source.things) {
+			for (var i = 0; i < source.things.length; i++) {
+				importThing(environmentId, zoneId, source.things[i]);
+			}
+		}
+	});
+}
+
+function importThing(environmentId, zoneId, source) {
+	var thing = {}; 
+	thing.name = source.name;
+	thing.description = source.description;
+	thing.position = source.position; // x, y
+	thing.data = source.data ? source.data : {};
+	
+	newThing(environmentId, zoneId, thing, function(result) {
+		appendToResults('&nbsp;&nbsp;&nbsp;&nbsp;Imported thing ' + result.name);
+	});
+}
+
+function importDevice(environmentId, source) {
+	var device = {}; 
+	device.name = source.name;
+	device.description = source.description;
+	device.position = source.position; // x, y
+	device.data = source.data ? source.data : {};
+	
+	newDevice(environmentId, device, function(result) {
+		appendToResults('&nbsp;&nbsp;Imported device ' + result.name);
+	});
+}
+
+function appendToResults(message) {
+	$('#results').append(message + '<br/>');
+}
+
+</script>
+
+<body>
+
+<p>This page will import data from the model.json file and create environment, zone, thing and device objects on the server. You can modify this page to pull data from your own data source.</p>
+
+<input type="button" id="import" onclick="return importData();" value="Import" />
+	
+<p><code id="results"></code></p>
+	
+</body>
+</html>

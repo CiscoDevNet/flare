@@ -1,0 +1,105 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Socket.IO API</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<body bgcolor="white">
+
+<h2 id="developing-with-java">Developing with Java</h2>
+<h3 id="download">Download</h3>
+<h3 id="setup">Setup</h3>
+<p>The sample code contains an Android Studio project with several modules. The flare module contains the FlareManager client, as well as classes for Environment, Zone, Thing and Device. </p>
+<h3 id="apps">Apps</h3>
+<h3 id="dependencies">Dependencies</h3>
+<p>The Flare library has a few dependencies:</p>
+<ul>
+<li><a href="https://github.com/mcxiaoke/android-volley">volley</a> is used for making HTTP calls</li>
+<li><a href="https://github.com/socketio/socket.io-client-java">socket.io-client</a> is used for making Socket.IO calls</li>
+<li><a href="https://altbeacon.github.io/android-beacon-library/">android-beacon-library</a> is used for discovering AltBeacons</li>
+</ul>
+<p>You can include them in your build.gradle file:</p>
+<pre><code>repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile &#39;com.mcxiaoke.volley:library:1.0.18&#39;
+    compile &#39;com.github.nkzawa:socket.io-client:0.6.0&#39;
+    compile &#39;org.altbeacon:android-beacon-library:2+&#39;
+}
+</code></pre><p>The Flare library makes extensive use of <a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/Lambda-QuickStart/index.html">lambdas</a>, a feature of Java 8. This <a href="http://viralpatel.net/blogs/lambda-expressions-java-tutorial/">tutorial</a> explains how lambdas work.</p>
+<p>Unfortunately, Android does not yet (as of version 5.1) support Java 8 for application development. However, you can use the <a href="https://github.com/evant/gradle-retrolambda">gradle-retrolambda</a> plugin to add support for the lambda syntax. You can add the following to your build.gradle file:</p>
+<pre><code>buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath &#39;me.tatarka:gradle-retrolambda:3.2.2&#39;
+    }
+}
+
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    apply plugin: &#39;me.tatarka.retrolambda&#39;
+}
+</code></pre><h3 id="library-documentation">Library documentation</h3>
+<p>The Flare library contains several classes:</p>
+<p>FlareManager is a high level class with methods for calling both the Flare REST API (for describing objects in the environment) and the Flare Socket.IO API (for realtime communication between objects). </p>
+<p>The Environment, Zone, Thing and Device classes all inherit common variables and methods from the abstract Flare superclass. These objects can be initialized with JSON objects returned by the FlareManager. </p>
+<p>BeaconManager is a class allows an Android device to calculate its position in the environment based on the distance to three or more beacons. </p>
+<h3 id="using-flaremanager">Using FlareManager</h3>
+<p>You can use the FlareManager to calling both the Flare REST API (for describing objects in the environment) and the Flare Socket.IO API (for realtime communication between objects). </p>
+<p>Provide the host and port when initializing the FlareManager:</p>
+<pre><code>var flareManager = new FlareManager(host, port);
+</code></pre><p>Set the activity, which is used by Volley to create a request queue:</p>
+<pre><code>flareManager.setActivity(this);
+</code></pre><p>Set the delegate (which should implement the FlareManager.Delegate interface) to receive Socket.IO message callbacks:</p>
+<pre><code>flareManager.setDelegate(this);
+</code></pre><p>Connect to the server before calling the Socket.IO interface:</p>
+<pre><code>flareManager.connect();
+</code></pre><p>To call a REST method:</p>
+<pre><code>flareManager.listEnvironments((jsonArray) -&gt; {
+    for (JSONObject json : jsonArray) {
+        Environment environment = new Environment(json);
+    }
+}
+
+flareManager.getDevice(deviceId, environment.getId(), (json) -&gt; {
+    Device device = new Device(json);
+});
+</code></pre><p>These methods use lambdas for asynchronous requests. When the response has been received, the lambda is called with a JSONObject or an array of JSONObjects. </p>
+<p>To call a Socket.IO method:</p>
+<pre><code>flareManager.getData(environment);
+</code></pre><p>Implement a delegate method to receive Socket.IO message callbacks:</p>
+<pre><code>public void didReceiveData(Flare flare, JSONObject data) {
+    Log.d(TAG, flare.getName() + &quot; data: &quot; + data.toString());
+}
+</code></pre><p>For more examples, see the <a href="tutorials/socketio-java.html">Socket.IO using Java</a> tutorial.</p>
+<h3 id="using-beaconmanager">Using BeaconManager</h3>
+<p>You can use the BeaconManager to determine the location of the user&#39;s device based on the distances from the beacons in the environment.</p>
+<p>Create a BeaconManager:</p>
+<pre><code>beaconManager = new BeaconManager();
+</code></pre><p>Set the delegate to receive callbacks:</p>
+<pre><code>beaconManager.setDelegate(this);
+</code></pre><p>Load the environment into the BeaconManager:</p>
+<pre><code>beaconManager.loadEnvironment(environment);
+</code></pre><p>Start scanning for beacons:</p>
+<pre><code>beaconManager.start();
+</code></pre><p>Implement a delegate method to be notified when the device&#39;s position changes:</p>
+<pre><code>... 
+</code></pre><p>For a complete example, see the <a href="beacons.html">Beacons</a> tutorial.</p>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Readme</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<body bgcolor="white">
+
+<h2 id="getting-started">Readme</h2>
+<p>You can run the Flare API on your own computer, or in a virtual machine.</p>
+<h3 id="to-run-the-server-on-your-own-computer-">To run the server on your own computer:</h3>
+
+<p>Install the <a href="https://nodejs.org/download">Node.js</a> runtime environment.</p>
+
+<p>Install the <a href="https://www.mongodb.org/downloads">MongoDB</a> database.</p>
+
+<p>Open a terminal and change to the Flare API directory:</p>
+<pre><code>cd ~/Downloads/flare
+</code></pre>
+
+<p>Install node modules:</p>
+<pre><code>npm install
+</code></pre>
+
+<p>Start MongoDB:</p>
+<pre><code>mongod --dbpath data/db
+</code></pre>
+
+<p>Initialize the database:</p>
+<pre><code>node import.js model.json
+</code></pre>
+
+<p>Start the flare server:</p>
+<pre><code>node flare.js
+</code></pre><h3 id="to-run-the-server-in-a-virtual-machine-">To run the server in a virtual machine:</h3>
+<p>Install <a href="https://www.vagrantup.com/downloads.html">Vagrant</a> to configure the virtualization environment.</p>
+<p>Install the <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a> vitualization application.</p>
+
+<p>Open a terminal and change to the Flare API directory:</p>
+<pre><code>cd ~/Downloads/flare
+</code></pre>
+
+<p>Choose a virtual box:    </p>
+<pre><code>vagrant init hashicorp/precise32
+</code></pre>
+
+<p>Start a virtual machine:</p>
+<pre><code>vagrant up
+</code></pre>
+
+<h3 id="demo">Start page</h3>
+<p>Open the start page in a browser:</p>
+<pre><code><a href="http://localhost:1234/">http://localhost:1234/</a>
+</code></pre>
+
+</html>
+</body>

@@ -1,0 +1,13 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">8dp</dimen>
+    <dimen name="default_stroke_width">10dp</dimen>
+    <dimen name="ring_inner_radius">130dp</dimen>
+    <dimen name="ring_width">280dp</dimen>
+    <dimen name="ring_height">280dp</dimen>
+
+    <dimen name="map_thing_width">20dp</dimen>
+    <dimen name="map_view_width">300dp</dimen>
+    <dimen name="map_view_height">250dp</dimen>
+</resources>

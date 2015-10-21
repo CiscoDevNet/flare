@@ -1,0 +1,74 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Socket.IO API</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<body bgcolor="white">
+
+<h2 id="developing-with-swift">Developing with Swift</h2>
+<h3 id="download">Download</h3>
+<h3 id="setup">Setup</h3>
+<p>The sample code for OS X, iOS and watchOS are distributed in one archive. To get started, open the Flare.xcworkspace to view all the projects in one window. </p>
+<p>The SocketIO framework is written in Swift and works on OS X, iOS and watchOS. </p>
+<p>The Flare framework is written in Swift, and works on OS X, iOS and watchOS. Beacon localization services depend on Bluetooth hardware and work only on iOS. The Swift framework depends on the SocketIO framework. </p>
+<h3 id="mac">Mac</h3>
+<p>The Explorer app runs on OS X and provides an overview of all environments, zones, things and devices in the database. It depends on both the SocketIO and the Flare frameworks. </p>
+<p>To build for Mac, first build the SocketIO framework, then build the Flare framework, then build the Explorer app. When building the frameworks, make sure to choose Edit Scheme and change the build configuration from Debug to Release. The built frameworks will be placed in the Output/Release/ folder inside the folder for each project, where other projects link to them.</p>
+<p>By default, the app connects to the server on localhost at port 1234. You can specify another server or port in the Preferences. </p>
+<h3 id="ios">iOS</h3>
+<p>To build for iOS, first build the SocketIO framework, then the Flare framework, then the Trilateral app. </p>
+<p>The iOS frameworks have a build script that can produce a framework for both devices and the iOS Simulator. When building the frameworks, make sure to choose Edit Scheme and change the build configuration from Debug to Release. It is necessary to build once for the iOS Simualtor (by selecting any device model) and then once again for devices (by selecting either &quot;Device&quot; or the name of an attached device). Once you have done so, the build script will produce a universal framework. The built frameworks will be placed in the Output/Release-iphoneuniversal/ folder inside the folder for each project, where other projects link to them. You can verify that the framework has architectures for both the simulator (i386 and x86_64) and devices (armv7 and arm64) like this:</p>
+<pre><code>$ cd /path/to/Flare 
+$ cd Output/Release-iphoneuniversal/Flare.framework/
+$ file Flare
+Flare: Mach-O universal binary with 4 architectures
+Flare (for architecture i386):    Mach-O dynamically linked shared library i386
+Flare (for architecture x86_64):    Mach-O 64-bit dynamically linked shared library x86_64
+Flare (for architecture armv7):    Mach-O dynamically linked shared library arm
+Flare (for architecture arm64):    Mach-O 64-bit dynamically linked shared library
+</code></pre><p>By default, the app connects to the server on localhost at port 1234. That works fine in the simulator, but on a device you&#39;ll need to specify the server and port in the Settings app.</p>
+<h3 id="framework-documentation">Framework documentation</h3>
+<p>The Flare framework contains several classes:</p>
+<p>FlareManager is a high level class with methods for calling both the Flare REST API (for describing objects in the environment) and the Flare Socket.IO API (for realtime communication between objects). </p>
+<p>FlareModel.swift contains definitions of the Environment, Zone, Thing and Device classes, which all inherit common variables and methods from the abstract Flare superclass. These objects can be initialized with JSON objects returned by the FlareManager. </p>
+<p>APIManager is a class for calling a generic REST API. Its main method is sendRequest(....), and has several convenience methods with fewer arguments. It makes HTTP requests asynchronously, and calls the handler closure when the response is available. For example, to send a request like this ###, you can call ###. Note that when calling a method in Swift where the last argument is a closure, you can specify the closure <em>outside</em> the parentheses, and the argument types can be inferred. </p>
+<p>BeaconManager is a class allows an iOS device to calculate its position in the environment based on the distance to three or more iBeacons. </p>
+<p>Extensions.swift contains a number of useful extensions, which allow you to do things like subtract one CGPoint from another to find the diagonal distance. Swift is a highly extensible language, and many operators are overridden on particular pairs of types. </p>
+<h3 id="using-flaremanager">Using FlareManager</h3>
+<p>You can use the FlareManager to calling both the Flare REST API (for describing objects in the environment) and the Flare Socket.IO API (for realtime communication between objects). </p>
+<p>Provide the host and port when initializing the FlareManager:</p>
+<pre><code>var flareManager = FlareManager(host, port)
+</code></pre><p>Set the delegate to receive Socket.IO message callbacks:</p>
+<pre><code>flareManager.delegate = self
+</code></pre><p>Connect to the server before calling the Socket.IO interface:</p>
+<pre><code>flareManager.connect()
+</code></pre><p>To call a REST method:</p>
+<pre><code>flareManager.getEnvironments() {jsonArray in ... }
+</code></pre><p>To call a Socket.IO method:</p>
+<pre><code>flareManager.getData(environment)
+</code></pre><p>Implement a delegate method to receive Socket.IO message callbacks:</p>
+<pre><code>func didReceiveData(flare: Flare, data: JSONDictionary) {
+    NSLog(&quot;\(flare.name) data: \(data)&quot;)
+}
+</code></pre><p>For more examples, see the <a href="tutorials/socketio-swift.html">Socket.IO using Swift</a> tutorial.</p>
+<h3 id="using-beaconmanager">Using BeaconManager</h3>
+<p>You can use the BeaconManager to determine the location of the user&#39;s device based on the distances from the beacons in the environment.</p>
+<p>Create a BeaconManager:</p>
+<pre><code>var beaconManager = BeaconManager()
+</code></pre><p>Set the delegate to receive callbacks:</p>
+<pre><code>beaconManager.delegate = self
+</code></pre><p>Load the environment into the BeaconManager:</p>
+<pre><code>beaconManager.loadEnvironment(environment)
+</code></pre><p>Start scanning for beacons:</p>
+<pre><code>self.beaconManager.start()
+</code></pre><p>Implement a delegate method to be notified when the device&#39;s position changes:</p>
+<pre><code>func devicePositionDidChange(position: CGPoint) {
+    device!.position = position
+    flareManager.setPosition(device!, position: position)
+}
+</code></pre><p>For a complete example, see the <a href="beacons.html">Beacons</a> tutorial.</p>
+
+</body>
+</html>

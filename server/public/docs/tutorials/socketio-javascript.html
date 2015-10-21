@@ -1,0 +1,339 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Socket.IO with JavaScript</title>
+  </head>
+<link href="../../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<h2 id="flare-tutorial-javascript">Socket.IO with JavaScript</h2>
+<p>This page explains how a web page written in JavaScript can use the Flare Socket.IO API to discover and interact with things in an environment. You may wish to read through the <a href="socketio-generic.html">generic tutorial</a> first. For the full sample code, view the source of the <a href="../../explorer/device.html">device.html</a> and <a href="../../explorer/thing.html">thing.html</a> files.</p>
+
+<ul>
+	<li><a href="#device-setup">Device setup</a></li>
+	<li><a href="#thing-setup">Thing setup</a></li>
+	<li><a href="#when-device-position-changes">When device position changes</a></li>
+	<li><a href="#when-a-device-has-become-near-to-a-thing">When a device has become near to a thing</a></li>
+	<li><a href="#when-thing-data-changes">When thing data changes</a></li>
+	<li><a href="#when-device-data-changes">When device data changes</a></li>
+	<li><a href="#when-performing-an-action-on-the-thing">When performing an action on the thing</a></li>
+	<li><a href="#when-performing-an-action-on-the-device">When performing an action on the device</a></li>
+	<li><a href="#when-thing-position-changes">When thing position changes</a></li>
+	<li><a href="#when-device-position-changes-again">When device position changes again</a></li>
+	<li><a href="#when-a-device-is-no-longer-near-to-a-thing">When a device is no longer near to a thing</a></li>
+</ul>
+
+
+<a name="device-setup"></a>
+<h3 id="device-setup">Device setup</h3>
+<p>The device client makes a REST API call to the server to get information about the device:</p>
+<pre><code>getDevice(environment_id, device_id, function(info) {
+    device = info;
+    document.title = device.name
+    $(&quot;input#name&quot;).val(device.name);
+    $(&quot;input#description&quot;).val(device.description);
+});
+</code></pre>
+
+<p>The server&#39;s response contains the name, description, etc. for the device, which the client uses to update the interface.</p>
+<p>The client then subscribes to the device so that it will receive any notifications about it:</p>
+<pre><code>subscribe({device:device_id});
+</code></pre>
+
+<p>Then it requests the most recent data:    </p>
+<pre><code>getData({device:device_id});
+</code></pre>
+
+<p>The server replies by sending back the data, which is received by this callback:</p>
+<pre><code>function gotData(message) {
+    if (message.device == device_id) {
+        var data = message.data;
+
+        for (key in data) {
+            var value = data[key];
+            var input = $(&quot;input#&quot; + key);
+            input.val(value);
+        }
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>getPosition({device:device_id});
+</code></pre>
+
+<p>The server replies by sending back the position, which is received by this callback:</p>
+<pre><code>function gotPosition(message) {
+    if (message.device == device_id) {
+        currentPosition = message.position;
+        $(&quot;input#x&quot;).val(currentPosition.x);
+        $(&quot;input#y&quot;).val(currentPosition.y);
+    }
+}
+</code></pre>
+
+
+<a name="thing-setup"></a>
+<h3 id="thing-setup">Thing setup</h3>
+<p>The thing client makes a REST API call to the server to get information about the thing:</p>
+<pre><code>getThing(environment_id, zone_id, thing_id, function(info) {
+    thing = info;
+    document.title = thing.name
+    $(&quot;input#name&quot;).val(thing.name);
+    $(&quot;input#description&quot;).val(thing.description);
+});
+</code></pre>
+
+<p>The server&#39;s response contains the name, description, etc. for the thing, which it uses to update the interface.</p>
+<p>The client then subscribes to the thing so that it will receive any notifications about it:</p>
+<pre><code>subscribe({thing:thing_id});
+</code></pre>
+
+<p>Then it requests the most recent data:    </p>
+<pre><code>getData({thing:thing_id});
+</code></pre>
+
+<p>The client receives the reply:</p>
+<pre><code>function gotData(message) {
+    if (message.thing == thing_id) {
+        var data = message.data;
+
+        for (key in data) {
+            var value = data[key];
+            var input = $(&quot;input#&quot; + key);
+            input.val(value);
+        }
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>getPosition({thing:thing_id});
+</code></pre>
+
+<p>And the reply:</p>
+<pre><code>function gotPosition(message) {
+    if (message.thing == thing_id) {
+        currentPosition = message.position;
+        $(&quot;input#x&quot;).val(currentPosition.x);
+        $(&quot;input#y&quot;).val(currentPosition.y);
+    }
+}
+</code></pre>
+
+<a name="when-device-position-changes"></a>
+<h3 id="when-device-position-changes">When device position changes</h3>
+<p>When the device&#39;s position changes, it sends a message to the server:</p>
+<pre><code>function positionChanged(input, key) {
+    var x = 1.0 * $(&quot;input#x&quot;).val();
+    var y = 1.0 * $(&quot;input#y&quot;).val();
+    currentPosition = {x:x, y:y};
+    setPosition({device:device_id}, currentPosition);
+}
+</code></pre>
+
+<p>The server will then notify all <em>other</em> clients that have subscribed to the device. Note that it won&#39;t send a message back to the client that sent the original message, because it already has the latest information. </p>
+
+<a name="when-a-device-has-become-near-to-a-thing"></a>
+<h3 id="when-a-device-has-become-near-to-a-thing">When a device has become near to a thing</h3>
+<p>If the server calculates that a device has become near to a thing because the distance between their positions is less than a certain threshold, it will broadcast a <em>near</em> message to all clients that have subscribed to the thing:</p>
+<pre><code>function near(message) {
+    nearbyThing = message.thing;
+    thingDistance = message.distance;
+    ...
+}
+</code></pre>
+
+<p>The device client can then get information about the thing:</p>
+<pre><code>getThing(environment_id, &#39;-&#39;, nearbyThing, function(info) {
+    $(&quot;input#thingname&quot;).val(info.name);
+    $(&quot;input#thingdescription&quot;).val(info.description);
+});
+</code></pre>
+
+<p>Note: If the device client doesn&#39;t know what zone the thing is in, it can just use a dash. The REST URL syntax is verbose, but the thing ID what matters.</p>
+<p>The device client subscribes to the thing:</p>
+<pre><code>subscribe({thing:nearbyThing});
+</code></pre>
+
+<p>It gets the latest data:</p>
+<pre><code>getData({thing:nearbyThing});
+</code></pre>
+
+<p>The server replies by sending back the data:</p>
+<pre><code>function gotData(message) {
+    if (message.device == device_id) {
+        ...
+    } else if (message.thing == nearbyThing) {
+        var data = message.data;
+
+        for (key in data) {
+            var value = data[key];
+            var input = $(&quot;input#thing&quot; + key);
+            input.val(value);
+        }
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>getPosition({thing:nearbyThing});
+</code></pre>
+
+<p>The server replies by sending back the position:</p>
+<pre><code>function gotPosition(message) {
+    if (message.device == device_id) {
+        ...
+    } else if (message.thing == nearbyThing) {
+        thingPosition = message.position;
+    }
+}
+</code></pre>
+
+<p>The server will also broadcast the same <em>near</em> message to all clients that have subscribed to the device: </p>
+<pre><code>function near(message) {
+    nearbyDevice = message.device;
+    deviceDistance = message.distance;
+    ...
+}
+</code></pre>
+
+<p>The thing client can then get information about the device:</p>
+<pre><code>getDevice(environment_id, nearbyDevice, function(info) {
+    $(&quot;input#devicename&quot;).val(info.name);
+    $(&quot;input#devicedescription&quot;).val(info.description);
+});
+</code></pre>
+
+<p>The thing client subscribes to the device:</p>
+<pre><code>subscribe({device:nearbyDevice});
+</code></pre>
+
+<p>It gets the latest data:</p>
+<pre><code>getData({device:nearbyDevice});
+</code></pre>
+
+<p>The server replies by sending back the data:</p>
+<pre><code>function gotData(message) {
+    if (message.thing == thing_id) {
+        ...
+    } else if (message.device == nearbyDevice) {
+        var data = message.data;
+
+        for (key in data) {
+            var value = data[key];
+            var input = $(&quot;input#device&quot; + key);
+            input.val(value);
+        }
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>getPosition({device:nearbyDevice});
+</code></pre>
+
+<p>The server replies by sending back the position:</p>
+<pre><code>function gotPosition(message) {
+    if (message.thing == thing_id) {
+        ...
+    } else if (message.device == nearbyDevice) {
+        devicePosition = message.position;
+    }
+}
+</code></pre>
+
+<a name="when-thing-data-changes"></a>
+<h3 id="when-thing-data-changes">When thing data changes</h3>
+<p>Either client can change the device&#39;s data:</p>
+<pre><code>function dataChanged(input, key) {
+    var value = input.value;
+    setData({device:device_id}, key, value);
+}
+</code></pre>
+
+<p>The server will then notify all other clients that have subscribed to the thing, which will be handled by gotData() as above.</p>
+
+<a name="when-device-data-changes"></a>
+<h3 id="when-device-data-changes">When device data changes</h3>
+<p>Either client can change the device&#39;s data:</p>
+<pre><code>function dataChanged(input, key) {
+    var value = input.value;
+    setData({thing:thing_id}, key, value);
+}
+</code></pre>
+
+<p>The server will then notify all other clients that have subscribed to the device.</p>
+
+<a name="when-performing-an-action-on-the-thing"></a>
+<h3 id="when-performing-an-action-on-the-thing">When performing an action on the thing</h3>
+<p>Any client can perform an action on the thing:</p>
+<pre><code>performAction({thing:thing_id}, &#39;rainbow&#39;);
+</code></pre>
+
+<p>The action can be handled by the server or any client. If it is not handled by the server, a message will be broadcast to all <em>other</em> clients subscribed to the thing:</p>
+<pre><code>function handleAction(message) {
+    if (message.thing == thing_id) {
+        var action = message.action;
+
+        if (action == &#39;rainbow&#39;) {
+            // do stuff
+        }
+    }
+}
+</code></pre>
+
+<a name="when-performing-an-action-on-the-device"></a>
+<h3 id="when-performing-an-action-on-the-device">When performing an action on the device</h3>
+<p>Any client can perform an action on the device:</p>
+<pre><code>performAction({device:device_id}, &#39;counterclockwise&#39;);
+</code></pre>
+
+<p>Similarly, if the action is not handled by the server, a message will be broadcast to all <em>other</em> clients subscribed to the device:</p>
+<pre><code>function handleAction(message) {
+    if (message.device == device_id) {
+        var action = message.action;
+
+        if (action == &#39;counterclockwise&#39;) {
+            // do stuff
+        }
+    }
+}
+</code></pre>
+
+<a name="when-thing-position-changes"></a>
+<h3 id="when-thing-position-changes">When thing position changes</h3>
+<p>If the thing&#39;s position changes, it can send a message to the server:</p>
+<pre><code>function positionChanged(input, key) {
+    var x = 1.0 * $(&quot;input#x&quot;).val();
+    var y = 1.0 * $(&quot;input#y&quot;).val();
+    currentPosition = {x:x, y:y};
+    setPosition({thing:thing_id}, currentPosition);
+}
+</code></pre>
+
+<p>The server will then notify all other clients that have subscribed to the thing.</p>
+
+<a name="when-device-position-changes-again"></a>
+<h3 id="when-device-position-changes-again">When device position changes again</h3>
+<p>You get the idea by now.</p>
+
+<a name="when-a-device-is-no-longer-near-to-a-thing"></a>
+<h3 id="when-a-device-is-no-longer-near-to-a-thing">When a device is no longer near to a thing</h3>
+<p>The server will notice when the device is no longer near to the thing, and notify all clients subscribed to the device:</p>
+<pre><code>function far(message) {
+    if (nearbyDevice) unsubscribe({device:nearbyDevice});
+    nearbyDevice = null;
+}
+</code></pre></p>
+<p>The device can then unsubscribe from the thing, and then it won&#39;t receive notifications about the thing anymore. </p>
+<p>The server will send the same message to all clients subscribed to the thing:</p>
+<pre><code>function far(message) {
+    if (nearbyThing) unsubscribe({thing:nearbyThing});
+    nearbyThing = null;
+}
+</code></pre></p>
+<p>And the thing can unsubscribe from the device as well.</p>
+
+
+</body>
+</html>

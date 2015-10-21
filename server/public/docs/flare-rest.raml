@@ -1,0 +1,1031 @@
+#%RAML 0.8
+---
+title: Flare
+baseUri: http://localhost:1234
+version: v1
+mediaType:  application/json
+protocols: [ HTTP, HTTPS ]
+
+
+
+/environments:
+  uriParameters:
+  displayName: Environments
+  description: A collection of environments.
+  post:
+    description: Create an environment
+    body:
+      application/json:
+        schema: |
+          {
+            "name": {
+              "required": true,
+              "type": "string"
+            },
+            "description": {
+              "required": false,
+              "type": "string"
+            },                
+            "data": {
+              "required": false,
+              "type": "object"
+            },                
+            "actions": {
+              "required": false,
+              "type": "[string]"
+            },                
+            "angle": {
+              "required": false,
+              "type": "number"
+            },                
+            "geofence": {
+              "required": true,
+              "type": "object",
+              "latitude": {
+                "required": true,
+                "type": "number"
+              },      
+              "longitude": {
+                "required": true,
+                "type": "number"
+              },      
+              "radius": {
+                "required": true,
+                "type": "number"
+              }    
+            },                
+            "perimeter": {
+              "required": true,
+              "type": "object",
+              "origin": {
+                "required": true,
+                "type": "object",
+                "x": {
+                  "required": true,
+                  "type": "number"
+                },
+                "y": {
+                  "required": true,
+                  "type": "number"
+                }
+              },      
+              "size": {
+                "required": true,
+                "type": "object",
+                "width": {
+                  "required": true,
+                  "type": "number"
+                },
+                "height": {
+                  "required": true,
+                  "type": "number"
+                }
+              }
+            }
+          }        
+        example: |
+          {
+            "name": "New York",
+            "description": "The New York store",
+            "data": {},
+            "angle": 30,
+            "geofence": {
+              "latitude": 40.751267,
+              "longitude": -73.99229,
+              "radius": 300
+            },
+            "perimeter": {
+              "origin": {
+                "x": 0,
+                "y": 0
+              },
+              "size": {
+                "height": 10,
+                "width": 10
+              }
+            }
+          }
+  get:
+    description: Get a list of environments
+    queryParameters:
+      latitude:
+        description: Filter by location
+        type: number
+        required: false
+      longitude:
+        description: Filter by location
+        type: number
+        required: false
+    responses:
+      200:
+        body:
+          application/json: 
+            #example: !include schema/environment-list.json
+
+
+
+  /{environment_id}:
+    description: An environment represents a single coordinate space that can contain zones and things. 
+    uriParameters:
+      environment_id:
+        displayName: Environment ID
+        type: string    
+    get:
+      description: Get a single environment
+      queryParameters:
+        environment_id:
+          description: The ID of the environment
+          type: string
+          required: true
+      responses:
+        200:
+          body:
+            application/json: 
+              #example: !include schema/environment-list.json
+    put:
+      description: Updates a single environment
+      queryParameters:
+        environment_id:
+          description: The ID of the environment
+          type: integer
+          required: true
+      body:
+        application/json:
+          schema: |
+            {
+              "_id": {
+                "required": true,
+                "type": "string"
+              },
+              "name": {
+                "required": true,
+                "type": "string"
+              },
+              "description": {
+                "required": false,
+                "type": "string"
+              },                
+              "data": {
+                "required": false,
+                "type": "object"
+              },
+              "actions": {
+                "required": false,
+                "type": "[string]"
+              },                
+              "angle": {
+                "required": false,
+                "type": "number"
+              },                
+              "geofence": {
+                "required": true,
+                "type": "object",
+                "latitude": {
+                  "required": true,
+                  "type": "number"
+                },      
+                "longitude": {
+                  "required": true,
+                  "type": "number"
+                },      
+                "radius": {
+                  "required": true,
+                  "type": "number"
+                }    
+              },                
+              "perimeter": {
+                "required": true,
+                "type": "object",
+                "origin": {
+                  "required": true,
+                  "type": "object",
+                  "x": {
+                    "required": true,
+                    "type": "number"
+                  },
+                  "y": {
+                    "required": true,
+                    "type": "number"
+                  }
+                },      
+                "size": {
+                  "required": true,
+                  "type": "object",
+                  "width": {
+                    "required": true,
+                    "type": "number"
+                  },
+                  "height": {
+                    "required": true,
+                    "type": "number"
+                  }
+                }
+              }
+            }        
+          example: |
+            {
+              "_id": "55c3da3b189acc3441b1d9e1",
+              "name": "New York",
+              "description": "The New York store",
+              "data": {},
+              "angle": 30,
+              "geofence": {
+                "latitude": 40.751267,
+                "longitude": -73.99229,
+                "radius": 300
+              },
+              "perimeter": {
+                "origin": {
+                  "x": 0,
+                  "y": 0
+                },
+                "size": {
+                  "height": 10,
+                  "width": 10
+                }
+              }
+            }        
+      responses:
+        200:
+          body:
+            application/json: 
+              #example: !include schema/environment-list.json  
+    delete:
+      description: Delete a single environment
+      queryParameters:
+        environment_id:
+          description: The ID of the environment
+          type: string
+          required: true
+      responses:
+        200:
+          body:
+            application/json: 
+              #example: !include schema/environment-list.json
+
+    /data:
+      uriParameters:
+      displayName: Device data
+      description: A key/value data store.
+      get:
+        description: Gets all the data values for the device.
+        responses:
+          200:
+            body:
+              application/json: 
+                example: |
+                  {
+                    "color": "red",
+                    "volume": 11
+                  }
+                  
+      /{key}:
+        description: The data value for a particular key.
+        uriParameters:
+          key:
+            displayName: Key
+            type: string    
+        get:
+          description: Gets the data value for a particular key.
+          queryParameters:
+            device_id:
+              description: The ID of the device
+              type: string
+              required: true
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/thing-list.json
+
+    
+    /zones:
+      uriParameters:
+      displayName: Zones
+      description: A collection of zones inside an environment.
+      post:
+        description: Create a zone
+        body:
+          application/json:
+            schema: |
+              {
+                "environment": {
+                  "required": true,
+                  "type": "string"
+                },
+                "name": {
+                  "required": true,
+                  "type": "string"
+                },
+                "description": {
+                  "required": false,
+                  "type": "string"
+                },
+                "data": {
+                  "required": false,
+                  "type": "object"
+                },
+                "actions": {
+                  "required": false,
+                  "type": "[string]"
+                },                
+                "perimeter": {
+                  "required": true,
+                  "type": "object",
+                  "origin": {
+                    "required": true,
+                    "type": "object",
+                    "x": {
+                      "required": true,
+                      "type": "number"
+                    },
+                    "y": {
+                      "required": true,
+                      "type": "number"
+                    }
+                  },      
+                  "size": {
+                    "required": true,
+                    "type": "object",
+                    "width": {
+                      "required": true,
+                      "type": "number"
+                    },
+                    "height": {
+                      "required": true,
+                      "type": "number"
+                    }
+                  }
+                }
+              }        
+            example: |
+              {
+                "environment": "55c3da3b189acc3441b1d9e1",
+                "name": "Showroom",
+                "description": "The showroom in the New York store",
+                "data": {},
+                "perimeter": {
+                  "origin": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "size": {
+                    "height": 5,
+                    "width": 5
+                  }
+                }
+              }
+      get:
+        description: Get a list of zones
+        queryParameters:
+          x:
+            description: Filter zones containing a given point
+            type: number
+            required: false
+          y:
+            description: Filter zones containing a given point
+            type: number
+            required: false
+        responses:
+          200:
+            body:
+              application/json: 
+                #example: !include schema/zone-list.json
+
+
+
+      /{zone_id}:
+        description: A zone is a subdivision of the coordinate space of an environment that groups together a number of things.
+        uriParameters:
+          zone_id:
+            displayName: Zone ID
+            type: string    
+        get:
+          description: Get a single zone
+          queryParameters:
+            zone_id:
+              description: The ID of the zone
+              type: string
+              required: true
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/environment-list.json
+        put:
+          description: Updates a single product
+          queryParameters:
+            zone_id:
+              description: The ID of the product
+              type: integer
+              required: true
+          body:
+            application/json:
+              schema: |
+                {
+                  "_id": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "name": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "required": false,
+                    "type": "string"
+                  },                
+                  "data": {
+                    "required": false,
+                    "type": "object"
+                  },                
+                  "perimeter": {
+                    "required": true,
+                    "type": "object",
+                    "origin": {
+                      "required": true,
+                      "type": "object",
+                      "x": {
+                        "required": true,
+                        "type": "number"
+                      },
+                      "y": {
+                        "required": true,
+                        "type": "number"
+                      }
+                    },      
+                    "size": {
+                      "required": true,
+                      "type": "object",
+                      "width": {
+                        "required": true,
+                        "type": "number"
+                      },
+                      "height": {
+                        "required": true,
+                        "type": "number"
+                      }
+                    }
+                  }
+                }        
+              example: |
+                {
+                  "_id": "55c3da3b189acc3441b1d9d0",
+                  "environment": "55c3da3b189acc3441b1d9e1",
+                  "name": "Showroom",
+                  "description": "The showroom in the New York store",
+                  "data": {},
+                  "perimeter": {
+                    "origin": {
+                      "x": 0,
+                      "y": 0
+                    },
+                    "size": {
+                      "height": 5,
+                      "width": 5
+                    }
+                  }
+                }        
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/zone-list.json  
+        delete:
+          description: Delete a single zone
+          queryParameters:
+            zone_id:
+              description: The ID of the zone
+              type: integer
+              required: true
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/zone-list.json
+        
+        /data:
+          uriParameters:
+          displayName: Device data
+          description: A key/value data store.
+          get:
+            description: Gets all the data values for the device.
+            responses:
+              200:
+                body:
+                  application/json: 
+                    example: |
+                      {
+                        "color": "red",
+                        "volume": 11
+                      }
+                      
+          /{key}:
+            description: The data value for a particular key.
+            uriParameters:
+              key:
+                displayName: Key
+                type: string    
+            get:
+              description: Gets the data value for a particular key.
+              queryParameters:
+                device_id:
+                  description: The ID of the device
+                  type: string
+                  required: true
+              responses:
+                200:
+                  body:
+                    application/json: 
+                      #example: !include schema/thing-list.json
+                        
+        /things:
+          uriParameters:
+          displayName: Things
+          description: A collection of things inside a zone.
+          post:
+            description: Create a thing
+            body:
+              application/json:
+                schema: |
+                  {
+                    "environment": {
+                      "required": true,
+                      "type": "string"
+                    },
+                    "zone": {
+                      "required": true,
+                      "type": "string"
+                    },
+                    "name": {
+                      "required": true,
+                      "type": "string"
+                    },
+                    "description": {
+                      "required": false,
+                      "type": "string"
+                    },
+                    "data": {
+                      "required": false,
+                      "type": "object"
+                    },
+                    "actions": {
+                      "required": false,
+                      "type": "[string]"
+                    },                
+                    "position": {
+                      "required": true,
+                      "type": "object",
+                      "x": {
+                        "required": true,
+                        "type": "number"
+                      },
+                      "y": {
+                        "required": true,
+                        "type": "number"
+                      }
+                    }
+                  }        
+                example: |
+                  {
+                    "environment": "55c3da3b189acc3441b1d9e1",
+                    "zone": "55c3da3b189acc3441b1d9d0",
+                    "name": "Gizmo",
+                    "description": "A gizmo for sale in the showroom",
+                    "data": {},
+                    "position": {
+                      "x": 3,
+                      "y": 2
+                    }
+                  }
+          get:
+            description: Get a list of things
+            responses:
+              200:
+                body:
+                  application/json: 
+                    #example: !include schema/zone-list.json
+    
+
+
+          /{thing_id}:
+            description: A thing is an object that the user can interact with, an can be a computing device, a connected gadget, or an unconnected thing such as a packaged product. Things are grouped by zone, and a have a position in the environment's coordiante space.
+            uriParameters:
+              thing_id:
+                displayName: Thing ID
+                type: string    
+            get:
+              description: Get a single thing
+              queryParameters:
+                thing_id:
+                  description: The ID of the thing
+                  type: string
+                  required: true
+              responses:
+                200:
+                  body:
+                    application/json: 
+                      #example: !include schema/thing-list.json
+            put:
+              description: Updates a single thing
+              queryParameters:
+                thing_id:
+                  description: The ID of the thing
+                  type: string
+                  required: true
+              body:
+                application/json:
+                  schema: |
+                    {
+                      "_id": {
+                        "required": true,
+                        "type": "string"
+                      },
+                      "environment": {
+                        "required": true,
+                        "type": "string"
+                      },
+                      "zone": {
+                        "required": true,
+                        "type": "string"
+                      },
+                      "name": {
+                        "required": true,
+                        "type": "string"
+                      },
+                      "description": {
+                        "required": false,
+                        "type": "string"
+                      },                
+                      "data": {
+                        "required": false,
+                        "type": "object"
+                      },                
+                      "perimeter": {
+                        "required": true,
+                        "type": "object",
+                        "origin": {
+                          "required": true,
+                          "type": "object",
+                          "x": {
+                            "required": true,
+                            "type": "number"
+                          },
+                          "y": {
+                            "required": true,
+                            "type": "number"
+                          }
+                        },      
+                        "size": {
+                          "required": true,
+                          "type": "object",
+                          "width": {
+                            "required": true,
+                            "type": "number"
+                          },
+                          "height": {
+                            "required": true,
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }        
+                  example: |
+                    {
+                      "_id": "55c3da3b189acc3441b1d9e1",
+                      "environment": "55c3da3b189acc3441b1d9e1",
+                      "zone": "55c3da3b189acc3441b1d9d0",
+                      "name": "Gizmo",
+                      "description": "A gizmo for sale in the showroom",
+                      "data": {},
+                      "position": {
+                        "x": 3,
+                        "y": 2
+                      }
+                    }        
+              responses:
+                200:
+                  body:
+                    application/json: 
+                      #example: !include schema/thing-list.json  
+            delete:
+              description: Delete a single thing
+              queryParameters:
+                thing_id:
+                  description: The ID of the thing
+                  type: string
+                  required: true
+              responses:
+                200:
+                  body:
+                    application/json: 
+                      #example: !include schema/thing-list.json
+                      
+            /data:
+              uriParameters:
+              displayName: Device data
+              description: A key/value data store.
+              get:
+                description: Gets all the data values for the device.
+                responses:
+                  200:
+                    body:
+                      application/json: 
+                        example: |
+                          {
+                            "color": "red",
+                            "volume": 11
+                          }
+                          
+              /{key}:
+                description: The data value for a particular key.
+                uriParameters:
+                  key:
+                    displayName: Key
+                    type: string    
+                get:
+                  description: Gets the data value for a particular key.
+                  queryParameters:
+                    device_id:
+                      description: The ID of the device
+                      type: string
+                      required: true
+                  responses:
+                    200:
+                      body:
+                        application/json: 
+                          #example: !include schema/thing-list.json
+            
+            /position:
+              uriParameters:
+              displayName: Device position
+              description: The position of the device.
+              get:
+                description: Gets the current position of the device.
+                responses:
+                  200:
+                    body:
+                      application/json: 
+                        schema: |
+                          {
+                            "x": {
+                              "required": true,
+                              "type": "string"
+                            },
+                            "y": {
+                              "required": true,
+                              "type": "string"
+                            }
+                          }
+                          
+                        example: |
+                          {
+                            "x": 2.3,
+                            "y": 3.4
+                          }
+                      
+    /devices:
+      uriParameters:
+      displayName: Devices
+      description: A collection of devices currently inside an environment.
+      post:
+        description: Create a thing
+        body:
+          application/json:
+            schema: |
+              {
+                "environment": {
+                  "required": true,
+                  "type": "string"
+                },
+                "zone": {
+                  "required": true,
+                  "type": "string"
+                },
+                "name": {
+                  "required": true,
+                  "type": "string"
+                },
+                "description": {
+                  "required": false,
+                  "type": "string"
+                },
+                "data": {
+                  "required": false,
+                  "type": "object"
+                },
+                "actions": {
+                  "required": false,
+                  "type": "[string]"
+                },                
+                "position": {
+                  "required": true,
+                  "type": "object",
+                  "x": {
+                    "required": true,
+                    "type": "number"
+                  },
+                  "y": {
+                    "required": true,
+                    "type": "number"
+                  }
+                }
+              }        
+            example: |
+              {
+                "environment": "55c3da3b189acc3441b1d9e1",
+                "zone": "55c3da3b189acc3441b1d9d0",
+                "name": "Gizmo",
+                "description": "A gizmo for sale in the showroom",
+                "data": {},
+                "position": {
+                  "x": 3,
+                  "y": 2
+                }
+              }
+      get:
+        description: Get a list of things
+        responses:
+          200:
+            body:
+              application/json: 
+                #example: !include schema/zone-list.json
+
+
+
+      /{device_id}:
+        description: A device that belongs to a user, such as a mobile phone or smart watch. Device objects are short-lived, are created when a device enters an environement, and are deleted when a device leaves the environment or after a period of time. 
+        uriParameters:
+          device_id:
+            displayName: Device ID
+            type: string    
+        get:
+          description: Get a single device
+          queryParameters:
+            device_id:
+              description: The ID of the device
+              type: string
+              required: true
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/thing-list.json
+        put:
+          description: Updates a single device
+          queryParameters:
+            device_id:
+              description: The ID of the device
+              type: integer
+              required: true
+          body:
+            application/json:
+              schema: |
+                {
+                  "_id": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "environment": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "zone": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "name": {
+                    "required": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "required": false,
+                    "type": "string"
+                  },                
+                  "data": {
+                    "required": false,
+                    "type": "object"
+                  },                
+                  "perimeter": {
+                    "required": true,
+                    "type": "object",
+                    "origin": {
+                      "required": true,
+                      "type": "object",
+                      "x": {
+                        "required": true,
+                        "type": "number"
+                      },
+                      "y": {
+                        "required": true,
+                        "type": "number"
+                      }
+                    },      
+                    "size": {
+                      "required": true,
+                      "type": "object",
+                      "width": {
+                        "required": true,
+                        "type": "number"
+                      },
+                      "height": {
+                        "required": true,
+                        "type": "number"
+                      }
+                    }
+                  }
+                }        
+              example: |
+                {
+                  "_id": "55c3da3b189acc3441b1d9e1",
+                  "environment": "55c3da3b189acc3441b1d9e1",
+                  "zone": "55c3da3b189acc3441b1d9d0",
+                  "name": "Gizmo",
+                  "description": "A gizmo for sale in the showroom",
+                  "data": {},
+                  "position": {
+                    "x": 3,
+                    "y": 2
+                  }
+                }        
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/thing-list.json  
+        delete:
+          description: Delete a single device
+          queryParameters:
+            device_id:
+              description: The ID of the device
+              type: string
+              required: true
+          responses:
+            200:
+              body:
+                application/json: 
+                  #example: !include schema/thing-list.json
+                  
+        /data:
+          uriParameters:
+          displayName: Device data
+          description: A key/value data store.
+          get:
+            description: Gets all the data values for the device.
+            responses:
+              200:
+                body:
+                  application/json: 
+                    example: |
+                      {
+                        "color": "red",
+                        "volume": 11
+                      }
+                      
+          /{key}:
+            description: The data value for a particular key.
+            uriParameters:
+              key:
+                displayName: Key
+                type: string    
+            get:
+              description: Gets the data value for a particular key.
+              queryParameters:
+                device_id:
+                  description: The ID of the device
+                  type: string
+                  required: true
+              responses:
+                200:
+                  body:
+                    application/json: 
+                      #example: !include schema/thing-list.json
+        
+        /position:
+          uriParameters:
+          displayName: Device position
+          description: The position of the device.
+          get:
+            description: Gets the current position of the device.
+            responses:
+              200:
+                body:
+                  application/json: 
+                    schema: |
+                      {
+                        "x": {
+                          "required": true,
+                          "type": "string"
+                        },
+                        "y": {
+                          "required": true,
+                          "type": "string"
+                        }
+                      }
+                      
+                    example: |
+                      {
+                        "x": 2.3,
+                        "y": 3.4
+                      }
+

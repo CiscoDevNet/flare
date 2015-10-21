@@ -1,0 +1,292 @@
+//
+//  Environment.swift
+//  Flare Test
+//
+//  Created by Andrew Zamler-Carhart on 3/23/15.
+//  Copyright (c) 2015 Andrew Zamler-Carhart. All rights reserved.
+//
+
+import Foundation
+
+public class Flare: NSObject {
+    public var id: String
+    public var name: String
+    public var comment: String
+    public var data: JSONDictionary
+    public var created: NSDate
+    public var modified: NSDate
+    
+    public init(json: JSONDictionary) {
+        self.id = json.getString("_id")
+        self.name = json.getString("name")
+        self.comment = json.getString("description") // description is a property of NSObject
+        self.data = json.getDictionary("data")
+        self.created = json.getDate("created")
+        self.modified = json.getDate("modified")
+    }
+
+    public var flareClass: String {
+        var className = NSStringFromClass(self.dynamicType)
+        return className.componentsSeparatedByString(".").last!
+    }
+    
+    override public var description: String {
+        return "\(self.flareClass) \(self.id) - \(self.name)"
+    }
+    
+    public var flareInfo: JSONDictionary {
+        var info = JSONDictionary()
+        info[self.flareClass.lowercaseString] = self.id
+        return info
+    }
+    
+    public func parentId() -> String? {
+        return nil
+    }
+    
+    public func children() -> [Flare] {
+        return Array()
+    }
+}
+
+public class Environment: Flare {
+    public var geofence: Geofence
+    public var perimeter: CGRect
+    public var angle: Double
+    public var uuid: String?
+
+    public var zones = [Zone]()
+    public var devices = [Device]()
+    
+    override public init(json: JSONDictionary) {
+        self.geofence = Geofence(json: json.getDictionary("geofence"))
+        self.perimeter = getRect(json.getDictionary("perimeter"))
+        self.angle = json.getDouble("angle")
+        
+        for child: JSONDictionary in json.getArray("zones") {
+            let zone = Zone(json: child)
+            zones.append(zone)
+        }
+        
+        super.init(json: json)
+        
+        
+        if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
+    }
+    
+    public override var description: String {
+        return "\(super.description) - \(perimeter)"
+    }
+    
+    public override func children() -> [Flare] {
+        return self.zones
+    }
+
+    public func things() -> [Thing] {
+        var results = [Thing]()
+        for zone in zones {
+            for thing in zone.things {
+                results.append(thing)
+            }
+        }
+        
+        return results
+    }
+
+    public func beacons() -> [Int:Thing] {
+        var results = [Int:Thing]()
+        for zone in zones {
+            if let major = zone.major {
+                for thing in zone.things {
+                    if let minor = thing.minor {
+                        results[minor] = thing
+                    }
+                }
+            }
+        }
+        
+        return results
+    }
+}
+
+public class Zone: Flare {
+    public var environmentId: String
+    
+    public var perimeter: CGRect
+    public var major: Int?
+    
+    public var things = [Thing]()
+    
+    override public init(json: JSONDictionary) {
+        self.environmentId = json.getString("environment")
+
+        self.perimeter = getRect(json.getDictionary("perimeter"))
+        
+        for child: JSONDictionary in json.getArray("things") {
+            let thing = Thing(json: child)
+            things.append(thing)
+        }
+        
+        super.init(json: json)
+
+        if let major = self.data["major"] as? Int { self.major = major }
+    }
+    
+    override public var description: String {
+        return "\(super.description) - \(perimeter)"
+    }
+
+    public override func parentId() -> String? {
+        return environmentId
+    }
+    
+    override public func children() -> [Flare] {
+        return self.things
+    }
+}
+
+public class Thing: Flare {
+    public var environmentId: String
+    public var zoneId: String
+    
+    public var type: String
+    public var position: CGPoint
+    public var minor: Int?
+    
+    public var distances = [Double]()
+    public var inverseDistance = 0.0
+    
+    override public init(json: JSONDictionary) {
+        self.environmentId = json.getString("environment")
+        self.zoneId = json.getString("zone")
+        
+        self.type = json.getString("type")
+        self.position = getPoint(json.getDictionary("position"))
+        
+        super.init(json: json)
+
+        if let minor = self.data["minor"] as? Int { self.minor = minor }
+    }
+    
+    public override var description: String {
+        return "\(super.description) - \(position)"
+    }
+
+    public override func parentId() -> String? {
+        return zoneId
+    }
+    
+    public func addDistance(distance: Double) {
+        distances.append(distance)
+        while distances.count > 5 {
+            distances.removeAtIndex(0)
+        }
+    }
+    
+    public func lastDistance() -> Double {
+        if distances.count > 0 {
+            return distances.last!
+        }
+        return -1
+    }
+    
+    public func averageDistance() -> Double {
+        var count = 0
+        var total = 0.0
+        
+        for value in distances {
+            if value != -1 {
+                total += value
+                count++
+            }
+        }
+        
+        if count == 0 {
+            return -1
+        }
+        
+        return total / Double(count)
+    }
+}
+
+public class Device: Flare {
+    public var environmentId: String
+
+    public var position: CGPoint
+    
+    override public init(json: JSONDictionary) {
+        self.environmentId = json.getString("environment")
+
+        self.position = getPoint(json.getDictionary("position"))
+        
+        super.init(json: json)
+        
+    }
+    
+    override public var description: String {
+        return "\(super.description) - \(position)"
+    }
+
+    public override func parentId() -> String? {
+        return environmentId
+    }
+    
+    public func distanceTo(thing: Thing) -> Double {
+        return self.position - thing.position
+    }
+    
+    public func angleTo(thing: Thing) -> Double {
+        let dx = thing.position.x - self.position.x
+        let dy = thing.position.y - self.position.y
+        let radians = Double(atan2(dy, dx))
+        var degrees = radiansToDegrees(radians)
+        if degrees < 0 { degrees += 360.0 }
+        return degrees
+    }
+}
+
+public class Geofence: NSObject {
+    public var latitude: Double
+    public var longitude: Double
+    public var radius: Double
+    
+    public init(json: JSONDictionary) {
+        self.latitude = json.getDouble("latitude")
+        self.longitude = json.getDouble("longitude")
+        self.radius = json.getDouble("radius")
+    }
+    
+    override public var description: String {
+        let latLabel = self.latitude >= 0 ? "°N" : "°S"
+        let longLabel = self.latitude >= 0 ? "°E" : "°W"
+        return "\(self.latitude)\(latLabel), \(self.longitude)\(longLabel), \(self.radius)m))"
+    }
+
+    // calculates the distance in meters along the Earth's surface between the geofence and the given location
+    func distanceFrom(latlong: CGPoint) -> Double {
+        let lat1rad = latitude * M_PI/180
+        let lon1rad = longitude * M_PI/180
+        let lat2rad = Double(latlong.x) * M_PI/180
+        let lon2rad = Double(latlong.y) * M_PI/180
+        
+        let dLat = lat2rad - lat1rad
+        let dLon = lon2rad - lon1rad
+        let a = sin(dLat/2) * sin(dLat/2) + sin(dLon/2) * sin(dLon/2) * cos(lat1rad) * cos(lat2rad)
+        let c = 2 * asin(sqrt(a))
+        let R = 6372.8
+        
+        return R * c
+    }
+}
+
+public func getRect(json: JSONDictionary) -> CGRect {
+    return CGRect(origin: getPoint(json.getDictionary("origin")), size: getSize(json.getDictionary("size")))
+}
+
+public func getPoint(json: JSONDictionary) -> CGPoint {
+    return CGPoint(x: json.getDouble("x"), y: json.getDouble("y"))
+}
+
+public func getSize(json: JSONDictionary) -> CGSize {
+    return CGSize(width: json.getDouble("width"), height: json.getDouble("height"))
+}

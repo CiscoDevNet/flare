@@ -1,0 +1,20 @@
+<resources>
+    <color name="black_overlay">#66000000</color>
+    <color name="background_colour">#ff494949</color>
+    <color name="ring_colour">#ff2f2f2f</color>
+    <color name="ring_shadow_outer_colour">#ff131313</color>
+    <color name="ring_shadow_center_transparent">#00494949</color>
+    <color name="fin_arc_ikea">#ffffcd00</color>
+    <color name="fin_arc_behind">#ff6b6b6b</color>
+    <color name="red">#ffff0000</color>
+    <color name="darkred">#ffcf0000</color>
+    <color name="map_bg_color">#fff0f0f0</color>
+    <color name="map_thing_default_color">#666666</color>
+    <color name="map_device_outer_color">#804285f4</color>
+    <color name="map_device_inner_color">#ff4285f4</color>
+    <color name="map_device_inner_stroke_color">#ffffffff</color>
+    <color name="map_device_arrow_color">#ff4285f4</color>
+    <color name="transparent">#00494949</color>
+    <color name="hover_object_name_color">#ffffffff</color>
+    <color name="hover_object_desc_color">#ffffffff</color>
+</resources>

@@ -1,0 +1,155 @@
+Device setup:
+
+GET /devices/:id 
+subscribe {device:id}
+getData {device:id}
+	(to sender) data {device:id, data:{...}}
+getPosition {device:id}
+	(to sender) position {device:id, position:{x:x, y:y}}
+	
+
+When device data changes:
+
+setData {device:id, key:key, value:value}
+	 (to other subscribers) data {device:id, key:value}
+
+
+When device position changes:
+
+setPosition {device:id, position:{x:x, y:y}}
+	 (to other subscribers) position {device:id, position:{x:x, y:y}}
+
+
+When a device has become near to a thing:
+
+	(to the sender and other subscribers) near {device:id, thing:id, distance:distance}
+		GET /things/:id 
+		subscribe {thing:id}
+		getData {thing:id}
+			(to sender) data {thing:id, data:{...}}
+		getPosition {thing:id}
+			(to sender) position {thing:id, position:{x:x, y:y}}
+	(to subscribers of the thing) near {device:id, thing:id, distance:distance}
+		GET /devices/:id 
+		subscribe {device:id}
+		getData {device:id}
+			(to sender) data {device:id, data:{...}}
+		getPosition {device:id}
+			(to sender) position {device:id, position:{x:x, y:y}}
+	
+When a device is no longer near to a thing:
+
+	(to the sender and other subscribers) far {device:id, thing:id}
+		unsubscribe {thing:id}
+	(to subscribers of the thing) far {device:id, thing:id}
+		unsubscribe {device:id}
+	
+When performing an action on a device:
+
+performAction {device:id, action:action}
+	(to other subscribers) {device:id, action:action}
+	
+
+
+
+
+Thing setup:
+
+GET /things/:id 
+subscribe {thing:id}
+getData {thing:id}
+	(to sender) data {thing:id, data:{...}}
+getPosition {thing:id}
+	(to sender) position {thing:id, position:{x:x, y:y}}
+	
+
+When thing data changes:
+
+setData {thing:id, key:key, value:value}
+	 (to other subscribers) data {thing:id, key:value}
+
+
+When thing position changes:
+
+setPosition {thing:id, position:{x:x, y:y}}
+	 (to other subscribers) position {thing:id, position:{x:x, y:y}}
+
+
+When performing an action on a thing:
+
+performAction {thing:id, action:action}
+	(to other subscribers) {thing:id, action:action}
+	
+
+
+
+https://www.websequencediagrams.com
+
+title Flare API
+
+note over Device, Server: Device setup 
+
+Device->Server: Get /devices/:id
+Server->Device: {id:id, name:name, ...}
+Device->Server: subscribe {device:id}
+Device->Server: getData {device:id}
+Server->Device: data {device:id, data:{...}}
+Device->Server: getPosition {device:id}
+Server->Device: position {device:id, position:{x:x, y:y}}
+
+note over Server, Thing: Thing setup 
+
+Thing->Server: Get /things/:id
+Server->Thing: {id:id, name:name, ...}
+Thing->Server: subscribe {thing:id}
+Thing->Server: getData {thing:id}
+Server->Thing: data {thing:id, data:{...}}
+Thing->Server: getPosition {thing:id}
+Server->Thing: position {thing:id, position:{x:x, y:y}}
+
+note over Device, Server, Thing: When a device has become near to a thing
+
+Server->Device: near {device:id, thing:id, distance:distance}
+Device->Server: GET /things/:id
+Server->Device: {id:id, name:name, ...}
+Device->Server: subscribe {thing:id}
+Device->Server: getData {thing:id}
+Server->Device: data {thing:id, data:{...}}
+Device->Server: getPosition {thing:id}
+Server->Device: position {thing:id, position:{x:x, y:y}}
+Server->Thing: near {device:id, thing:id, distance:distance}
+Thing->Server: Get /devices/:id
+Server-> Thing: {id:id, name:name, ...}
+Thing->Server: subscribe {device:id}
+Thing->Server: getData {device:id}
+Server-> Thing: data {device:id, data:{...}}
+Thing->Server: getPosition {device:id}
+Server-> Thing: position {device:id, position:{x:x, y:y}}
+
+note over Device, Server, Thing: When device data changes 
+
+Device->Server: setData {device:id, key:key, value:value}
+Server->Thing: data {device:id, key:value}
+
+note over Device, Server, Thing: When device position changes 
+
+Device->Server: setPosition {device:id, position:{x:x, y:y}}
+Server->Thing: position {device:id, position:{x:x, y:y}}
+
+note over Device, Server, Thing: When thing data changes 
+
+Thing->Server: setData {thing:id, key:key, value:value}
+Server->Device: data {thing:id, key:value}
+
+note over Device, Server, Thing: When thing position changes 
+
+Thing->Server: setPosition {thing:id, position:{x:x, y:y}}
+Server->Device: position {thing:id, position:{x:x, y:y}}
+
+note over Device, Server, Thing: When a device is no longer near to a thing
+
+Server->Device: far {device:id, thing:id}
+Device->Server: unsubscribe {thing:id}
+Server->Thing: far {device:id, thing:id}
+Thing->Server: unsubscribe {device:id}
+

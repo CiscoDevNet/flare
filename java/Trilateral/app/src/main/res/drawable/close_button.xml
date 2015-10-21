@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- red circle -->
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="oval">
+            <solid
+                android:color="@color/darkred"/>
+
+            <stroke android:color="@color/darkred" android:width="10dp"/>
+
+            <size
+                android:width="100dp"
+                android:height="100dp" />
+        </shape>
+    </item>
+
+    <!-- white cross -->
+    <item>
+        <rotate xmlns:android="http://schemas.android.com/apk/res/android"
+            android:fromDegrees="45" android:toDegrees="45">
+            <shape
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:shape="line">
+                <stroke android:width="8dp" android:color="#fff"/>
+            </shape>
+        </rotate>
+    </item>
+    <item>
+        <rotate xmlns:android="http://schemas.android.com/apk/res/android"
+            android:fromDegrees="135" android:toDegrees="135">
+            <shape
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:shape="line">
+                <stroke android:width="8dp" android:color="#fff"/>
+            </shape>
+        </rotate>
+    </item>
+
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="ring"
+            android:innerRadius="30dp"
+            android:thickness="20dp"
+            android:useLevel="false">
+            <solid android:color="@color/darkred"/>
+
+            <size
+                android:width="100dp"
+                android:height="100dp" />
+        </shape>
+    </item>
+</layer-list>

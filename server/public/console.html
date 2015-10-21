@@ -1,0 +1,653 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Socket.IO Console</title>
+  </head>
+<link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
+
+<script src="js/socket.io-1.0.0.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
+<script src="js/flare.js"></script>
+
+<script>
+
+var allTypes = ['environment', 'zone', 'thing', 'device'];
+var allNames = ['subscribe', 'unsubscribe', 'getData', 'setData', 'getPosition', 'setPosition', 'performAction', 'data', 'position', 'near', 'far', 'handleAction'];
+var allFields = ['type', 'id', 'key', 'value', 'x', 'y', 'action', 'all'];
+
+$(function() {
+
+	for (var i = 0; i < allNames.length; i++) {
+		var name = allNames[i];
+		
+		for (var j = 0; j < allFields.length; j++) {
+			var field = allFields[j];
+			
+			var elementId = name + '-' + field;
+			var element = $('#' + elementId);
+			
+			if (element !== undefined) {
+				var saved = $.cookie(elementId);
+				
+				if (saved !== undefined) {
+					if (field == 'all') {
+						saved = saved == 'true';
+						element.prop('checked', saved == true);
+					} else {
+						element.val(saved);
+					}
+				}
+			}
+		}
+		
+		updateMessageWithName(name);
+
+		var section = getElement(name, 'section');
+		var visible = $.cookie(name + '-section');
+		
+		if (visible !== 'true') {
+			section.hide();
+		}
+	}
+	
+	function outlineItem(object, type, target, params) {
+		return ($('<li>').append($('<a>').attr('href', '../explorer/' + type + '.html?' + $.param(params)).attr('target', target).append(object.name)).append('<span class="gray"> - ' + target + '</span>'));
+	}
+	
+	appendEnvironments($('ul#outline'));
+	
+	function appendEnvironments(environmentsList) {
+		getEnvironments(function(environments) {
+			for (var i = 0; i < environments.length; i++) {
+				var environment = environments[i];
+				var environmentItem = outlineItem(environment, 'environment', environment._id, {environment:environment._id});
+				environmentsList.append(environmentItem);    
+				var zonesList = $('<ul/>');
+				environmentItem.append(zonesList);
+				
+				appendZones(environment._id, zonesList);
+				appendDevices(environment._id, zonesList);
+			}
+		});
+	}
+	
+	function appendZones(environment_id, zonesList) {
+		getZones(environment_id, function(zones) {
+			for (var i = 0; i < zones.length; i++) {
+				var zone = zones[i];
+				var zoneItem = outlineItem(zone, 'zone', zone._id, {environment:environment_id, zone:zone._id});
+				zonesList.append(zoneItem);    
+				var thingsList = $('<ul/>');
+				zoneItem.append(thingsList);
+				appendThings(environment_id, zone._id, thingsList);
+			}
+		});
+	}
+
+	function appendThings(environment_id, zone_id, thingsList) {
+		getThings(environment_id, zone_id, function(things) {
+			for (var i = 0; i < things.length; i++) {
+				var thing = things[i];
+				var thingItem = outlineItem(thing, 'thing', thing._id, {environment:environment_id, zone:zone_id, thing:thing._id});
+				thingsList.append(thingItem);    
+			}
+		});
+	}
+
+	function appendDevices(environment_id, devicesList) {
+		getDevices(environment_id, function(devices) {
+			if (devices.length > 0) {
+				var devicesHeader = $('<li>').append('Devices');
+				devicesList.append(devicesHeader);
+			
+				var sublist = $('<ul/>');
+				devicesHeader.append(sublist);
+
+				for (var i = 0; i < devices.length; i++) {
+					var device = devices[i];
+					var deviceItem = outlineItem(device, 'device', device._id, {environment:environment_id, device:device._id});
+					sublist.append(deviceItem);    
+				}
+			}
+		});
+	}
+});
+
+function getElement(name, id) {
+	return $("#" + name + "-" + id);
+}
+
+function updateMessage(input) {
+	var parts = input.id.split('-');
+	var name = parts[0];
+	var field = parts[1];
+
+	var value = input.value;
+	if (field == 'all') value = input.checked;
+	$.cookie(input.id, value, {expires: 30});
+	
+	updateMessageWithName(name);
+}
+
+function updateMessageWithName(name) {
+	var message = {};
+
+	for (var i = 2; i < allFields.length; i++) {
+		var field = allFields[i];
+		
+		var elementId = name + '-' + field;
+		var element = $('#' + elementId);
+		
+		if (element != undefined) {
+			var value = element.val();
+			
+			if (name == 'subscribe' && field == 'all') value = element.is(':checked');
+			
+			if (value != undefined && value != '') {
+				// convert to a number if possible
+				// numberic values should not be in quotes
+				if (!isNaN(value) && value !== true && value !== false) value = +value;
+				
+				if (field == 'x' || field == 'y') {
+					var position = message.position;
+					if (position == undefined) {
+						position = {};
+						message.position = position;
+					}
+					position[field] = value;
+				} else {
+					message[field] = value;
+				}	
+			}
+		}
+	}
+	
+	var typeElement = getElement(name, 'type');
+	var idElement = getElement(name, 'id');
+
+	if (typeElement && idElement) {
+		var type = typeElement.val();
+		var id = idElement.val();
+		if (type && id) {	
+			message[type] = id;
+		}
+	}
+	
+	getElement(name, 'message').val(JSON.stringify(message));
+}
+
+function sendMessage(input) {
+	var parts = input.id.split('-');
+	var name = parts[0];
+	var message = JSON.parse(getElement(name, 'message').val());
+	console.log('> ' + name + ': ' + JSON.stringify(message));
+	socket.emit(name, message);
+}
+
+function gotData(message) {
+	receiveMessage('data', message);
+}
+
+function gotPosition(message) {
+	receiveMessage('position', message);
+}
+
+function handleAction(message) {
+	receiveMessage('handleAction', message);
+}
+
+function near(message) {
+	receiveMessage('near', message);
+}
+
+function far(message) {
+	receiveMessage('far', message);
+}
+
+function enter(message) {
+	receiveMessage('enter', message);
+}
+
+function exit(message) {
+	receiveMessage('exit', message);
+}
+
+function receiveMessage(name, message) {
+	console.log('< ' + name + ': ' + JSON.stringify(message));
+	var messageElement = getElement(name, 'message') ;
+	if (messageElement != undefined) {
+		getElement(name, 'section').show();
+		messageElement.val(JSON.stringify(message));
+		
+		var typeId = getTypeId(message);
+		var typeElement = getElement(name, 'type');
+		var idElement = getElement(name, 'id');	
+		if (typeId && typeElement && idElement) {
+			typeElement.val(typeId.type);
+			idElement.val(typeId.id);
+		}
+		
+		for (var key in message) {
+			var value = message[key];
+			var element = getElement(name, key);
+			if (element != undefined) {
+				if (key == 'position') {
+					getElement(name, 'x').val(value.x);
+					getElement(name, 'y').val(value.y);
+				} else {
+					if (typeof(value) == 'object') value = JSON.stringify(value);
+					element.val(value);
+				}
+			}
+		}
+	} 
+}
+
+function getTypeId(message) {
+	for (var i = 0; i < allTypes.length; i++) {
+		var type = allTypes[i];
+		var id = message[type];
+		if (id != undefined) return {type: type, id: id};
+	}
+	return null;
+}
+
+function toggleSection(link) {
+	var parts = link.id.split('-');
+	var name = parts[0];
+	
+	var section = getElement(name, 'section');
+	if (section != undefined) {
+		section.toggle();
+		console.log(name + '-section: ' + section.is(':visible'));
+		$.cookie(name + '-section', section.is(':visible'), {expires: 30});
+	} else {
+		console.log('section not found');
+	}
+}
+
+
+</script>
+<body bgcolor="white">
+	
+<h2>Flare Socket.IO Console</h2>
+
+This page lets you try out the Flare Socket.IO API by sending and receiving messages. See the <a href="docs/flare-socketio.html" target="docs">Socket.IO</a> interface page for full documentation for each message. 
+
+<h3>Client to Server</h3>
+
+<p class="description">Click a message type to expand it. When you fill in the fields, you'll see the JSON message being composed. Click the Send button to send it to the server.</p>
+
+<div class="console">
+<h3><a href="#" id="subscribe-header" onclick="toggleSection(this);">subscribe</a></h3>
+<div class="section" id="subscribe-section">
+<p class="description">Subscribes to notifications about an object. The client will receive messages when other clients change the data or position of the object, or perform an action on the object. For environments, you can choose to receive notifications about all zone, thing and device child objects. For Zones, you can choose to receive notifications about all thing child objects. <a href="docs/flare-socketio.html#subscribe" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="subscribe-type" onchange="updateMessage(this);">
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="subscribe-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">All:</td>
+		<td><input type="checkbox" size="10" id="subscribe-all" onchange="updateMessage(this);"/> include all children</td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="subscribe-message" />
+			<input type="button" value="Send" id="subscribe-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="unsubscribe-header" onclick="toggleSection(this);">unsubscribe</a></h3>
+<div class="section" id="unsubscribe-section">
+<p class="description">Unsubscribes to notifications about an object. <a href="docs/flare-socketio.html#unsubscribe" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="unsubscribe-type" onchange="updateMessage(this);">
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="unsubscribe-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="unsubscribe-message" />
+			<input type="button" value="Send" id="unsubscribe-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="getData-header" onclick="toggleSection(this);">getData</a></h3>
+<div class="section" id="getData-section">
+<p class="description">Causes a <b>data</b> message to be sent back to the client with all data values, or just one value if a key is specified. <a href="docs/flare-socketio.html#getData" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="getData-type" onchange="updateMessage(this);">
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="getData-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Key:</td>
+		<td><input type="text" size="10" id="getData-key" onchange="updateMessage(this);"/> (optional)</td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="getData-message" />
+			<input type="button" value="Send" id="getData-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="setData-header" onclick="toggleSection(this);">setData</a></h3>
+<div class="section" id="setData-section">
+<p class="description">Changes a data value of the object, and causes a <b>data</b> message to be sent to all <i>other</i> subscribers of the object. <a href="docs/flare-socketio.html#setData" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="setData-type" onchange="updateMessage(this);">
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="setData-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Key:</td>
+		<td><input type="text" size="10" id="setData-key" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Value:</td>
+		<td><input type="text" size="10" id="setData-value" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="setData-message" />
+			<input type="button" value="Send" id="setData-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="getPosition-header" onclick="toggleSection(this);">getPosition</a></h3>
+<div class="section" id="getPosition-section">
+<p class="description">Causes a <b>position</b> message to be sent back to the client. <a href="docs/flare-socketio.html#getPosition" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="getPosition-type" onchange="updateMessage(this);">
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="getPosition-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="getPosition-message" />
+			<input type="button" value="Send" id="getPosition-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="setPosition-header" onclick="toggleSection(this);">setPosition</a></h3>
+<div class="section" id="setPosition-section">
+<p class="description">Changes the position of the object, and causes a <b>position</b> message to be sent to all <i>other</i> subscribers of the object. <a href="docs/flare-socketio.html#setPosition" target="docs">docs</a></p>
+
+<table id="setPosition-table">
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="setPosition-type" onchange="updateMessage(this);">
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="setPosition-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Position:</td>
+		<td><input type="text" size="4" id="setPosition-x" onchange="updateMessage(this);"/>,<input type="text" size="4" id="setPosition-y" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="setPosition-message" />
+			<input type="button" value="Send" id="setPosition-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+
+
+<h3><a href="#" id="performAction-header" onclick="toggleSection(this);">performAction</a></h3>
+<div class="section" id="performAction-section">
+<p class="description">Performs an action on the object. If the action is not handled by the server, causes a <b>handleAction</b> message to be sent to all <i>other</i> subscribers of the object. <a href="docs/flare-socketio.html#performAction" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="performAction-type" onchange="updateMessage(this);">
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="performAction-id" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Action:</td>
+		<td><input type="text" size="10" id="performAction-action" onchange="updateMessage(this);"/></td>
+	</tr>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="performAction-message" />
+			<input type="button" value="Send" id="performAction-send" onclick="sendMessage(this);"> </td>
+	</tr>
+</table>
+</div>
+</div>
+
+<h3>Server to Client</h3>
+
+<p class="description">When a message is received, it will be displayed below.</p>
+
+<div class="console">
+<h3><a href="#" id="data-header" onclick="toggleSection(this);">data</a></h3>
+<div class="section" id="data-section">
+<p class="description">When a client sends a <b>getData</b> message, sent to the client only. <br>
+	When a client sends a <b>setData</b> message, sent to all <i>other</i> subscribers of the object. <a href="docs/flare-socketio.html#data" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="data-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="data-type" >
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="data-id" /></td>
+	</tr>
+	<tr>
+		<td align="right">Data:</td>
+		<td><input type="text" size="60" id="data-data" /></td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="position-header" onclick="toggleSection(this);">position</a></h3>
+<div class="section" id="position-section">
+<p class="description">When a client sends a <b>getPosition</b> message, sent to the client only. <br>
+	When a client sends a <b>setPosition</b> message, sent to all <i>other</i> subscribers of the object. <a href="docs/flare-socketio.html#position" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="position-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="position-type" >
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="position-id" /></td>
+	</tr>
+	<tr>
+		<td align="right">Position:</td>
+		<td><input type="text" size="4" id="position-x" />,<input type="text" size="4" id="position-y" /></td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="enter-header" onclick="toggleSection(this);">enter</a></h3>
+<div class="section" id="enter-section">
+<p class="description">When a device enters a zone, sent to all subscribers of the device <i>and</i> of the zone. <a href="docs/flare-socketio.html#enter" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="enter-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Device:</td>
+		<td><input type="text" size="30" id="enter-device" /></td>
+	</tr>
+	<tr>
+		<td align="right">Zone:</td>
+		<td><input type="text" size="30" id="enter-zone" /></td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="exit-header" onclick="toggleSection(this);">exit</a></h3>
+<div class="section" id="exit-section">
+<p class="description">When a device exits a zone, sent to all subscribers of the device <i>and</i> of the zone. <a href="docs/flare-socketio.html#exit" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="exit-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Device:</td>
+		<td><input type="text" size="30" id="exit-device" /></td>
+	</tr>
+	<tr>
+		<td align="right">Zone:</td>
+		<td><input type="text" size="30" id="exit-zone" /></td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="near-header" onclick="toggleSection(this);">near</a></h3>
+<div class="section" id="near-section">
+<p class="description">When a device becomes near to a thing, sent to all subscribers of the device <i>and</i> of the thing. <a href="docs/flare-socketio.html#near" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="near-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Device:</td>
+		<td><input type="text" size="30" id="near-device" /></td>
+	</tr>
+	<tr>
+		<td align="right">Thing:</td>
+		<td><input type="text" size="30" id="near-thing" /></td>
+	</tr>
+	<tr>
+		<td align="right">Distance:</td>
+		<td><input type="text" size="30" id="near-distance" /></td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="far-header" onclick="toggleSection(this);">far</a></h3>
+<div class="section" id="far-section">
+<p class="description">When a device is no longer near to a thing, sent to all subscribers of the device <i>and</i> of the thing. <a href="docs/flare-socketio.html#far" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="far-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Device:</td>
+		<td><input type="text" size="30" id="far-device" /></td>
+	</tr>
+	<tr>
+		<td align="right">Thing:</td>
+		<td><input type="text" size="30" id="far-thing" /></td>
+	</tr>
+</table>
+</div>
+
+<h3><a href="#" id="handleAction-header" onclick="toggleSection(this);">handleAction</a></h3>
+<div class="section" id="handleAction-section">
+<p class="description">When an action is performed on an object <i>and</i> the action is not handled by the server, sent to all <i>other</i> subscribers of the object. <a href="docs/flare-socketio.html#handleAction" target="docs">docs</a></p>
+
+<table>
+	<tr>
+		<td align="right">Message:</td>
+		<td><input type="text" size="60" id="handleAction-message" /></td>
+	</tr>
+	<tr>
+		<td align="right">Object:</td>
+		<td>
+			<select name="type" id="handleAction-type" >
+			<option value="environment">Environment</option>
+			<option value="zone">Zone</option>
+			<option value="thing">Thing</option>
+			<option value="device">Device</option>
+			</select>
+			<input type="text" size="30" id="handleAction-id" /></td>
+	</tr>
+	<tr>
+		<td align="right">Action:</td>
+		<td><input type="text" size="60" id="handleAction-action" /></td>
+	</tr>
+</table>
+</div>
+</div>
+
+<h3>Objects</h3>
+
+<p class="description">You can copy the IDs of objects from the list below.</p>
+
+<ul id="outline"></ul>
+
+</body>
+</html>

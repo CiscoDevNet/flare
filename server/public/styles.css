@@ -1,0 +1,34 @@
+body,td,ul,input {font-family: Helvetica; font-size: 13pt; line-height: 1.4; font-weight: lighter;}
+h1,h2,h3,h4,b {font-weight: normal;}
+body {margin: 20px;}
+a {text-decoration: none; color: blue;}
+a:hover {text-decoration: underline;}
+p.description {color: gray; font-size: 11pt; }
+span.gray {color: #ccc;}
+
+ul {
+    margin-left: 15px;
+    margin-right: 0px;
+    padding-left: 10px;
+    padding-right: 0px;
+}
+
+div.console {
+    /* padding: 0px 20px 0px 20px; */
+}
+
+div.section {
+    border-radius: 20px;
+    border: 2px solid #ddd;
+    padding: 0px 20px 15px 20px; 
+}
+
+div.code,pre {
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    padding: 10px; 
+}
+
+code {
+	font-family: "Menlo", "Lucida Console"; font-size: 11pt; line-height: 1.4; 
+}

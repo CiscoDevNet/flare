@@ -1,0 +1,463 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C951C9F61B9F77E200F898A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951C9F51B9F77E200F898A8 /* AppDelegate.swift */; };
+		C951C9F81B9F77E200F898A8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C951C9F71B9F77E200F898A8 /* Images.xcassets */; };
+		C951C9FB1B9F77E200F898A8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C951C9F91B9F77E200F898A8 /* MainMenu.xib */; };
+		C951CA071B9F77E200F898A8 /* ReflektorRemoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951CA061B9F77E200F898A8 /* ReflektorRemoteTests.swift */; };
+		C951CA121B9F780100F898A8 /* SocketIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C951CA111B9F780100F898A8 /* SocketIO.framework */; };
+		C951CA141B9F780D00F898A8 /* Flare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C951CA131B9F780D00F898A8 /* Flare.framework */; };
+		C951CA161B9F783100F898A8 /* Flare.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C951CA131B9F780D00F898A8 /* Flare.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C951CA171B9F783300F898A8 /* SocketIO.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C951CA111B9F780100F898A8 /* SocketIO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C951CA011B9F77E200F898A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C951C9E81B9F77E200F898A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C951C9EF1B9F77E200F898A8;
+			remoteInfo = ReflektorRemote;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C951CA151B9F782A00F898A8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C951CA161B9F783100F898A8 /* Flare.framework in CopyFiles */,
+				C951CA171B9F783300F898A8 /* SocketIO.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C951C9F01B9F77E200F898A8 /* ReflektorRemote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReflektorRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C951C9F41B9F77E200F898A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C951C9F51B9F77E200F898A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C951C9F71B9F77E200F898A8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		C951C9FA1B9F77E200F898A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		C951CA001B9F77E200F898A8 /* ReflektorRemoteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReflektorRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C951CA051B9F77E200F898A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C951CA061B9F77E200F898A8 /* ReflektorRemoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflektorRemoteTests.swift; sourceTree = "<group>"; };
+		C951CA111B9F780100F898A8 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = ../../SocketIO/Output/Release/SocketIO.framework; sourceTree = "<group>"; };
+		C951CA131B9F780D00F898A8 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = ../../Flare/Output/Release/Flare.framework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C951C9ED1B9F77E200F898A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C951CA121B9F780100F898A8 /* SocketIO.framework in Frameworks */,
+				C951CA141B9F780D00F898A8 /* Flare.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C951C9FD1B9F77E200F898A8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C951C9E71B9F77E200F898A8 = {
+			isa = PBXGroup;
+			children = (
+				C951C9F21B9F77E200F898A8 /* ReflektorRemote */,
+				C951CA031B9F77E200F898A8 /* ReflektorRemoteTests */,
+				C951C9F11B9F77E200F898A8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C951C9F11B9F77E200F898A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C951C9F01B9F77E200F898A8 /* ReflektorRemote.app */,
+				C951CA001B9F77E200F898A8 /* ReflektorRemoteTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C951C9F21B9F77E200F898A8 /* ReflektorRemote */ = {
+			isa = PBXGroup;
+			children = (
+				C951C9F51B9F77E200F898A8 /* AppDelegate.swift */,
+				C951C9F71B9F77E200F898A8 /* Images.xcassets */,
+				C951C9F91B9F77E200F898A8 /* MainMenu.xib */,
+				C951C9F31B9F77E200F898A8 /* Supporting Files */,
+				C951CA101B9F77EF00F898A8 /* Frameworks */,
+			);
+			path = ReflektorRemote;
+			sourceTree = "<group>";
+		};
+		C951C9F31B9F77E200F898A8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C951C9F41B9F77E200F898A8 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C951CA031B9F77E200F898A8 /* ReflektorRemoteTests */ = {
+			isa = PBXGroup;
+			children = (
+				C951CA061B9F77E200F898A8 /* ReflektorRemoteTests.swift */,
+				C951CA041B9F77E200F898A8 /* Supporting Files */,
+			);
+			path = ReflektorRemoteTests;
+			sourceTree = "<group>";
+		};
+		C951CA041B9F77E200F898A8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C951CA051B9F77E200F898A8 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C951CA101B9F77EF00F898A8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C951CA131B9F780D00F898A8 /* Flare.framework */,
+				C951CA111B9F780100F898A8 /* SocketIO.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C951C9EF1B9F77E200F898A8 /* ReflektorRemote */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C951CA0A1B9F77E200F898A8 /* Build configuration list for PBXNativeTarget "ReflektorRemote" */;
+			buildPhases = (
+				C951C9EC1B9F77E200F898A8 /* Sources */,
+				C951C9ED1B9F77E200F898A8 /* Frameworks */,
+				C951C9EE1B9F77E200F898A8 /* Resources */,
+				C951CA151B9F782A00F898A8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReflektorRemote;
+			productName = ReflektorRemote;
+			productReference = C951C9F01B9F77E200F898A8 /* ReflektorRemote.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C951C9FF1B9F77E200F898A8 /* ReflektorRemoteTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C951CA0D1B9F77E200F898A8 /* Build configuration list for PBXNativeTarget "ReflektorRemoteTests" */;
+			buildPhases = (
+				C951C9FC1B9F77E200F898A8 /* Sources */,
+				C951C9FD1B9F77E200F898A8 /* Frameworks */,
+				C951C9FE1B9F77E200F898A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C951CA021B9F77E200F898A8 /* PBXTargetDependency */,
+			);
+			name = ReflektorRemoteTests;
+			productName = ReflektorRemoteTests;
+			productReference = C951CA001B9F77E200F898A8 /* ReflektorRemoteTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C951C9E81B9F77E200F898A8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = Cisco;
+				TargetAttributes = {
+					C951C9EF1B9F77E200F898A8 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					C951C9FF1B9F77E200F898A8 = {
+						CreatedOnToolsVersion = 6.4;
+						TestTargetID = C951C9EF1B9F77E200F898A8;
+					};
+				};
+			};
+			buildConfigurationList = C951C9EB1B9F77E200F898A8 /* Build configuration list for PBXProject "ReflektorRemote" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C951C9E71B9F77E200F898A8;
+			productRefGroup = C951C9F11B9F77E200F898A8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C951C9EF1B9F77E200F898A8 /* ReflektorRemote */,
+				C951C9FF1B9F77E200F898A8 /* ReflektorRemoteTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C951C9EE1B9F77E200F898A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C951C9F81B9F77E200F898A8 /* Images.xcassets in Resources */,
+				C951C9FB1B9F77E200F898A8 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C951C9FE1B9F77E200F898A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C951C9EC1B9F77E200F898A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C951C9F61B9F77E200F898A8 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C951C9FC1B9F77E200F898A8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C951CA071B9F77E200F898A8 /* ReflektorRemoteTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C951CA021B9F77E200F898A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C951C9EF1B9F77E200F898A8 /* ReflektorRemote */;
+			targetProxy = C951CA011B9F77E200F898A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C951C9F91B9F77E200F898A8 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C951C9FA1B9F77E200F898A8 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C951CA081B9F77E200F898A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C951CA091B9F77E200F898A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C951CA0B1B9F77E200F898A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/SocketIO/Output/Release",
+					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/Flare/Output/Release",
+				);
+				INFOPLIST_FILE = ReflektorRemote/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		C951CA0C1B9F77E200F898A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/SocketIO/Output/Release",
+					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/Flare/Output/Release",
+				);
+				INFOPLIST_FILE = ReflektorRemote/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		C951CA0E1B9F77E200F898A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ReflektorRemoteTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReflektorRemote.app/Contents/MacOS/ReflektorRemote";
+			};
+			name = Debug;
+		};
+		C951CA0F1B9F77E200F898A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ReflektorRemoteTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReflektorRemote.app/Contents/MacOS/ReflektorRemote";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C951C9EB1B9F77E200F898A8 /* Build configuration list for PBXProject "ReflektorRemote" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C951CA081B9F77E200F898A8 /* Debug */,
+				C951CA091B9F77E200F898A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C951CA0A1B9F77E200F898A8 /* Build configuration list for PBXNativeTarget "ReflektorRemote" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C951CA0B1B9F77E200F898A8 /* Debug */,
+				C951CA0C1B9F77E200F898A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C951CA0D1B9F77E200F898A8 /* Build configuration list for PBXNativeTarget "ReflektorRemoteTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C951CA0E1B9F77E200F898A8 /* Debug */,
+				C951CA0F1B9F77E200F898A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C951C9E81B9F77E200F898A8 /* Project object */;
+}

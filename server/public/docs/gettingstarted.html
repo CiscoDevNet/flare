@@ -1,0 +1,66 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Overview</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<body bgcolor="white">
+
+<h2 id="getting-started">Getting started</h2>
+<h3 id="server">Server</h3>
+<p>The Flare API server in implemented in <a href="https://nodejs.org">Node.js</a> using JavaScript. It uses the <a href="https://www.mongodb.org">MongoDB</a> database.</p>
+<p>The source code is available as a download, so you can run it yourself. </p>
+<p>You have several options for running the server:</p>
+<ul>
+<li>To learn how it works, you can connect to a shared instance in the DevNet Sandbox. </li>
+<li>For development, you can easily run the server on your own computer. </li>
+<li>For deployment on a local network, you can run the server on a local server.</li>
+<li>For a large-scale deployment, you can run the server in the cloud. </li>
+</ul>
+<p>See the <a href="readme.html">Readme</a> file for instructions on downloading the necessary software and running the server. Regardless of where you choose to install it, you have the option of installing it directly or running it in a virtual machine using Vagrant. </p>
+<h3 id="documentation">Documentation</h3>
+<p>The Flare API server serves its own documentation. For example, if you have the server running on localhost using port 1234, you can point your browser to <a href="http://localhost:1234">http://localhost:1234</a> to see an outline of all documentation and other resources. </p>
+<p>While you can browse the documentation on DevNet or by opening the HTML files directly in your browser, note that some of the documentation is dynamic and needs to be able to connect to the server to work properly. For example, when you use the <a href="../api-console/index.html?raml=/docs/flare-rest.raml">REST API Console</a> and the <a href="../console.html">Socket.IO API console</a>, you can call APIs and see the results in realtime. </p>
+<h3 id="data">Data</h3>
+<p>To get started with your own instance of the server, you&#39;ll need to add some data to the database by creating some environment, zone, thing, and device objects. You can do this in several ways.</p>
+<ul>
+<li><p>You can load some sample data from a JSON file. See the file model.json for an example of the data format. To load the data into the database, you can use this command:</p>
+<div class="code"><code>node import.js model.json</code></div>
+</li>
+<li><p>If you have exported some data from a previous installation using MongoDB, you can use <a href="http://www.mkyong.com/mongodb/mongodb-import-and-export-example/">mongoimport</a>.</p>
+</li>
+<li><p>You can call the API directly using curl or <a href="https://github.com/dengzhp/chrome-poster">poster</a>. For example, here&#39;s a command to create a device:</p>
+<div class="code"><code>curl --data &quot;{\&quot;data\&quot;:{\&quot;color\&quot;:\&quot;red\&quot;},\&quot;description\&quot;: \&quot;iPhone 6 (32 GB)\&quot;,\&quot;name\&quot;: \&quot;My iPhone\&quot;,\&quot;position\&quot;: {\&quot;x\&quot;: 3,\&quot;y\&quot;: 1}}&quot; -H &quot;Content-Type: application/json&quot; http://localhost:1234/devices</code></div>
+</li>
+<li><p>You can use the <a href="../api-console/index.html?raml=/docs/flare-rest.raml">REST API Console</a> to create objects using POST requests. </p>
+</li>
+<li><p>You can use the Explorer app for Mac, which is part of the sample code, to create objects using a graphical interface. </p>
+</li>
+<li><p>You can write a script to get data out of your own enterprise database and add it to Flare. </p>
+</li>
+</ul>
+<h3 id="location-technologies">Location technologies</h3>
+<p>Flare currently supports two kinds of indoor location technologies, beacons and CMX. </p>
+<p>Beacons are tiny devices that transmit a signal over Bluetooth at regular intervals. A device can measure the signal strength of three or more beacons at known locations to determine its own location. The device can then send its location to the Flare server, which can then push the location to other things. </p>
+<p>The Flare sample code for iOS uses Apple&#39;s <a href="https://developer.apple.com/ibeacon/">iBeacon</a> standard, while the sample code for Android uses <a href="http://www.radiusnetworks.com">Radius Networks</a>&#39; <a href="http://altbeacon.org">AltBeacon</a> standard. We recommend beacons from Radius Networks as they are compatible with both standards. See the <a href="beacons.html">beacons</a> documentation for more information on purchasing and setting up hardware.</p>
+<p><a href="http://www.cisco.com/c/en/us/solutions/enterprise-networks/connected-mobile-experiences/index.html?vs_f=Products+Launch+RSS+Feeds&vs_p=Cisco+Connected+Mobile+Experiences+Boost+Revenues+with+Better+Service&vs_k=1">CMX</a> (Connected Mobile Experience) is a Cisco platform that uses Wi-Fi access points to detect the location of user devices connected to the network. The location information can be transmitted from the CMX server to the Flare server, and then pushed to devices and things.</p>
+<p>A CMX installation requires a controller module and three or more access points. See the <a href="cmx.html">CMX</a> documentation for more information on purchasing and setting up hardware, and the <a href="https://developer.cisco.com/site/cmx-mobility-services/">CMX DevNet site</a> for developer resources.</p>
+<h3 id="clients">Clients</h3>
+<p>Several kinds of clients can talk to the Flare server. </p>
+<p>Users can run apps on their personal devices, including tablets, mobile phones and smart watches. The Flare server can track the location of these devices for enhanced interactions as users move around in a space. </p>
+<p>Things can run web or native apps that drive interactive displays. For example, when a user walks up to a display, it could greet them with a message and then allow them to control the display from their device.</p>
+<p>Connected things can be controlled by small scripts that connect to the thing over a proprietary interface. </p>
+<p>Administrators can run web and native apps for creating, browsing and updating data on the server. </p>
+<p>Data can be imported into Flare from an enterprise database, either on a one-time or ongoing basis, using an import script written in the language of your choice. </p>
+<p>Monitoring scripts can subscribe to receive notifications for logging and analytics purposes. </p>
+<h3 id="sample-code">Sample Code</h3>
+<p>Sample code is available for the following platforms:</p>
+<ul>
+<li>Web apps using JavaScript</li>
+<li>Mac, iOS and watchOS apps using Swift</li>
+<li>Android apps using Java</li>
+</ul>
+
+</body>
+</html>

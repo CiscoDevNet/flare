@@ -1,0 +1,725 @@
+<!DOCTYPE HTML><html><head><title>Flare API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/kevinrenskers/raml2html 2.0.2"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script><script type="text/javascript">
+      $(document).ready(function() {
+        $('.page-header pre code, .top-resource-description pre code').each(function(i, block) {
+          hljs.highlightBlock(block);
+        });
+
+        $('[data-toggle]').click(function() {
+          var selector = $(this).data('target') + ' pre code';
+          $(selector).each(function(i, block) {
+            hljs.highlightBlock(block);
+          });
+        });
+
+        // open modal on hashes like #_action_get
+        $(window).bind('hashchange', function(e) {
+          var anchor_id = document.location.hash.substr(1); //strip #
+          var element = $('#' + anchor_id);
+
+          // do we have such element + is it a modal?  --> show it
+          if (element.length && element.hasClass('modal')) {
+            element.modal('show');
+          }
+        });
+
+        // execute hashchange on first page load
+        $(window).trigger('hashchange');
+
+        // remove url fragment on modal hide
+        $('.modal').on('hidden.bs.modal', function() {
+          if(history && history.replaceState) {
+            history.replaceState({}, '', '#');
+          }
+        });
+      });
+    </script><style>
+      .hljs {
+        background: transparent;
+      }
+      .parent {
+        color: #999;
+      }
+      .list-group-item > .badge {
+        float: none;
+        margin-right: 6px;
+      }
+      .panel-title > .methods {
+        float: right;
+      }
+      .badge {
+        border-radius: 0;
+        text-transform: uppercase;
+        width: 70px;
+        font-weight: normal;
+        color: #f3f3f6;
+        line-height: normal;
+      }
+      .badge_get {
+        background-color: #63a8e2;
+      }
+      .badge_post {
+        background-color: #6cbd7d;
+      }
+      .badge_put {
+        background-color: #22bac4;
+      }
+      .badge_delete {
+        background-color: #d26460;
+      }
+      .badge_patch {
+        background-color: #ccc444;
+      }
+      .list-group, .panel-group {
+        margin-bottom: 0;
+      }
+      .panel-group .panel+.panel-white {
+        margin-top: 0;
+      }
+      .panel-group .panel-white {
+        border-bottom: 1px solid #F5F5F5;
+        border-radius: 0;
+      }
+      .panel-white:last-child {
+        border-bottom-color: white;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
+      .panel-white .panel-heading {
+        background: white;
+      }
+      .tab-pane ul {
+        padding-left: 2em;
+      }
+      .tab-pane h2 {
+        font-size: 1.2em;
+        padding-bottom: 4px;
+        border-bottom: 1px solid #ddd;
+      }
+      .tab-pane h3 {
+        font-size: 1.1em;
+      }
+      .tab-content {
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+      #sidebar {
+        margin-top: 30px;
+        padding-right: 5px;
+        overflow: auto;
+        height: 90%;
+      }
+      .top-resource-description {
+        border-bottom: 1px solid #ddd;
+        background: #fcfcfc;
+        padding: 15px 15px 0 15px;
+        margin: -15px -15px 10px -15px;
+      }
+      .resource-description {
+        border-bottom: 1px solid #fcfcfc;
+        background: #fcfcfc;
+        padding: 15px 15px 0 15px;
+        margin: -15px -15px 10px -15px;
+      }
+      .resource-description p:last-child {
+        margin: 0;
+      }
+      .list-group .badge {
+        float: left;
+      }
+      .method_description {
+        margin-left: 85px;
+      }
+      .method_description p:last-child {
+        margin: 0;
+      }
+      .list-group-item {
+        cursor: pointer;
+      }
+      .list-group-item:hover {
+        background-color: #f5f5f5;
+      }
+    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Flare API documentation <small>version v1</small></h1><p>http://localhost:1234</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="environments" class="panel-title">Environments</h3></div><div class="panel-body"><div class="top-resource-description"><p>A collection of environments.</p></div><div class="panel-group"><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments"><span class="parent"></span>/environments</a> <span class="methods"><a href="#environments_post"><span class="badge badge_post">post</span></a> <a href="#environments_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#environments_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Create an environment</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a list of environments</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/environments</h4></div><div class="modal-body"><div class="alert alert-info"><p>Create an environment</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments_post_request" data-toggle="tab">Request</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments_post_request"><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },                
+  "data": {
+    "required": false,
+    "type": "object"
+  },                
+  "actions": {
+    "required": false,
+    "type": "[string]"
+  },                
+  "angle": {
+    "required": false,
+    "type": "number"
+  },                
+  "geofence": {
+    "required": true,
+    "type": "object",
+    "latitude": {
+      "required": true,
+      "type": "number"
+    },      
+    "longitude": {
+      "required": true,
+      "type": "number"
+    },      
+    "radius": {
+      "required": true,
+      "type": "number"
+    }    
+  },                
+  "perimeter": {
+    "required": true,
+    "type": "object",
+    "origin": {
+      "required": true,
+      "type": "object",
+      "x": {
+        "required": true,
+        "type": "number"
+      },
+      "y": {
+        "required": true,
+        "type": "number"
+      }
+    },      
+    "size": {
+      "required": true,
+      "type": "object",
+      "width": {
+        "required": true,
+        "type": "number"
+      },
+      "height": {
+        "required": true,
+        "type": "number"
+      }
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "name": "New York",
+  "description": "The New York store",
+  "data": {},
+  "angle": 30,
+  "geofence": {
+    "latitude": 40.751267,
+    "longitude": -73.99229,
+    "radius": 300
+  },
+  "perimeter": {
+    "origin": {
+      "x": 0,
+      "y": 0
+    },
+    "size": {
+      "height": 10,
+      "width": 10
+    }
+  }
+}
+</code></pre></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent"></span>/environments</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a list of environments</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments_get_request" data-toggle="tab">Request</a></li><li><a href="#environments_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments_get_request"><h3>Query Parameters</h3><ul><li><strong>latitude</strong>: <em>(number)</em><p>Filter by location</p></li><li><strong>longitude</strong>: <em>(number)</em><p>Filter by location</p></li></ul></div><div class="tab-pane" id="environments_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id_"><span class="parent">/environments</span>/{environment_id}</a> <span class="methods"><a href="#environments__environment_id__get"><span class="badge badge_get">get</span></a> <a href="#environments__environment_id__put"><span class="badge badge_put">put</span></a> <a href="#environments__environment_id__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_environments__environment_id_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>An environment represents a single coordinate space that can contain zones and things.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a single environment</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Updates a single environment</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Delete a single environment</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments</span>/{environment_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a single environment</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>environment_id</strong>: <em>required (string)</em><p>The ID of the environment</p></li></ul></div><div class="tab-pane" id="environments__environment_id__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__put"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_put">put</span> <span class="parent">/environments</span>/{environment_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Updates a single environment</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__put_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__put_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>environment_id</strong>: <em>required (integer)</em><p>The ID of the environment</p></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "_id": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },                
+  "data": {
+    "required": false,
+    "type": "object"
+  },
+  "actions": {
+    "required": false,
+    "type": "[string]"
+  },                
+  "angle": {
+    "required": false,
+    "type": "number"
+  },                
+  "geofence": {
+    "required": true,
+    "type": "object",
+    "latitude": {
+      "required": true,
+      "type": "number"
+    },      
+    "longitude": {
+      "required": true,
+      "type": "number"
+    },      
+    "radius": {
+      "required": true,
+      "type": "number"
+    }    
+  },                
+  "perimeter": {
+    "required": true,
+    "type": "object",
+    "origin": {
+      "required": true,
+      "type": "object",
+      "x": {
+        "required": true,
+        "type": "number"
+      },
+      "y": {
+        "required": true,
+        "type": "number"
+      }
+    },      
+    "size": {
+      "required": true,
+      "type": "object",
+      "width": {
+        "required": true,
+        "type": "number"
+      },
+      "height": {
+        "required": true,
+        "type": "number"
+      }
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "_id": "55c3da3b189acc3441b1d9e1",
+  "name": "New York",
+  "description": "The New York store",
+  "data": {},
+  "angle": 30,
+  "geofence": {
+    "latitude": 40.751267,
+    "longitude": -73.99229,
+    "radius": 300
+  },
+  "perimeter": {
+    "origin": {
+      "x": 0,
+      "y": 0
+    },
+    "size": {
+      "height": 10,
+      "width": 10
+    }
+  }
+}        
+</code></pre></div><div class="tab-pane" id="environments__environment_id__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__delete"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/environments</span>/{environment_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Delete a single environment</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__delete_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__delete_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>environment_id</strong>: <em>required (string)</em><p>The ID of the environment</p></li></ul></div><div class="tab-pane" id="environments__environment_id__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__data"><span class="parent">/environments/{environment_id}</span>/data</a> <span class="methods"><a href="#environments__environment_id__data_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__data" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A key/value data store.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__data_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets all the data values for the device.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__data_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}</span>/data</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets all the data values for the device.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__data_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__data_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__data_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__data_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "color": "red",
+  "volume": 11
+}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__data__key_"><span class="parent">/environments/{environment_id}/data</span>/{key}</a> <span class="methods"><a href="#environments__environment_id__data__key__get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__data__key_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>The data value for a particular key.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__data__key__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets the data value for a particular key.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__data__key__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/data</span>/{key}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets the data value for a particular key.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__data__key__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__data__key__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__data__key__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Key</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (string)</em><p>The ID of the device</p></li></ul></div><div class="tab-pane" id="environments__environment_id__data__key__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones"><span class="parent">/environments/{environment_id}</span>/zones</a> <span class="methods"><a href="#environments__environment_id__zones_post"><span class="badge badge_post">post</span></a> <a href="#environments__environment_id__zones_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A collection of zones inside an environment.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Create a zone</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__zones_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a list of zones</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/environments/{environment_id}</span>/zones</h4></div><div class="modal-body"><div class="alert alert-info"><p>Create a zone</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones_post_request" data-toggle="tab">Request</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones_post_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "environment": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },
+  "data": {
+    "required": false,
+    "type": "object"
+  },
+  "actions": {
+    "required": false,
+    "type": "[string]"
+  },                
+  "perimeter": {
+    "required": true,
+    "type": "object",
+    "origin": {
+      "required": true,
+      "type": "object",
+      "x": {
+        "required": true,
+        "type": "number"
+      },
+      "y": {
+        "required": true,
+        "type": "number"
+      }
+    },      
+    "size": {
+      "required": true,
+      "type": "object",
+      "width": {
+        "required": true,
+        "type": "number"
+      },
+      "height": {
+        "required": true,
+        "type": "number"
+      }
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "environment": "55c3da3b189acc3441b1d9e1",
+  "name": "Showroom",
+  "description": "The showroom in the New York store",
+  "data": {},
+  "perimeter": {
+    "origin": {
+      "x": 0,
+      "y": 0
+    },
+    "size": {
+      "height": 5,
+      "width": 5
+    }
+  }
+}
+</code></pre></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}</span>/zones</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a list of zones</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>x</strong>: <em>(number)</em><p>Filter zones containing a given point</p></li><li><strong>y</strong>: <em>(number)</em><p>Filter zones containing a given point</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id_"><span class="parent">/environments/{environment_id}/zones</span>/{zone_id}</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__get"><span class="badge badge_get">get</span></a> <a href="#environments__environment_id__zones__zone_id__put"><span class="badge badge_put">put</span></a> <a href="#environments__environment_id__zones__zone_id__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A zone is a subdivision of the coordinate space of an environment that groups together a number of things.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a single zone</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Updates a single product</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Delete a single zone</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones</span>/{zone_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a single zone</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>zone_id</strong>: <em>required (string)</em><p>The ID of the zone</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__put"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_put">put</span> <span class="parent">/environments/{environment_id}/zones</span>/{zone_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Updates a single product</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__put_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__put_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>zone_id</strong>: <em>required (integer)</em><p>The ID of the product</p></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "_id": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },                
+  "data": {
+    "required": false,
+    "type": "object"
+  },                
+  "perimeter": {
+    "required": true,
+    "type": "object",
+    "origin": {
+      "required": true,
+      "type": "object",
+      "x": {
+        "required": true,
+        "type": "number"
+      },
+      "y": {
+        "required": true,
+        "type": "number"
+      }
+    },      
+    "size": {
+      "required": true,
+      "type": "object",
+      "width": {
+        "required": true,
+        "type": "number"
+      },
+      "height": {
+        "required": true,
+        "type": "number"
+      }
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "_id": "55c3da3b189acc3441b1d9d0",
+  "environment": "55c3da3b189acc3441b1d9e1",
+  "name": "Showroom",
+  "description": "The showroom in the New York store",
+  "data": {},
+  "perimeter": {
+    "origin": {
+      "x": 0,
+      "y": 0
+    },
+    "size": {
+      "height": 5,
+      "width": 5
+    }
+  }
+}        
+</code></pre></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__delete"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/environments/{environment_id}/zones</span>/{zone_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Delete a single zone</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__delete_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__delete_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>zone_id</strong>: <em>required (integer)</em><p>The ID of the zone</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__data"><span class="parent">/environments/{environment_id}/zones/{zone_id}</span>/data</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__data_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__data" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A key/value data store.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__data_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets all the data values for the device.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__data_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}</span>/data</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets all the data values for the device.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__data_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__data_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__data_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__data_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "color": "red",
+  "volume": 11
+}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__data__key_"><span class="parent">/environments/{environment_id}/zones/{zone_id}/data</span>/{key}</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__data__key__get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__data__key_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>The data value for a particular key.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__data__key__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets the data value for a particular key.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__data__key__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/data</span>/{key}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets the data value for a particular key.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__data__key__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__data__key__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__data__key__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Key</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (string)</em><p>The ID of the device</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__data__key__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__things"><span class="parent">/environments/{environment_id}/zones/{zone_id}</span>/things</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__things_post"><span class="badge badge_post">post</span></a> <a href="#environments__environment_id__zones__zone_id__things_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__things" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A collection of things inside a zone.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Create a thing</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a list of things</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}</span>/things</h4></div><div class="modal-body"><div class="alert alert-info"><p>Create a thing</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things_post_request" data-toggle="tab">Request</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things_post_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "environment": {
+    "required": true,
+    "type": "string"
+  },
+  "zone": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },
+  "data": {
+    "required": false,
+    "type": "object"
+  },
+  "actions": {
+    "required": false,
+    "type": "[string]"
+  },                
+  "position": {
+    "required": true,
+    "type": "object",
+    "x": {
+      "required": true,
+      "type": "number"
+    },
+    "y": {
+      "required": true,
+      "type": "number"
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "environment": "55c3da3b189acc3441b1d9e1",
+  "zone": "55c3da3b189acc3441b1d9d0",
+  "name": "Gizmo",
+  "description": "A gizmo for sale in the showroom",
+  "data": {},
+  "position": {
+    "x": 3,
+    "y": 2
+  }
+}
+</code></pre></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}</span>/things</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a list of things</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__things__thing_id_"><span class="parent">/environments/{environment_id}/zones/{zone_id}/things</span>/{thing_id}</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__things__thing_id__get"><span class="badge badge_get">get</span></a> <a href="#environments__environment_id__zones__zone_id__things__thing_id__put"><span class="badge badge_put">put</span></a> <a href="#environments__environment_id__zones__zone_id__things__thing_id__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__things__thing_id_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A thing is an object that the user can interact with, an can be a computing device, a connected gadget, or an unconnected thing such as a packaged product. Things are grouped by zone, and a have a position in the environment&#39;s coordiante space.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things__thing_id__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a single thing</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things__thing_id__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Updates a single thing</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things__thing_id__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Delete a single thing</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things__thing_id__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/things</span>/{thing_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a single thing</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things__thing_id__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things__thing_id__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things__thing_id__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Thing ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>thing_id</strong>: <em>required (string)</em><p>The ID of the thing</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things__thing_id__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things__thing_id__put"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_put">put</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/things</span>/{thing_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Updates a single thing</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things__thing_id__put_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things__thing_id__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things__thing_id__put_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Thing ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>thing_id</strong>: <em>required (string)</em><p>The ID of the thing</p></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "_id": {
+    "required": true,
+    "type": "string"
+  },
+  "environment": {
+    "required": true,
+    "type": "string"
+  },
+  "zone": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },                
+  "data": {
+    "required": false,
+    "type": "object"
+  },                
+  "perimeter": {
+    "required": true,
+    "type": "object",
+    "origin": {
+      "required": true,
+      "type": "object",
+      "x": {
+        "required": true,
+        "type": "number"
+      },
+      "y": {
+        "required": true,
+        "type": "number"
+      }
+    },      
+    "size": {
+      "required": true,
+      "type": "object",
+      "width": {
+        "required": true,
+        "type": "number"
+      },
+      "height": {
+        "required": true,
+        "type": "number"
+      }
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "_id": "55c3da3b189acc3441b1d9e1",
+  "environment": "55c3da3b189acc3441b1d9e1",
+  "zone": "55c3da3b189acc3441b1d9d0",
+  "name": "Gizmo",
+  "description": "A gizmo for sale in the showroom",
+  "data": {},
+  "position": {
+    "x": 3,
+    "y": 2
+  }
+}        
+</code></pre></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things__thing_id__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things__thing_id__delete"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/things</span>/{thing_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Delete a single thing</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things__thing_id__delete_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things__thing_id__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things__thing_id__delete_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Thing ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>thing_id</strong>: <em>required (string)</em><p>The ID of the thing</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things__thing_id__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__things__thing_id__data"><span class="parent">/environments/{environment_id}/zones/{zone_id}/things/{thing_id}</span>/data</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__things__thing_id__data_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__things__thing_id__data" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A key/value data store.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things__thing_id__data_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets all the data values for the device.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things__thing_id__data_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/things/{thing_id}</span>/data</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets all the data values for the device.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things__thing_id__data_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things__thing_id__data_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things__thing_id__data_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Thing ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things__thing_id__data_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "color": "red",
+  "volume": 11
+}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__things__thing_id__data__key_"><span class="parent">/environments/{environment_id}/zones/{zone_id}/things/{thing_id}/data</span>/{key}</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__things__thing_id__data__key__get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__things__thing_id__data__key_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>The data value for a particular key.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things__thing_id__data__key__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets the data value for a particular key.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things__thing_id__data__key__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/things/{thing_id}/data</span>/{key}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets the data value for a particular key.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things__thing_id__data__key__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things__thing_id__data__key__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things__thing_id__data__key__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Thing ID</strong>: <em>required (string)</em></li><li><strong>Key</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (string)</em><p>The ID of the device</p></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things__thing_id__data__key__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__zones__zone_id__things__thing_id__position"><span class="parent">/environments/{environment_id}/zones/{zone_id}/things/{thing_id}</span>/position</a> <span class="methods"><a href="#environments__environment_id__zones__zone_id__things__thing_id__position_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__zones__zone_id__things__thing_id__position" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>The position of the device.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__zones__zone_id__things__thing_id__position_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets the current position of the device.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__zones__zone_id__things__thing_id__position_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/zones/{zone_id}/things/{thing_id}</span>/position</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets the current position of the device.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__zones__zone_id__things__thing_id__position_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__zones__zone_id__things__thing_id__position_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__zones__zone_id__things__thing_id__position_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Zone ID</strong>: <em>required (string)</em></li><li><strong>Thing ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__zones__zone_id__things__thing_id__position_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "x": {
+    "required": true,
+    "type": "string"
+  },
+  "y": {
+    "required": true,
+    "type": "string"
+  }
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "x": 2.3,
+  "y": 3.4
+}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__devices"><span class="parent">/environments/{environment_id}</span>/devices</a> <span class="methods"><a href="#environments__environment_id__devices_post"><span class="badge badge_post">post</span></a> <a href="#environments__environment_id__devices_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__devices" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A collection of devices currently inside an environment.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__devices_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Create a thing</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__devices_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a list of things</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices_post"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/environments/{environment_id}</span>/devices</h4></div><div class="modal-body"><div class="alert alert-info"><p>Create a thing</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices_post_request" data-toggle="tab">Request</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices_post_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "environment": {
+    "required": true,
+    "type": "string"
+  },
+  "zone": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },
+  "data": {
+    "required": false,
+    "type": "object"
+  },
+  "actions": {
+    "required": false,
+    "type": "[string]"
+  },                
+  "position": {
+    "required": true,
+    "type": "object",
+    "x": {
+      "required": true,
+      "type": "number"
+    },
+    "y": {
+      "required": true,
+      "type": "number"
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "environment": "55c3da3b189acc3441b1d9e1",
+  "zone": "55c3da3b189acc3441b1d9d0",
+  "name": "Gizmo",
+  "description": "A gizmo for sale in the showroom",
+  "data": {},
+  "position": {
+    "x": 3,
+    "y": 2
+  }
+}
+</code></pre></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}</span>/devices</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a list of things</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__devices_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__devices__device_id_"><span class="parent">/environments/{environment_id}/devices</span>/{device_id}</a> <span class="methods"><a href="#environments__environment_id__devices__device_id__get"><span class="badge badge_get">get</span></a> <a href="#environments__environment_id__devices__device_id__put"><span class="badge badge_put">put</span></a> <a href="#environments__environment_id__devices__device_id__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_environments__environment_id__devices__device_id_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A device that belongs to a user, such as a mobile phone or smart watch. Device objects are short-lived, are created when a device enters an environement, and are deleted when a device leaves the environment or after a period of time.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__devices__device_id__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get a single device</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__devices__device_id__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Updates a single device</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#environments__environment_id__devices__device_id__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Delete a single device</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices__device_id__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/devices</span>/{device_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get a single device</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices__device_id__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices__device_id__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices__device_id__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Device ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (string)</em><p>The ID of the device</p></li></ul></div><div class="tab-pane" id="environments__environment_id__devices__device_id__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices__device_id__put"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_put">put</span> <span class="parent">/environments/{environment_id}/devices</span>/{device_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Updates a single device</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices__device_id__put_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices__device_id__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices__device_id__put_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Device ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (integer)</em><p>The ID of the device</p></li></ul><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "_id": {
+    "required": true,
+    "type": "string"
+  },
+  "environment": {
+    "required": true,
+    "type": "string"
+  },
+  "zone": {
+    "required": true,
+    "type": "string"
+  },
+  "name": {
+    "required": true,
+    "type": "string"
+  },
+  "description": {
+    "required": false,
+    "type": "string"
+  },                
+  "data": {
+    "required": false,
+    "type": "object"
+  },                
+  "perimeter": {
+    "required": true,
+    "type": "object",
+    "origin": {
+      "required": true,
+      "type": "object",
+      "x": {
+        "required": true,
+        "type": "number"
+      },
+      "y": {
+        "required": true,
+        "type": "number"
+      }
+    },      
+    "size": {
+      "required": true,
+      "type": "object",
+      "width": {
+        "required": true,
+        "type": "number"
+      },
+      "height": {
+        "required": true,
+        "type": "number"
+      }
+    }
+  }
+}        
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "_id": "55c3da3b189acc3441b1d9e1",
+  "environment": "55c3da3b189acc3441b1d9e1",
+  "zone": "55c3da3b189acc3441b1d9d0",
+  "name": "Gizmo",
+  "description": "A gizmo for sale in the showroom",
+  "data": {},
+  "position": {
+    "x": 3,
+    "y": 2
+  }
+}        
+</code></pre></div><div class="tab-pane" id="environments__environment_id__devices__device_id__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices__device_id__delete"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/environments/{environment_id}/devices</span>/{device_id}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Delete a single device</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices__device_id__delete_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices__device_id__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices__device_id__delete_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Device ID</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (string)</em><p>The ID of the device</p></li></ul></div><div class="tab-pane" id="environments__environment_id__devices__device_id__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__devices__device_id__data"><span class="parent">/environments/{environment_id}/devices/{device_id}</span>/data</a> <span class="methods"><a href="#environments__environment_id__devices__device_id__data_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__devices__device_id__data" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>A key/value data store.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__devices__device_id__data_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets all the data values for the device.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices__device_id__data_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/devices/{device_id}</span>/data</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets all the data values for the device.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices__device_id__data_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices__device_id__data_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices__device_id__data_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Device ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__devices__device_id__data_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Example</strong>:</p><pre><code>{
+  "color": "red",
+  "volume": 11
+}
+</code></pre></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__devices__device_id__data__key_"><span class="parent">/environments/{environment_id}/devices/{device_id}/data</span>/{key}</a> <span class="methods"><a href="#environments__environment_id__devices__device_id__data__key__get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__devices__device_id__data__key_" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>The data value for a particular key.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__devices__device_id__data__key__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets the data value for a particular key.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices__device_id__data__key__get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/devices/{device_id}/data</span>/{key}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets the data value for a particular key.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices__device_id__data__key__get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices__device_id__data__key__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices__device_id__data__key__get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Device ID</strong>: <em>required (string)</em></li><li><strong>Key</strong>: <em>required (string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>device_id</strong>: <em>required (string)</em><p>The ID of the device</p></li></ul></div><div class="tab-pane" id="environments__environment_id__devices__device_id__data__key__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p></div></div></div></div></div></div></div><div class="panel panel-white"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_environments__environment_id__devices__device_id__position"><span class="parent">/environments/{environment_id}/devices/{device_id}</span>/position</a> <span class="methods"><a href="#environments__environment_id__devices__device_id__position_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_environments__environment_id__devices__device_id__position" class="panel-collapse collapse"><div class="panel-body"><div class="resource-description"><p>The position of the device.</p></div><div class="list-group"><div onclick="window.location.href = '#environments__environment_id__devices__device_id__position_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Gets the current position of the device.</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="environments__environment_id__devices__device_id__position_get"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/environments/{environment_id}/devices/{device_id}</span>/position</h4></div><div class="modal-body"><div class="alert alert-info"><p>Gets the current position of the device.</p></div><ul class="nav nav-tabs"><li class="active"><a href="#environments__environment_id__devices__device_id__position_get_request" data-toggle="tab">Request</a></li><li><a href="#environments__environment_id__devices__device_id__position_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="environments__environment_id__devices__device_id__position_get_request"><h3>URI Parameters</h3><ul><li><strong>Environment ID</strong>: <em>required (string)</em></li><li><strong>Device ID</strong>: <em>required (string)</em></li></ul></div><div class="tab-pane" id="environments__environment_id__devices__device_id__position_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Type: application/json</strong></p><p><strong>Schema</strong>:</p><pre><code>{
+  "x": {
+    "required": true,
+    "type": "string"
+  },
+  "y": {
+    "required": true,
+    "type": "string"
+  }
+}
+</code></pre><p><strong>Example</strong>:</p><pre><code>{
+  "x": 2.3,
+  "y": 3.4
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#environments">Environments</a></li></ul></div></div></div></div></body></html>

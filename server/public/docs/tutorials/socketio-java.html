@@ -1,0 +1,278 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Socket.IO with Java</title>
+  </head>
+<link href="../../styles.css" rel="stylesheet" type="text/css" media="screen" />
+
+<h2 id="flare-tutorial-swift">Socket.IO with Java</h2>
+<p>This page explains how an Android app written in Java can use the Flare library to discover and interact with things in an environment. You may wish to read through the <a href="socketio-generic.html">generic tutorial</a> first. See the Flare sample code for Java for a full implementation.</p>
+
+<p>Note that these simplified examples do not include all the try/catch blocks that you'll need when working with JSONObject variables.</p>
+
+<ul>
+	<li><a href="#device-setup">Device setup</a></li>
+	<li><a href="#thing-setup">Thing setup</a></li>
+	<li><a href="#when-device-position-changes">When device position changes</a></li>
+	<li><a href="#when-a-device-has-become-near-to-a-thing">When a device has become near to a thing</a></li>
+	<li><a href="#when-thing-data-changes">When thing data changes</a></li>
+	<li><a href="#when-device-data-changes">When device data changes</a></li>
+	<li><a href="#when-performing-an-action-on-the-thing">When performing an action on the thing</a></li>
+	<li><a href="#when-performing-an-action-on-the-device">When performing an action on the device</a></li>
+	<li><a href="#when-thing-position-changes">When thing position changes</a></li>
+	<li><a href="#when-device-position-changes-again">When device position changes again</a></li>
+	<li><a href="#when-a-device-is-no-longer-near-to-a-thing">When a device is no longer near to a thing</a></li>
+</ul>
+
+<a name="device-setup"></a>
+<h3 id="device-setup">Device setup</h3>
+<p>The device client makes a REST API call to the server to get information about the device:</p>
+<pre><code>flareManager.getDevice(deviceId, environment.getId(), (json) -&gt; {
+    this.device = new Device(json);
+});
+</code></pre>
+
+<p>The server&#39;s response contains the name, description, etc. for the device, which the client uses to update the interface.</p>
+<p>The client then subscribes to the device so that it will receive any notifications about it:</p>
+<pre><code>flareManager.subscribe(device);
+</code></pre>
+
+<p>Then it requests the most recent data:    </p>
+<pre><code>flareManager.getData(device);
+</code></pre>
+
+<p>The server replies by sending back the data, which is received by this callback:</p>
+<pre><code>public void didReceiveData(Flare flare, JSONObject data) {
+    if (flare == selectedFlare) {
+        double angle = data.getDouble("angle");
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>flareManager.getPosition(device);
+</code></pre>
+
+<p>The server replies by sending back the position, which is received by this callback:</p>
+<pre><code>public void didReceivePosition(Flare flare, PointF position) {
+    if flare == selectedFlare {
+        double x = position.x;
+        double y = position.y;
+    }
+}
+</code></pre>
+
+<a name="thing-setup"></a>
+<h3 id="thing-setup">Thing setup</h3>
+<p>The thing client makes a REST API call to the server to get information about the thing:</p>
+<pre><code>flareManager.getThing(thingId, zone.getId(), environment.getId(), (json) -&gt; {
+    this.thing = new Thing(json);
+});
+</code></pre>
+
+<p>The client then subscribes to the thing so that it will receive any notifications about it:</p>
+<pre><code>flareManager.subscribe(thing);
+</code></pre>
+
+<p>Then it requests the most recent data:    </p>
+<pre><code>flareManager.getData(thing);
+</code></pre>
+
+<p>The client receives the reply:</p>
+<pre><code>public void didReceiveData(Flare flare, JSONObject data) {
+    if (flare == selectedFlare) {
+        String color = data.getString("color");
+        double brightness = data.getDouble("brightness");
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>flareManager.getPosition(thing);
+</code></pre>
+
+<p>And the reply:</p>
+<pre><code>public void didReceivePosition(Flare flare, PointF position) {
+    if (flare == selectedFlare) {
+        double x = position.x;
+        double y = position.y;
+    }
+}
+</code></pre>
+
+<a name="when-device-position-changes"></a>
+<h3 id="when-device-position-changes">When device position changes</h3>
+<p>When the device&#39;s position changes, it sends a message to the server:</p>
+<pre><code>public void changePosition(PointF position) {
+    device.setPosition(position);
+    flareManager.setPosition(device, position);
+}
+</code></pre>
+
+<p>The server will then notify all <em>other</em> clients that have subscribed to the device. Note that it won&#39;t send a message back to the client that sent the original message, because it already has the latest information. </p>
+
+<a name="when-a-device-has-become-near-to-a-thing"></a>
+<h3 id="when-a-device-has-become-near-to-a-thing">When a device has become near to a thing</h3>
+<p>If the server calculates that a device has become near to a thing because the distance between their positions is less than a certain threshold, it will broadcast a <em>near</em> message to all clients that have subscribed to the thing:</p>
+<pre><code>public void near(Thing thing, Device device, double distance) {
+    if (thing == selectedFlare) {
+        nearbyFlare = device;
+    }
+}
+</code></pre>
+
+<p>The device client can then get information about the thing:</p>
+<pre><code>flareManager.getThing(thingId, "-", environment.getId(), (json) -&gt; {
+    nearbyFlare = new Thing(json);
+});
+</code></pre>
+
+<p>Note: If the device client doesn&#39;t know what zone the thing is in, it can just use a dash. The REST URL syntax is verbose, but the thing ID what matters.</p>
+<p>The device client subscribes to the thing:</p>
+<pre><code>flareManager.subscribe(nearbyFlare);
+</code></pre>
+
+<p>It gets the latest data:</p>
+<pre><code>flareManager.getData(nearbyFlare);
+</code></pre>
+
+<p>The server replies by sending back the data:</p>
+<pre><code>public void didReceiveData(Flare flare, JSONObject data) {
+    if (flare == selectedFlare) {
+        ...
+    } else if (flare == nearbyFlare) {
+        String color = data.getString("color");
+        double brightness = data.getDouble("brightness");
+    }
+}
+</code></pre>
+
+<p>The client requests the most recent position:</p>
+<pre><code>flareManager.getPosition(nearbyFlare);
+</code></pre>
+
+<p>The server replies by sending back the position:</p>
+<pre><code>public void didReceivePosition(Flare flare, PointF position) {
+    if (flare == selectedFlare) {
+        ...
+    } else if (flare == nearbyFlare) {
+        double x = position.x;
+        double y = position.y;
+    }
+}
+</code></pre>
+
+<p>The server will also broadcast the same <em>near</em> message to all clients that have subscribed to the device: </p>
+<pre><code>public void near(Thing thing, Device device, double distance) {
+    if (device == selectedFlare) {
+        nearbyFlare = thing;
+    }
+}
+</code></pre>
+
+<p>The thing client can then get information about the device:</p>
+<pre><code>flareManager.getDevice(deviceId, environment.getId(), (json) -&gt; {
+    nearbyFlare = new Device(json);
+});
+</code></pre>
+
+<p>The thing client subscribes to the device:</p>
+<pre><code>flareManager.subscribe(nearbyFlare);
+</code></pre>
+
+<p>It gets the latest data:</p>
+<pre><code>flareManager.getData(nearbyFlare);
+</code></pre>
+
+<p>The server replies by sending back the data, which is handled as above.</p>
+<p>The client requests the most recent position:</p>
+<pre><code>flareManager.getPosition(nearbyFlare);
+</code></pre>
+
+<p>The server replies by sending back the position, which is handled as above.</p>
+
+<a name="when-thing-data-changes"></a>
+<h3 id="when-thing-data-changes">When thing data changes</h3>
+<p>Either client can change the device&#39;s data:</p>
+<pre><code>public void changeColor(String color) {
+    selectedFlare.getData().put("color", color);
+    flareManager.setData(selectedFlare, "color", color);
+}
+
+public void changeColor(double brightness) {
+    selectedFlare.getData().put("brightness", brightness);
+    flareManager.setData(selectedFlare, "brightness", brightness);
+}
+</code></pre>
+
+<p>The server will then notify all other clients that have subscribed to the thing, which will be handled by gotData() as above.</p>
+
+<a name="when-device-data-changes"></a>
+<h3 id="when-device-data-changes">When device data changes</h3>
+<p>Either client can change the device&#39;s data:</p>
+<pre><code>public void changeAngle(double angle) {
+    selectedFlare.getData().put("angle", angle);
+    flareManager.setData(selectedFlare, "angle", angle);
+}
+</code></pre>
+
+<p>The server will then notify all other clients that have subscribed to the device.</p>
+
+<a name="when-performing-an-action-on-the-thing"></a>
+<h3 id="when-performing-an-action-on-the-thing">When performing an action on the thing</h3>
+<p>Any client can perform an action on the thing:</p>
+<pre><code>public void performAction(String action) {
+    flareManager.performAction(selectedFlare, action);
+}
+</code></pre>
+
+<p>The action can be handled by the server or any client. If it is not handled by the server, a message will be broadcast to all <em>other</em> clients subscribed to the thing:</p>
+<pre><code>public void handleAction(Flare flare, String action) {
+    if (action.equals("rainbow")) {
+        ...
+    }
+}
+</code></pre>
+
+<a name="when-performing-an-action-on-the-device"></a>
+<h3 id="when-performing-an-action-on-the-device">When performing an action on the device</h3>
+<p>Any client can perform an action on the device, as above.</p>
+<p>Similarly, if the action is not handled by the server, a message will be broadcast to all <em>other</em> clients subscribed to the device, which will be handled as above</p>
+
+<a name="when-thing-position-changes"></a>
+<h3 id="when-thing-position-changes">When thing position changes</h3>
+<p>If the thing&#39;s position changes, it can send a message to the server:</p>
+<pre><code>public void changePosition(PointF position) {
+    selectedFlare.setPosition(position);
+    flareManager.setPosition(selectedFlare, position);
+}
+</code></pre>
+
+<p>The server will then notify all other clients that have subscribed to the thing.</p>
+
+<a name="when-device-position-changes-again"></a>
+<h3 id="when-device-position-changes-again">When device position changes again</h3>
+<p>You get the idea by now.</p>
+
+<a name="when-a-device-is-no-longer-near-to-a-thing"></a>
+<h3 id="when-a-device-is-no-longer-near-to-a-thing">When a device is no longer near to a thing</h3>
+<p>The server will notice when the device is no longer near to the thing, and notify all clients subscribed to the device:</p>
+<pre><code>public void far(Thing thing, Device device) {
+    if (thing == selectedFlare &amp;&amp; device == nearbyFlare) {
+        flareManager.unsubscribe(device);
+        nearbyFlare = null;
+    }
+}
+</code></pre>
+
+<p>The device can then unsubscribe from the thing, and then it won&#39;t receive notifications about the thing anymore. </p>
+<p>The server will send the same message to all clients subscribed to the thing:</p>
+<pre><code>public void far(Thing thing, Device device) {
+    if (device == selectedFlare &amp;&amp; thing == nearbyFlare) {
+        flareManager.unsubscribe(thing);
+        nearbyFlare = null;
+    }
+}
+</code></pre>
+
+<p>And the thing can unsubscribe from the device as well.</p>

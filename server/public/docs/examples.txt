@@ -1,0 +1,6 @@
+curl --data "{\"data\":{\"color\":\"red\",\"angle\": 90},\"description\": \"iPhone 6 (32 GB)\",\"id\": \"300001\",\"name\": \"My iPhone\",\"position\": {\"x\": 3,\"y\": 1}}" -H "Content-Type: application/json" http://localhost:1234/devices
+
+curl -X PUT --data "{\"description\":\"Coucou\"}" -H "Content-Type: application/json" http://localhost:1234/environments/55e04df3f6d346da715c5a12
+
+
+curl -X DELETE http://localhost:1234/devices/55c0ca963ac454950fc2619d
