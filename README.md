@@ -20,35 +20,24 @@ Flare includes client libraries and sample code for the following platforms:
 - [Java](java/) for Android
 - [Python](python/)
 
-## Dependencies
+See the individual pages above for a list of dependencies, installation and configuration instructions, and usage examples.
 
-Describe any dependencies that must be installed for this software to work.
-This includes programming languages, databases or other storage mechanisms, build tools, frameworks, and so forth.
-If specific versions of other software are required, or known not to work, call that out.
+# Tutorials
 
-## Installation
+These tutorials will jumpstart your development on specific topics:
 
-Detailed instructions on how to install, configure, and get the project running.
-This should be frequently tested to ensure reliability. Alternatively, link to
-a separate [INSTALL](INSTALL.md) document.
+- [Import tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/import-tutorial.html) - how to write a script that imports data into Flare
+- [Location tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/location-tutorial.html) - how to write an iOS or Android app that uses Flare location technologies
+- [Socket.IO tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/socketio-tutorial.html) - how to write an iOS or Android app that uses Flare realtime notifications
 
-## Configuration
+# Sample apps
 
-If the software is configurable, describe it in detail, either here or in other documentation to which you link.
+These apps are included in the sample code. Use the Flare Explorer to set up your environment, and the Trilateral app to navigate using mobile devices.
 
-## Usage
-
-Show users how to use the software.
-Be specific.
-Use appropriate formatting when showing code snippets.
-
-## How to test the software
-
-If the software includes automated tests, detail how to run those tests.
-
-## Known issues
-
-Document any known significant shortcomings with the software.
+- [Trilateral iOS App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-ios.html) - shows a live map of the environment, including all zones and things, with the location of the user's device
+- [Trilateral Android App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-android.html) - shows both a live map and a compass indicating the direction of nearby things
+- [Explorer Web App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-web.html) - browse and edit Flare objects, and connect to nearby things and devices
+- [Explorer Mac App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-mac.html) - browse and edit Flare objects, and connect to nearby things and devices
 
 ## Getting help
 
