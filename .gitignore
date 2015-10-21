@@ -1,0 +1,14 @@
+.DS_Store
+.google
+.gradle
+.idea
+*.iml
+build
+/SkeletonWearableApp
+/SynchronizedNotifications
+/samples
+xcuserdata
+xcshareddata
+Flare*.json
+local.properties
+node_modules
