@@ -26,18 +26,18 @@ See the individual pages above for a list of dependencies, installation and conf
 
 These tutorials will jumpstart your development on specific topics:
 
-- [Import tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/import-tutorial.html) - how to write a script that imports data into Flare
-- [Location tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/location-tutorial.html) - how to write an iOS or Android app that uses Flare location technologies
-- [Socket.IO tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/socketio-tutorial.html) - how to write an iOS or Android app that uses Flare realtime notifications
+- [Import tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/import-tutorial/) - how to write a script that imports data into Flare
+- [Location tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/location-tutorial/) - how to write an iOS or Android app that uses Flare location technologies
+- [Socket.IO tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/socketio-tutorial/) - how to write an iOS or Android app that uses Flare realtime notifications
 
 ## Sample apps
 
 These apps are included in the sample code. Use the Flare Explorer to set up your environment, and the Trilateral app to navigate using mobile devices.
 
-- [Trilateral iOS App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-ios.html) - shows a live map with the location of the user's device
-- [Trilateral Android App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-android.html) - shows a live map and a compass indicating the direction of nearby things
-- [Explorer Web App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-web.html) - browse and edit Flare objects, and connect to nearby things and devices
-- [Explorer Mac App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-mac.html) - browse and edit Flare objects, and connect to nearby things and devices
+- [Trilateral iOS App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-ios/) - shows a live map with the location of the user's device
+- [Trilateral Android App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-android/) - shows a live map and a compass indicating the direction of nearby things
+- [Explorer Web App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-web/) - browse and edit Flare objects, and connect to nearby things and devices
+- [Explorer Mac App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-mac/) - browse and edit Flare objects, and connect to nearby things and devices
 
 ## Getting help
 
