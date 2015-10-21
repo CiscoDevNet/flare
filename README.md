@@ -22,7 +22,7 @@ Flare includes client libraries and sample code for the following platforms:
 
 See the individual pages above for a list of dependencies, installation and configuration instructions, and usage examples.
 
-# Tutorials
+## Tutorials
 
 These tutorials will jumpstart your development on specific topics:
 
@@ -30,7 +30,7 @@ These tutorials will jumpstart your development on specific topics:
 - [Location tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/location-tutorial.html) - how to write an iOS or Android app that uses Flare location technologies
 - [Socket.IO tutorial](http://devnet-stage.kpimdp.com/site/flare/learn/socketio-tutorial.html) - how to write an iOS or Android app that uses Flare realtime notifications
 
-# Sample apps
+## Sample apps
 
 These apps are included in the sample code. Use the Flare Explorer to set up your environment, and the Trilateral app to navigate using mobile devices.
 
