@@ -2,20 +2,20 @@
 
 Flare allows users with mobile devices to discover and interact with things in an environment. It combines multiple location technologies with a realtime communications architecture, to enable new kinds of user interactions. 
 
-- [Flare](http://devnet-stage.kpimdp.com/site/flare/)
+- [DevNet site](http://devnet-stage.kpimdp.com/site/flare/)
 - [Overview](http://devnet-stage.kpimdp.com/site/flare/discover/overview/)
 - [Architecture](http://devnet-stage.kpimdp.com/site/flare/discover/architecture/)
 - [Getting Started](http://devnet-stage.kpimdp.com/site/flare/discover/gettingstarted/)
 
 ## Server
 
-The [Flare server](server/) is implemented in Node.js.
+The [Flare server](server/) is implemented in Node.js. You can run it on your own computer or in a virtual machine. 
 
 ## Clients
 
 Flare includes client libraries and sample code for the following platforms:
 
-- [JavaScript](server/public/) for web page
+- [JavaScript](server/public/) for web pages
 - [Swift](swift/) for iOS, Mac and watchOS
 - [Java](java/) for Android
 - [Python](python/)
@@ -34,8 +34,8 @@ These tutorials will jumpstart your development on specific topics:
 
 These apps are included in the sample code. Use the Flare Explorer to set up your environment, and the Trilateral app to navigate using mobile devices.
 
-- [Trilateral iOS App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-ios.html) - shows a live map of the environment, including all zones and things, with the location of the user's device
-- [Trilateral Android App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-android.html) - shows both a live map and a compass indicating the direction of nearby things
+- [Trilateral iOS App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-ios.html) - shows a live map with the location of the user's device
+- [Trilateral Android App](http://devnet-stage.kpimdp.com/site/flare/learn/trilateral-android.html) - shows a live map and a compass indicating the direction of nearby things
 - [Explorer Web App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-web.html) - browse and edit Flare objects, and connect to nearby things and devices
 - [Explorer Mac App](http://devnet-stage.kpimdp.com/site/flare/learn/explorer-mac.html) - browse and edit Flare objects, and connect to nearby things and devices
 
