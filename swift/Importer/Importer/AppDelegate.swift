@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func importData() {
         if let path = NSBundle.mainBundle().pathForResource(filename, ofType: "json"),
             contents = NSData(contentsOfFile: path),
-            json = NSJSONSerialization.JSONObjectWithData(contents, options: nil, error: nil) as? JSONDictionary,
+            json = (try? NSJSONSerialization.JSONObjectWithData(contents, options: [])) as? JSONDictionary,
             environments = json["environments"] as? JSONArray
         {
             for environment in environments {

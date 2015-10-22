@@ -187,8 +187,9 @@
 		C97E31C61B7E18BE00402556 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Andrew Zamler-Carhart";
 				TargetAttributes = {
 					C97E31CE1B7E18BE00402556 = {
@@ -312,6 +313,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -393,6 +395,7 @@
 				INFOPLIST_FILE = Flare/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.ctao.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Flare;
 				SKIP_INSTALL = YES;
 			};
@@ -412,6 +415,7 @@
 				INFOPLIST_FILE = Flare/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.ctao.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Flare;
 				SKIP_INSTALL = YES;
 			};
@@ -439,6 +443,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.ctao.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Flare;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -462,6 +467,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.ctao.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Flare;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

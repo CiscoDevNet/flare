@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="15A279b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -1322,7 +1322,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="501.5" height="404"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="counterclockwise" verticalHuggingPriority="750" id="Cwc-Mi-G5z">
+                                        <button identifier="counterclockwise2" verticalHuggingPriority="750" id="Cwc-Mi-G5z">
                                             <rect key="frame" x="193" y="372" width="155" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
@@ -1357,7 +1357,7 @@
                                                 <action selector="changeDataDouble:" target="Voe-Tx-rLC" id="oxE-VN-fWD"/>
                                             </connections>
                                         </textField>
-                                        <button identifier="clockwise" verticalHuggingPriority="750" id="Abe-Aq-gcs">
+                                        <button identifier="clockwise2" verticalHuggingPriority="750" id="Abe-Aq-gcs">
                                             <rect key="frame" x="348" y="372" width="104" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
@@ -1369,7 +1369,7 @@
                                                 <action selector="performAction:" target="Voe-Tx-rLC" id="gxC-Eg-74q"/>
                                             </connections>
                                         </button>
-                                        <button identifier="east" verticalHuggingPriority="750" id="zvp-HU-hYO">
+                                        <button identifier="east2" verticalHuggingPriority="750" id="zvp-HU-hYO">
                                             <rect key="frame" x="264" y="342" width="69" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
@@ -1407,7 +1407,7 @@
                                                 <action selector="changePosition:" target="Voe-Tx-rLC" id="RV4-il-eki"/>
                                             </connections>
                                         </textField>
-                                        <button identifier="south" verticalHuggingPriority="750" id="EMT-7O-GWy">
+                                        <button identifier="south2" verticalHuggingPriority="750" id="EMT-7O-GWy">
                                             <rect key="frame" x="331" y="342" width="79" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
@@ -1439,7 +1439,7 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <button identifier="west" verticalHuggingPriority="750" id="EN8-Qg-fqO">
+                                        <button identifier="west2" verticalHuggingPriority="750" id="EN8-Qg-fqO">
                                             <rect key="frame" x="193" y="342" width="73" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
@@ -1451,7 +1451,7 @@
                                                 <action selector="performAction:" target="Voe-Tx-rLC" id="n9Z-Io-Wu2"/>
                                             </connections>
                                         </button>
-                                        <button identifier="north" verticalHuggingPriority="750" id="2OV-bn-vC6">
+                                        <button identifier="north2" verticalHuggingPriority="750" id="2OV-bn-vC6">
                                             <rect key="frame" x="408" y="342" width="77" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
@@ -1524,7 +1524,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView appearanceType="vibrantLight" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="systemDefault" viewBased="YES" indentationPerLevel="16" outlineTableColumn="f5T-p5-RAc" id="JUj-qh-Hzt">
-                                            <rect key="frame" x="0.0" y="0.0" width="220" height="478"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="220" height="0.0"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <animations/>
                                             <size key="intercellSpacing" width="3" height="2"/>

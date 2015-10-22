@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Flare
 import CoreLocation
 import CoreGraphics
 
@@ -43,7 +42,7 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         if (environment != nil) {
             if let uuidString = environment!.uuid {
                 let uuid = NSUUID(UUIDString: uuidString)
-                region = CLBeaconRegion(proximityUUID: uuid, identifier: environment!.name)
+                region = CLBeaconRegion(proximityUUID: uuid!, identifier: environment!.name)
                 beacons = environment!.beacons()
             }
         }
@@ -51,13 +50,13 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     
     public func start() {
         if region != nil {
-            self.locationManager.startRangingBeaconsInRegion(region)
+            self.locationManager.startRangingBeaconsInRegion(region!)
         }
     }
 
     public func stop() {
         if region != nil {
-            self.locationManager.stopRangingBeaconsInRegion(region)
+            self.locationManager.stopRangingBeaconsInRegion(region!)
         }
     }
 
@@ -69,20 +68,19 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         self.locationManager.stopMonitoringSignificantLocationChanges()
     }
     
-    public func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    public func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         switch status {
             case .NotDetermined: NSLog("Not determined")
             case .Restricted: NSLog("Restricted")
             case .Denied: NSLog("Denied")
             case .AuthorizedAlways: NSLog("Authorized Always")
             case .AuthorizedWhenInUse: NSLog("Authorized When In Use")
-            default:  NSLog("Other")
         }
     }
 
-    public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [AnyObject]) {
+    public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         NSLog("Did update locations")
-        if let location = locations.last as? CLLocation {
+        if let location = locations.last {
             // NSLog("Location: \(location)")
             currentLatlong = location
             
@@ -92,14 +90,14 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         }
     }
 
-    public func locationManager(manager: CLLocationManager!, didRangeBeacons clbeacons: [AnyObject]!, inRegion region: CLBeaconRegion!) {
+    public func locationManager(manager: CLLocationManager, didRangeBeacons clbeacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         var clBeaconIndex = [Int:CLBeacon]()
         
-        for clbeacon in clbeacons as! [CLBeacon] {
+        for clbeacon in clbeacons {
             clBeaconIndex[clbeacon.minor.integerValue] = clbeacon
         }
         
-        for (minor,beacon) in beacons {
+        for (_,beacon) in beacons {
             if let clbeacon = clBeaconIndex[beacon.minor!] {
                 beacon.addDistance(clbeacon.accuracy)
             } else {
@@ -119,8 +117,8 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         var x = 0.0
         var y = 0.0
         
-        for (minor,beacon) in beacons {
-            var distance = average ? beacon.averageDistance() : beacon.lastDistance()
+        for (_,beacon) in beacons {
+            let distance = average ? beacon.averageDistance() : beacon.lastDistance()
             if distance > 0 {
                 beacon.inverseDistance = 1.0 / (distance * distance)
             } else {
@@ -129,20 +127,20 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         }
 
         var sortedBeacons = [Thing](beacons.values)
-        sortedBeacons.sort { (one: Thing, two: Thing) -> Bool in
+        sortedBeacons.sortInPlace { (one: Thing, two: Thing) -> Bool in
             return one.inverseDistance > two.inverseDistance
         }
         
-        for (index,beacon) in enumerate(sortedBeacons) {
+        for (_,beacon) in sortedBeacons.enumerate() {
             if beacon.inverseDistance != -1 {
-                var weight = beacon.inverseDistance /* * (index < 2 ? 2 : 1) */
+                let weight = beacon.inverseDistance /* * (index < 2 ? 2 : 1) */
                 x += Double(beacon.position.x) * weight
                 y += Double(beacon.position.y) * weight
                 total += weight
             }
         }
         
-        var result = CGPoint(x:x / total, y:y / total)
+        let result = CGPoint(x:x / total, y:y / total)
         // NSLog("Result: \(result)")
         return result
     }

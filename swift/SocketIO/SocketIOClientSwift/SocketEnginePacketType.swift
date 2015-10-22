@@ -1,8 +1,8 @@
 //
-//  SocketTypes.swift
+//  SocketEnginePacketType.swift
 //  Socket.IO-Client-Swift
 //
-//  Created by Erik Little on 4/8/15.
+//  Created by Erik Little on 10/7/15.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,14 +21,10 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
+//
 
 import Foundation
 
-public typealias AckCallback = ([AnyObject]) -> Void
-public typealias NormalCallback = ([AnyObject], SocketAckEmitter?) -> Void
-public typealias OnAckCallback = (timeoutAfter: UInt64, callback: AckCallback) -> Void
-
-enum Either<E, V> {
-    case Left(E)
-    case Right(V)
+@objc public enum SocketEnginePacketType: Int {
+    case Open, Close, Ping, Pong, Message, Upgrade, Noop
 }

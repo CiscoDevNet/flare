@@ -42,7 +42,7 @@ public class FlareManager: APIManager {
     }
     
     public func disconnect() {
-        self.socket.disconnect(fast: true)
+        self.socket.disconnect()
     }
     
     // Asynchronously loads all zones and things for one environment, and then calls the handler.
@@ -141,7 +141,7 @@ public class FlareManager: APIManager {
     public func modifyFlare(flare: Flare, handler:(JSONDictionary) -> (JSONDictionary)) {
         getFlare(flare) {json in
             NSLog("Current  \(flare): \(json)")
-            var modifiedJson = handler(json)
+            let modifiedJson = handler(json)
             NSLog("Modified \(flare): \(modifiedJson)")
             self.updateFlare(flare, json: modifiedJson) {json in }
         }
@@ -415,10 +415,10 @@ public class FlareManager: APIManager {
     public func savedDevice(environmentId: String, handler: (Device?) -> ()) {
         if let deviceId = NSUserDefaults.standardUserDefaults().stringForKey("deviceId") {
             self.getDevice(deviceId, environmentId: environmentId) { (json) -> () in
-                if let validId = json["_id"] as? String {
+                if let _ = json["_id"] as? String {
                     if let deviceEnvironment = json["environment"] as? String {
                         if deviceEnvironment == environmentId {
-                            var device = Device(json: json)
+                            let device = Device(json: json)
                             self.addToIndex(device)
                             
                             NSLog("Found existing device: \(device.name)")
@@ -445,7 +445,7 @@ public class FlareManager: APIManager {
     // creates a new device object using the default values in the template
     public func newDeviceObject(environmentId: String, template: JSONDictionary, handler: (Device?) -> ()) {
         newDevice(environmentId, device: template) { (json) -> () in
-            var device = Device(json: json)
+            let device = Device(json: json)
             self.addToIndex(device)
             
             NSUserDefaults.standardUserDefaults().setObject(device.id, forKey: "deviceId")
@@ -472,12 +472,12 @@ public class FlareManager: APIManager {
     }
     
     public func unsubscribe(flare: Flare) {
-        var message = flare.flareInfo
+        let message = flare.flareInfo
         emit("unsubscribe", message: message)
     }
     
     public func getData(flare: Flare) {
-        var message = flare.flareInfo
+        let message = flare.flareInfo
         emit("getData", message: message)
     }
     
@@ -497,7 +497,7 @@ public class FlareManager: APIManager {
     }
     
     public func getPosition(flare: Flare) {
-        var message = flare.flareInfo
+        let message = flare.flareInfo
         emit("getPosition", message: message)
     }
     
@@ -519,7 +519,7 @@ public class FlareManager: APIManager {
     
     public func addHandlers() {
         socket.on("data") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 flare = self.flareForMessage(message),
                 data = message["data"] as? JSONDictionary
             {
@@ -538,12 +538,12 @@ public class FlareManager: APIManager {
         }
         
         socket.on("position") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 flare = self.flareForMessage(message),
                 positionDict = message["position"] as? JSONDictionary
             {
                 if self.debugSocket { NSLog("position: \(message)") }
-                var position = getPoint(positionDict);
+                let position = getPoint(positionDict);
                 
                 if let thing = flare as? Thing {
                     thing.position = position
@@ -561,7 +561,7 @@ public class FlareManager: APIManager {
         }
         
         socket.on("handleAction") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 flare = self.flareForMessage(message),
                 action = message["action"] as? String
             {
@@ -577,7 +577,7 @@ public class FlareManager: APIManager {
         }
         
         socket.on("enter") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 zoneId = message["zone"] as? String,
                 deviceId = message["device"] as? String,
                 zone = self.flareIndex[zoneId] as? Zone,
@@ -589,7 +589,7 @@ public class FlareManager: APIManager {
         }
         
         socket.on("exit") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 zoneId = message["zone"] as? String,
                 deviceId = message["device"] as? String,
                 zone = self.flareIndex[zoneId] as? Zone,
@@ -601,7 +601,7 @@ public class FlareManager: APIManager {
         }
         
         socket.on("near") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 thingId = message["thing"] as? String,
                 deviceId = message["device"] as? String,
                 thing = self.flareIndex[thingId] as? Thing,
@@ -614,7 +614,7 @@ public class FlareManager: APIManager {
         }
         
         socket.on("far") {messages, ack in
-            if let message = messages?[0] as? JSONDictionary,
+            if let message = messages[0] as? JSONDictionary,
                 thingId = message["thing"] as? String,
                 deviceId = message["device"] as? String,
                 thing = self.flareIndex[thingId] as? Thing,

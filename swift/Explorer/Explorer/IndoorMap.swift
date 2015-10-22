@@ -39,7 +39,7 @@ class IndoorMap: NSView {
     
     func loadEnvironment(value: Environment) {
         if value != environment {
-            for (id,label) in labels {
+            for (_,label) in labels {
                 label.removeFromSuperview()
             }
             labels.removeAll(keepCapacity: true)
@@ -68,7 +68,7 @@ class IndoorMap: NSView {
             label!.editable = false
             label!.drawsBackground = false
             label!.bezeled = false
-            label!.alignment = NSTextAlignment.CenterTextAlignment
+            label!.alignment = NSTextAlignment.Center
             self.addSubview(label!)
             labels[flare.id] = label!
         }
@@ -77,14 +77,14 @@ class IndoorMap: NSView {
 
     override func drawRect(rect: CGRect) {
         if (environment != nil) {
-            var inset = CGRectInset(rect, 20, 20)
-            var grid = environment!.perimeter
+            let inset = CGRectInset(rect, 20, 20)
+            let grid = environment!.perimeter
             
             insetCenter = centerPoint(inset)
             gridCenter = centerPoint(grid)
             
-            var xScale = inset.size.width / grid.size.width
-            var yScale = inset.size.height / grid.size.height
+            let xScale = inset.size.width / grid.size.width
+            let yScale = inset.size.height / grid.size.height
             scale = (xScale < yScale) ? xScale : yScale
             
             fillRect(grid, color: white, inset: 0)
@@ -92,7 +92,7 @@ class IndoorMap: NSView {
             for zone in zones {
                 fillRect(zone.perimeter, color: white, inset: 2)
                 
-                var label = labelForFlare(zone)
+                let label = labelForFlare(zone)
                 label.frame.origin = convertPoint(centerPoint(zone.perimeter)) - CGSize(width: 100, height: 10)
             }
             
@@ -115,14 +115,14 @@ class IndoorMap: NSView {
                 }
                 fillCircle(thing.position, radius: 10, color: color)
                 
-                var label = labelForFlare(thing)
+                let label = labelForFlare(thing)
                 label.frame.origin = convertPoint(thing.position) - CGSize(width: 100, height: 33)
             }
 
             for device in environment!.devices {
                 fillCircle(device.position, radius: 10, color: blue)
 
-                var label = labelForFlare(device)
+                let label = labelForFlare(device)
                 label.frame.origin = convertPoint(device.position) - CGSize(width: 100, height: 33)
                 /*
                 // example of using distanceTo() and angleTo()
@@ -154,10 +154,10 @@ class IndoorMap: NSView {
     }
     
     func fillRect(rect: CGRect, color: NSColor, inset: CGFloat) {
-        var converted = convertRect(rect)
-        var inset = CGRectInset(convertRect(rect), inset, inset)
+        let converted = convertRect(rect)
+        let inset = CGRectInset(convertRect(rect), inset, inset)
         if inset.size.width > 0 && inset.size.height > 0 {
-            var path = NSBezierPath(rect: inset)
+            let path = NSBezierPath(rect: inset)
             color.setFill()
             path.fill()
         } else {
@@ -167,10 +167,10 @@ class IndoorMap: NSView {
     }
     
     func fillCircle(center: CGPoint, radius: CGFloat, color: NSColor) {
-        var newCenter = convertPoint(center)
-        var rect = CGRect(x: newCenter.x - radius, y: newCenter.y - radius, width: radius * 2, height: radius * 2)
+        let newCenter = convertPoint(center)
+        let rect = CGRect(x: newCenter.x - radius, y: newCenter.y - radius, width: radius * 2, height: radius * 2)
         if rect.origin.x < 10000000 && rect.origin.y < 10000000 {
-            var path = NSBezierPath(ovalInRect: rect)
+            let path = NSBezierPath(ovalInRect: rect)
             color.setFill()
             path.fill()
         } else {

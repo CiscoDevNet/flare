@@ -32,14 +32,14 @@ public class APIManager: NSObject {
         handler:(AnyObject, NSURLRequest, NSURLResponse?, Double) -> ())
     {
         let startTime = NSDate()
-        var url = urlWithParams(uri, params:params)
-        var request = NSMutableURLRequest(URL:url)
+        let url = urlWithParams(uri, params:params)
+        let request = NSMutableURLRequest(URL:url)
         request.HTTPMethod = method.rawValue
         
         if debugHttp { NSLog("url: \(request.HTTPMethod) \(url)") }
         
         if (message != nil) {
-            let messageData = NSJSONSerialization.dataWithJSONObject(message!, options:nil, error:nil)
+            let messageData = try? NSJSONSerialization.dataWithJSONObject(message!, options:[])
             let messageString = NSString(data: messageData!, encoding: NSUTF8StringEncoding)
             
             request.HTTPBody = messageData
@@ -49,17 +49,17 @@ public class APIManager: NSObject {
         }
         
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue.mainQueue(),
-            completionHandler: {(response: NSURLResponse!, data: NSData!, error: NSError!) -> () in
+            completionHandler: {(response: NSURLResponse?, data: NSData?, error: NSError?) -> () in
                 if error == nil {
                     let duration = 0 - startTime.timeIntervalSinceNow
-                    if let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data!, options: nil, error: nil)  {
+                    if let json: AnyObject = try? NSJSONSerialization.JSONObjectWithData(data!, options: [])  {
                         handler(json, request, response, duration)
                     } else {
                         NSLog("Not json: \(NSString(data: data!, encoding: NSUTF8StringEncoding)))")
                         handler([:], request, response, duration)
                     }
                 } else {
-                    NSLog("Error: \(error.localizedDescription)")
+                    NSLog("Error: \(error!.localizedDescription)")
                 }
         })
     }
@@ -108,13 +108,13 @@ public class APIManager: NSObject {
         if params != nil && params!.count > 0 {
             urlString += "?" + paramString(params!)
         }
-        var url: NSURL? = NSURL(string:urlString)
+        let url: NSURL? = NSURL(string:urlString)
         return url!
     }
     
     // formats the parameters for a URL
     public func paramString(params: JSONDictionary) -> String {
-        var keyValues = NSMutableArray()
+        let keyValues = NSMutableArray()
         for (key, value) in params { keyValues.addObject("\(key)=\(value)") }
         return keyValues.componentsJoinedByString("&")
     }
@@ -128,15 +128,15 @@ public class APIManager: NSObject {
     
     // this handler can be used to print out all info from an API call
     public var printInfo = {(json: JSONDictionary, request: NSURLRequest, response: NSURLResponse?, duration: Double) -> () in
-        println("url: \(request.HTTPMethod) \(request.URL)")
-        if response != nil { println("response: \((response! as! NSHTTPURLResponse).statusCode)") }
-        println("json: \(json)")
-        println("duration: \(duration)")
+        print("url: \(request.HTTPMethod) \(request.URL)")
+        if response != nil { print("response: \((response! as! NSHTTPURLResponse).statusCode)") }
+        print("json: \(json)")
+        print("duration: \(duration)")
     }
     
     // this handler can be used to print out the json from an API call
     public var printJson = {(json: JSONDictionary) -> () in
-        println("json: \(json)")
+        print("json: \(json)")
     }
 }
 

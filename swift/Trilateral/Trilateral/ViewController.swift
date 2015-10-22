@@ -41,7 +41,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, FlareManagerD
     @IBOutlet weak var instantX: UILabel!
     @IBOutlet weak var instantY: UILabel!
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         if let newHost = defaults.stringForKey("host") { host = newHost }
         let newPort = defaults.integerForKey("port")
         if newPort != 0 { port = newPort }

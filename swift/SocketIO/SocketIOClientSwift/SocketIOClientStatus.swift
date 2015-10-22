@@ -1,8 +1,8 @@
 //
-//  SocketTypes.swift
+//  SocketIOClientStatus.swift
 //  Socket.IO-Client-Swift
 //
-//  Created by Erik Little on 4/8/15.
+//  Created by Erik Little on 8/14/15.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,21 @@
 
 import Foundation
 
-public typealias AckCallback = ([AnyObject]) -> Void
-public typealias NormalCallback = ([AnyObject], SocketAckEmitter?) -> Void
-public typealias OnAckCallback = (timeoutAfter: UInt64, callback: AckCallback) -> Void
+@objc public enum SocketIOClientStatus: Int, CustomStringConvertible {
+    case NotConnected, Closed, Connecting, Connected, Reconnecting
 
-enum Either<E, V> {
-    case Left(E)
-    case Right(V)
+    public var description: String {
+        switch self {
+        case NotConnected:
+            return "Not Connected"
+        case Closed:
+            return "Closed"
+        case Connecting:
+            return "Connecting"
+        case Connected:
+            return "Connected"
+        case Reconnecting:
+            return "Reconnecting"
+        }
+    }
 }

@@ -26,7 +26,7 @@ public class Flare: NSObject {
     }
 
     public var flareClass: String {
-        var className = NSStringFromClass(self.dynamicType)
+        let className = NSStringFromClass(self.dynamicType)
         return className.componentsSeparatedByString(".").last!
     }
     
@@ -96,7 +96,7 @@ public class Environment: Flare {
     public func beacons() -> [Int:Thing] {
         var results = [Int:Thing]()
         for zone in zones {
-            if let major = zone.major {
+            if let _ = zone.major {
                 for thing in zone.things {
                     if let minor = thing.minor {
                         results[minor] = thing

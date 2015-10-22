@@ -10,22 +10,11 @@
 		C951C9F61B9F77E200F898A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951C9F51B9F77E200F898A8 /* AppDelegate.swift */; };
 		C951C9F81B9F77E200F898A8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C951C9F71B9F77E200F898A8 /* Images.xcassets */; };
 		C951C9FB1B9F77E200F898A8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C951C9F91B9F77E200F898A8 /* MainMenu.xib */; };
-		C951CA071B9F77E200F898A8 /* ReflektorRemoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C951CA061B9F77E200F898A8 /* ReflektorRemoteTests.swift */; };
 		C951CA121B9F780100F898A8 /* SocketIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C951CA111B9F780100F898A8 /* SocketIO.framework */; };
 		C951CA141B9F780D00F898A8 /* Flare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C951CA131B9F780D00F898A8 /* Flare.framework */; };
 		C951CA161B9F783100F898A8 /* Flare.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C951CA131B9F780D00F898A8 /* Flare.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C951CA171B9F783300F898A8 /* SocketIO.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C951CA111B9F780100F898A8 /* SocketIO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		C951CA011B9F77E200F898A8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C951C9E81B9F77E200F898A8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C951C9EF1B9F77E200F898A8;
-			remoteInfo = ReflektorRemote;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		C951CA151B9F782A00F898A8 /* CopyFiles */ = {
@@ -47,9 +36,6 @@
 		C951C9F51B9F77E200F898A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C951C9F71B9F77E200F898A8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C951C9FA1B9F77E200F898A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		C951CA001B9F77E200F898A8 /* ReflektorRemoteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReflektorRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C951CA051B9F77E200F898A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C951CA061B9F77E200F898A8 /* ReflektorRemoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflektorRemoteTests.swift; sourceTree = "<group>"; };
 		C951CA111B9F780100F898A8 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = ../../SocketIO/Output/Release/SocketIO.framework; sourceTree = "<group>"; };
 		C951CA131B9F780D00F898A8 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = ../../Flare/Output/Release/Flare.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,13 +50,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C951C9FD1B9F77E200F898A8 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,7 +57,6 @@
 			isa = PBXGroup;
 			children = (
 				C951C9F21B9F77E200F898A8 /* ReflektorRemote */,
-				C951CA031B9F77E200F898A8 /* ReflektorRemoteTests */,
 				C951C9F11B9F77E200F898A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,7 +65,6 @@
 			isa = PBXGroup;
 			children = (
 				C951C9F01B9F77E200F898A8 /* ReflektorRemote.app */,
-				C951CA001B9F77E200F898A8 /* ReflektorRemoteTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,23 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				C951C9F41B9F77E200F898A8 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		C951CA031B9F77E200F898A8 /* ReflektorRemoteTests */ = {
-			isa = PBXGroup;
-			children = (
-				C951CA061B9F77E200F898A8 /* ReflektorRemoteTests.swift */,
-				C951CA041B9F77E200F898A8 /* Supporting Files */,
-			);
-			path = ReflektorRemoteTests;
-			sourceTree = "<group>";
-		};
-		C951CA041B9F77E200F898A8 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				C951CA051B9F77E200F898A8 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -159,24 +119,6 @@
 			productReference = C951C9F01B9F77E200F898A8 /* ReflektorRemote.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C951C9FF1B9F77E200F898A8 /* ReflektorRemoteTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C951CA0D1B9F77E200F898A8 /* Build configuration list for PBXNativeTarget "ReflektorRemoteTests" */;
-			buildPhases = (
-				C951C9FC1B9F77E200F898A8 /* Sources */,
-				C951C9FD1B9F77E200F898A8 /* Frameworks */,
-				C951C9FE1B9F77E200F898A8 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				C951CA021B9F77E200F898A8 /* PBXTargetDependency */,
-			);
-			name = ReflektorRemoteTests;
-			productName = ReflektorRemoteTests;
-			productReference = C951CA001B9F77E200F898A8 /* ReflektorRemoteTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -184,15 +126,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = Cisco;
 				TargetAttributes = {
 					C951C9EF1B9F77E200F898A8 = {
 						CreatedOnToolsVersion = 6.4;
-					};
-					C951C9FF1B9F77E200F898A8 = {
-						CreatedOnToolsVersion = 6.4;
-						TestTargetID = C951C9EF1B9F77E200F898A8;
 					};
 				};
 			};
@@ -210,7 +148,6 @@
 			projectRoot = "";
 			targets = (
 				C951C9EF1B9F77E200F898A8 /* ReflektorRemote */,
-				C951C9FF1B9F77E200F898A8 /* ReflektorRemoteTests */,
 			);
 		};
 /* End PBXProject section */
@@ -225,13 +162,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C951C9FE1B9F77E200F898A8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -243,23 +173,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C951C9FC1B9F77E200F898A8 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C951CA071B9F77E200F898A8 /* ReflektorRemoteTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		C951CA021B9F77E200F898A8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C951C9EF1B9F77E200F898A8 /* ReflektorRemote */;
-			targetProxy = C951CA011B9F77E200F898A8 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		C951C9F91B9F77E200F898A8 /* MainMenu.xib */ = {
@@ -294,6 +208,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -361,12 +276,13 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/SocketIO/Output/Release",
-					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/Flare/Output/Release",
+					../SocketIO/Output/Release,
+					../Flare/Output/Release,
 				);
 				INFOPLIST_FILE = ReflektorRemote/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.flare.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -379,51 +295,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/SocketIO/Output/Release",
-					"/Volumes/System/Users/azamler/Projects/Flare/IoE-UX-Flare/prototypes/iOS/Flare/Output/Release",
+					../SocketIO/Output/Release,
+					../Flare/Output/Release,
 				);
 				INFOPLIST_FILE = ReflektorRemote/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.flare.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		C951CA0E1B9F77E200F898A8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = ReflektorRemoteTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReflektorRemote.app/Contents/MacOS/ReflektorRemote";
-			};
-			name = Debug;
-		};
-		C951CA0F1B9F77E200F898A8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = ReflektorRemoteTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReflektorRemote.app/Contents/MacOS/ReflektorRemote";
 			};
 			name = Release;
 		};
@@ -444,15 +323,6 @@
 			buildConfigurations = (
 				C951CA0B1B9F77E200F898A8 /* Debug */,
 				C951CA0C1B9F77E200F898A8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C951CA0D1B9F77E200F898A8 /* Build configuration list for PBXNativeTarget "ReflektorRemoteTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C951CA0E1B9F77E200F898A8 /* Debug */,
-				C951CA0F1B9F77E200F898A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -68,15 +68,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         
         defaults.registerDefaults(factorySettings! as! [String : AnyObject])
 
-        defaultsController.addObserver(self, forKeyPath: "values.host", options: nil, context: nil)
-        defaultsController.addObserver(self, forKeyPath: "values.port", options: nil, context: nil)
+        defaultsController.addObserver(self, forKeyPath: "values.host", options: [], context: nil)
+        defaultsController.addObserver(self, forKeyPath: "values.port", options: [], context: nil)
 
         load()
     }
     
     func load() {
-        var host = defaults.stringForKey("host")!
-        var port = defaults.integerForKey("port")
+        let host = defaults.stringForKey("host")!
+        let port = defaults.integerForKey("port")
         
         flareManager = FlareManager(host: host, port: port)
         flareManager.delegate = self
@@ -115,7 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?,
-        change: [NSObject : AnyObject]?, context: UnsafeMutablePointer<Void>)
+        change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>)
     {
         switch keyPath! {
             case "values.host", "values.port": load()
@@ -155,7 +155,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     @IBAction func addRemove(sender: NSSegmentedControl) {
-        var selected = sender.selectedSegment
+        let selected = sender.selectedSegment
 
         switch selected {
         case 0: newFlare(sender)
@@ -165,7 +165,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     @IBAction func newFlare(sender: AnyObject) {
-        var template: JSONDictionary = ["name":"Untitled", "description":"", "data":[:]]
+        let template: JSONDictionary = ["name":"Untitled", "description":"", "data":[:]]
 
         flareManager.newFlare(selectedFlare, json: template) { json in
             if let selectId = json["_id"] as? String {
@@ -232,7 +232,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             }
         } else if flare == nearbyFlare {
             if let device = nearbyFlare as? Device, thing = selectedFlare as? Thing {
-                var distance = device.position - thing.position
+                let distance = device.position - thing.position
                 nearbyDistanceField.doubleValue = distance
             }
         }
@@ -290,7 +290,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBAction func changeName(sender: NSTextField) {
         if let flare = selectedFlare {
-            var name = sender.stringValue
+            let name = sender.stringValue
             flare.name = name
             self.outlineView.reloadData()
             flareManager.updateFlare(flare, json: ["name":name]) {json in }
@@ -299,7 +299,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBAction func changeComment(sender: NSTextField) {
         if let flare = selectedFlare {
-            var comment = sender.stringValue
+            let comment = sender.stringValue
             flare.comment = comment
             flareManager.updateFlare(flare, json: ["description":comment]) {json in }
         }
@@ -307,7 +307,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBAction func changeDataString(sender: NSTextField) {
         if let flare = selectedFlare {
-            var value = sender.stringValue
+            let value = sender.stringValue
             flare.data[sender.identifier!] = value
             flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
         }
@@ -315,7 +315,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBAction func changeDataInteger(sender: NSTextField) {
         if let flare = selectedFlare {
-            var value = sender.integerValue
+            let value = sender.integerValue
             flare.data[sender.identifier!] = value
             flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
         }
@@ -323,7 +323,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBAction func changeDataDouble(sender: NSTextField) {
         if let flare = selectedFlare {
-            var value = sender.doubleValue
+            let value = sender.doubleValue
             flare.data[sender.identifier!] = value
             flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
         }
@@ -331,11 +331,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
 
     @IBAction func changePosition(sender: NSTextField) {
         if let thing = selectedFlare as? Thing {
-            var position = CGPoint(x: xField.doubleValue, y: yField.doubleValue)
+            let position = CGPoint(x: xField.doubleValue, y: yField.doubleValue)
             thing.position = position
             flareManager.setPosition(thing, position: position, sender: nil)
         } else if let device = selectedFlare as? Device {
-            var position = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
+            let position = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
             device.position = position
             flareManager.setPosition(device, position: position, sender: nil)
         }
@@ -363,7 +363,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBAction func changeAngle(sender: NSTextField) {
         if let flare = nearbyFlare {
-            var value = sender.doubleValue
+            let value = sender.doubleValue
             flare.data["angle"] = value
             flareManager.setData(flare, key: "angle", value: value, sender: nil)
         }
@@ -424,7 +424,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     func outlineView(outlineView: NSOutlineView!, viewForTableColumn tableColumn: NSTableColumn!, item: AnyObject!) -> NSView! {
-        var view = (item as! Flare).id == "" ?
+        let view = (item as! Flare).id == "" ?
             outlineView.makeViewWithIdentifier("HeaderCell", owner: self) as! NSTableCellView :
             outlineView.makeViewWithIdentifier("DataCell", owner: self) as! NSTableCellView
         

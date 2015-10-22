@@ -73,7 +73,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 pageField.integerValue = page
             }
             
-            if let product = data["product"] as? String, productIndex = find(products, product) {
+            if let product = data["product"] as? String, productIndex = products.indexOf(product) {
                 productPopup.selectItemAtIndex(productIndex)
             }
             

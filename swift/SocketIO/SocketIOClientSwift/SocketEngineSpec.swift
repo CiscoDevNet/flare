@@ -1,8 +1,8 @@
 //
-//  SocketTypes.swift
+//  SocketEngineSpec.swift
 //  Socket.IO-Client-Swift
 //
-//  Created by Erik Little on 4/8/15.
+//  Created by Erik Little on 10/7/15.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,14 +21,22 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
+//
 
 import Foundation
 
-public typealias AckCallback = ([AnyObject]) -> Void
-public typealias NormalCallback = ([AnyObject], SocketAckEmitter?) -> Void
-public typealias OnAckCallback = (timeoutAfter: UInt64, callback: AckCallback) -> Void
-
-enum Either<E, V> {
-    case Left(E)
-    case Right(V)
+@objc public protocol SocketEngineSpec {
+    weak var client: SocketEngineClient? {get set}
+    var cookies: [NSHTTPCookie]? {get}
+    var sid: String {get}
+    var socketPath: String {get}
+    var urlPolling: String {get}
+    var urlWebSocket: String {get}
+    
+    init(client: SocketEngineClient, options: NSDictionary?)
+    
+    func close()
+    func open(opts: [String: AnyObject]?)
+    func send(msg: String, withData datas: [NSData]?)
+    func write(msg: String, withType type: SocketEnginePacketType, withData data: [NSData]?)
 }

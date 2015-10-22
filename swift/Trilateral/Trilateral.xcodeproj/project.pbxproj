@@ -17,21 +17,10 @@
 		C9D1AA481AC1F5850003B8A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9D1AA461AC1F5850003B8A1 /* Main.storyboard */; };
 		C9D1AA4A1AC1F5850003B8A1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9D1AA491AC1F5850003B8A1 /* Images.xcassets */; };
 		C9D1AA4D1AC1F5850003B8A1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9D1AA4B1AC1F5850003B8A1 /* LaunchScreen.xib */; };
-		C9D1AA591AC1F5860003B8A1 /* TrilateralTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1AA581AC1F5860003B8A1 /* TrilateralTests.swift */; };
 		C9D1AA631AC1F6F10003B8A1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D1AA621AC1F6F10003B8A1 /* CoreLocation.framework */; };
 		C9D1AA651AC1FA100003B8A1 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D1AA641AC1FA100003B8A1 /* CoreBluetooth.framework */; };
 		C9D1AA7A1AC4575D0003B8A1 /* IndoorMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		C9D1AA531AC1F5860003B8A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9D1AA351AC1F5850003B8A1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9D1AA3C1AC1F5850003B8A1;
-			remoteInfo = Trilateral;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		C98970781B81E92B00DAB978 /* CopyFiles */ = {
@@ -58,9 +47,6 @@
 		C9D1AA471AC1F5850003B8A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C9D1AA491AC1F5850003B8A1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C9D1AA4C1AC1F5850003B8A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		C9D1AA521AC1F5860003B8A1 /* TrilateralTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrilateralTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9D1AA571AC1F5860003B8A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9D1AA581AC1F5860003B8A1 /* TrilateralTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrilateralTests.swift; sourceTree = "<group>"; };
 		C9D1AA621AC1F6F10003B8A1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		C9D1AA641AC1FA100003B8A1 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorMap.swift; sourceTree = "<group>"; };
@@ -78,13 +64,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C9D1AA4F1AC1F5860003B8A1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -92,7 +71,6 @@
 			isa = PBXGroup;
 			children = (
 				C9D1AA3F1AC1F5850003B8A1 /* Trilateral */,
-				C9D1AA551AC1F5860003B8A1 /* TrilateralTests */,
 				C9D1AA3E1AC1F5850003B8A1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,7 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				C9D1AA3D1AC1F5850003B8A1 /* Trilateral.app */,
-				C9D1AA521AC1F5860003B8A1 /* TrilateralTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -126,23 +103,6 @@
 			isa = PBXGroup;
 			children = (
 				C9D1AA411AC1F5850003B8A1 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		C9D1AA551AC1F5860003B8A1 /* TrilateralTests */ = {
-			isa = PBXGroup;
-			children = (
-				C9D1AA581AC1F5860003B8A1 /* TrilateralTests.swift */,
-				C9D1AA561AC1F5860003B8A1 /* Supporting Files */,
-			);
-			path = TrilateralTests;
-			sourceTree = "<group>";
-		};
-		C9D1AA561AC1F5860003B8A1 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				C9D1AA571AC1F5860003B8A1 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -179,41 +139,20 @@
 			productReference = C9D1AA3D1AC1F5850003B8A1 /* Trilateral.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C9D1AA511AC1F5860003B8A1 /* TrilateralTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C9D1AA5F1AC1F5860003B8A1 /* Build configuration list for PBXNativeTarget "TrilateralTests" */;
-			buildPhases = (
-				C9D1AA4E1AC1F5860003B8A1 /* Sources */,
-				C9D1AA4F1AC1F5860003B8A1 /* Frameworks */,
-				C9D1AA501AC1F5860003B8A1 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				C9D1AA541AC1F5860003B8A1 /* PBXTargetDependency */,
-			);
-			name = TrilateralTests;
-			productName = TrilateralTests;
-			productReference = C9D1AA521AC1F5860003B8A1 /* TrilateralTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		C9D1AA351AC1F5850003B8A1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = Cisco;
 				TargetAttributes = {
 					C9D1AA3C1AC1F5850003B8A1 = {
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = UN88H9QU8J;
-					};
-					C9D1AA511AC1F5860003B8A1 = {
-						CreatedOnToolsVersion = 6.2;
-						TestTargetID = C9D1AA3C1AC1F5850003B8A1;
 					};
 				};
 			};
@@ -231,7 +170,6 @@
 			projectRoot = "";
 			targets = (
 				C9D1AA3C1AC1F5850003B8A1 /* Trilateral */,
-				C9D1AA511AC1F5860003B8A1 /* TrilateralTests */,
 			);
 		};
 /* End PBXProject section */
@@ -248,13 +186,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C9D1AA501AC1F5860003B8A1 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -268,23 +199,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C9D1AA4E1AC1F5860003B8A1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C9D1AA591AC1F5860003B8A1 /* TrilateralTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		C9D1AA541AC1F5860003B8A1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9D1AA3C1AC1F5850003B8A1 /* Trilateral */;
-			targetProxy = C9D1AA531AC1F5860003B8A1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		C9D1AA461AC1F5850003B8A1 /* Main.storyboard */ = {
@@ -326,6 +241,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -398,6 +314,7 @@
 				INFOPLIST_FILE = Trilateral/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)com.cisco.flare.Trilateral";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "13d2036f-29dc-4c2c-825e-0ca42711dabb";
 			};
@@ -416,42 +333,9 @@
 				INFOPLIST_FILE = Trilateral/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)com.cisco.flare.Trilateral";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "13d2036f-29dc-4c2c-825e-0ca42711dabb";
-			};
-			name = Release;
-		};
-		C9D1AA601AC1F5860003B8A1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = TrilateralTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Trilateral.app/Trilateral";
-			};
-			name = Debug;
-		};
-		C9D1AA611AC1F5860003B8A1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = TrilateralTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Trilateral.app/Trilateral";
 			};
 			name = Release;
 		};
@@ -472,15 +356,6 @@
 			buildConfigurations = (
 				C9D1AA5D1AC1F5860003B8A1 /* Debug */,
 				C9D1AA5E1AC1F5860003B8A1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C9D1AA5F1AC1F5860003B8A1 /* Build configuration list for PBXNativeTarget "TrilateralTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C9D1AA601AC1F5860003B8A1 /* Debug */,
-				C9D1AA611AC1F5860003B8A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

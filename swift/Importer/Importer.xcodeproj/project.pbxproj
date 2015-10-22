@@ -10,23 +10,12 @@
 		C9DB56E21BD18AE40030E8A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DB56E11BD18AE40030E8A7 /* AppDelegate.swift */; };
 		C9DB56E41BD18AE40030E8A7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9DB56E31BD18AE40030E8A7 /* Images.xcassets */; };
 		C9DB56E71BD18AE40030E8A7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9DB56E51BD18AE40030E8A7 /* MainMenu.xib */; };
-		C9DB56F31BD18AE40030E8A7 /* ImporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DB56F21BD18AE40030E8A7 /* ImporterTests.swift */; };
 		C9DB56FD1BD18B0F0030E8A7 /* SocketIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9DB56FC1BD18B0F0030E8A7 /* SocketIO.framework */; };
 		C9DB56FF1BD18B1E0030E8A7 /* Flare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9DB56FE1BD18B1E0030E8A7 /* Flare.framework */; };
 		C9DB57011BD18BAA0030E8A7 /* Flare.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9DB56FE1BD18B1E0030E8A7 /* Flare.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C9DB57021BD18BAC0030E8A7 /* SocketIO.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9DB56FC1BD18B0F0030E8A7 /* SocketIO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C9DB57041BD18C8F0030E8A7 /* model.json in Resources */ = {isa = PBXBuildFile; fileRef = C9DB57031BD18C8F0030E8A7 /* model.json */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		C9DB56ED1BD18AE40030E8A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9DB56D41BD18AE40030E8A7 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9DB56DB1BD18AE40030E8A7;
-			remoteInfo = Importer;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		C9DB57001BD18BA20030E8A7 /* CopyFiles */ = {
@@ -48,9 +37,6 @@
 		C9DB56E11BD18AE40030E8A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9DB56E31BD18AE40030E8A7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C9DB56E61BD18AE40030E8A7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		C9DB56EC1BD18AE40030E8A7 /* ImporterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImporterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9DB56F11BD18AE40030E8A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9DB56F21BD18AE40030E8A7 /* ImporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImporterTests.swift; sourceTree = "<group>"; };
 		C9DB56FC1BD18B0F0030E8A7 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = ../../SocketIO/Output/Release/SocketIO.framework; sourceTree = "<group>"; };
 		C9DB56FE1BD18B1E0030E8A7 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = ../../Flare/Output/Release/Flare.framework; sourceTree = "<group>"; };
 		C9DB57031BD18C8F0030E8A7 /* model.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = model.json; sourceTree = "<group>"; };
@@ -66,13 +52,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C9DB56E91BD18AE40030E8A7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -80,7 +59,6 @@
 			isa = PBXGroup;
 			children = (
 				C9DB56DE1BD18AE40030E8A7 /* Importer */,
-				C9DB56EF1BD18AE40030E8A7 /* ImporterTests */,
 				C9DB56DD1BD18AE40030E8A7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,7 +67,6 @@
 			isa = PBXGroup;
 			children = (
 				C9DB56DC1BD18AE40030E8A7 /* Importer.app */,
-				C9DB56EC1BD18AE40030E8A7 /* ImporterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -116,23 +93,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		C9DB56EF1BD18AE40030E8A7 /* ImporterTests */ = {
-			isa = PBXGroup;
-			children = (
-				C9DB56F21BD18AE40030E8A7 /* ImporterTests.swift */,
-				C9DB56F01BD18AE40030E8A7 /* Supporting Files */,
-			);
-			path = ImporterTests;
-			sourceTree = "<group>";
-		};
-		C9DB56F01BD18AE40030E8A7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				C9DB56F11BD18AE40030E8A7 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -154,40 +114,19 @@
 			productReference = C9DB56DC1BD18AE40030E8A7 /* Importer.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C9DB56EB1BD18AE40030E8A7 /* ImporterTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C9DB56F91BD18AE40030E8A7 /* Build configuration list for PBXNativeTarget "ImporterTests" */;
-			buildPhases = (
-				C9DB56E81BD18AE40030E8A7 /* Sources */,
-				C9DB56E91BD18AE40030E8A7 /* Frameworks */,
-				C9DB56EA1BD18AE40030E8A7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				C9DB56EE1BD18AE40030E8A7 /* PBXTargetDependency */,
-			);
-			name = ImporterTests;
-			productName = ImporterTests;
-			productReference = C9DB56EC1BD18AE40030E8A7 /* ImporterTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		C9DB56D41BD18AE40030E8A7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = Cisco;
 				TargetAttributes = {
 					C9DB56DB1BD18AE40030E8A7 = {
 						CreatedOnToolsVersion = 6.4;
-					};
-					C9DB56EB1BD18AE40030E8A7 = {
-						CreatedOnToolsVersion = 6.4;
-						TestTargetID = C9DB56DB1BD18AE40030E8A7;
 					};
 				};
 			};
@@ -205,7 +144,6 @@
 			projectRoot = "";
 			targets = (
 				C9DB56DB1BD18AE40030E8A7 /* Importer */,
-				C9DB56EB1BD18AE40030E8A7 /* ImporterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -221,13 +159,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C9DB56EA1BD18AE40030E8A7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -239,23 +170,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C9DB56E81BD18AE40030E8A7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C9DB56F31BD18AE40030E8A7 /* ImporterTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		C9DB56EE1BD18AE40030E8A7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9DB56DB1BD18AE40030E8A7 /* Importer */;
-			targetProxy = C9DB56ED1BD18AE40030E8A7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		C9DB56E51BD18AE40030E8A7 /* MainMenu.xib */ = {
@@ -290,6 +205,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -363,6 +279,7 @@
 				INFOPLIST_FILE = Importer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.flare.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -381,43 +298,8 @@
 				INFOPLIST_FILE = Importer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cisco.flare.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		C9DB56FA1BD18AE40030E8A7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = ImporterTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Importer.app/Contents/MacOS/Importer";
-			};
-			name = Debug;
-		};
-		C9DB56FB1BD18AE40030E8A7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = ImporterTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Importer.app/Contents/MacOS/Importer";
 			};
 			name = Release;
 		};
@@ -438,15 +320,6 @@
 			buildConfigurations = (
 				C9DB56F71BD18AE40030E8A7 /* Debug */,
 				C9DB56F81BD18AE40030E8A7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C9DB56F91BD18AE40030E8A7 /* Build configuration list for PBXNativeTarget "ImporterTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C9DB56FA1BD18AE40030E8A7 /* Debug */,
-				C9DB56FB1BD18AE40030E8A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

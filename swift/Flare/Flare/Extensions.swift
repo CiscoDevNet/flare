@@ -79,22 +79,22 @@ public func randomInt(min: Int, max: Int) -> Int {
 
 // a random size with each dimension between min and max
 public func randomSize(min: Int, max: Int) -> CGSize {
-    let width = randomInt(min, max)
-    let height = randomInt(min, max)
+    let width = randomInt(min, max: max)
+    let height = randomInt(min, max: max)
     return CGSize(width:width, height:height)
 }
 
 extension Array {
     
     // returns a random object from the array
-    func randomObject() -> T  {
+    func randomObject() -> Element  {
         return self[randomInt(self.count)]
     }
 
     // removes an object from the array by value
     mutating func removeObject<U: Equatable>(object: U) {
         var index: Int?
-        for (idx, objectToCompare) in enumerate(self) {
+        for (idx, objectToCompare) in self.enumerate() {
             if let to = objectToCompare as? U {
                 if object == to {
                     index = idx
@@ -155,7 +155,7 @@ public extension Int {
     // e.g. 5.times { // do stuff }
     public func times(closure: () -> ()) {
         if self > 0 {
-            for index in 1...self {
+            for _ in 1...self {
                 closure()
             }
         }
@@ -187,7 +187,7 @@ public extension NSMutableString {
     
     // replaces all occurrences of one string with another
     public func replace(target: String, with: String) {
-        self.replaceOccurrencesOfString(target, withString: with, options: nil, range: NSRange(location: 0, length: self.length))
+        self.replaceOccurrencesOfString(target, withString: with, options: [], range: NSRange(location: 0, length: self.length))
     }
 }
 

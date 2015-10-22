@@ -36,7 +36,7 @@ class IndoorMap: UIView {
     let halo = UIColor(red:1, green:1, blue:0, alpha:0.5)
     
     func loadEnvironment(value: Environment) {
-        for (id,label) in labels {
+        for (_,label) in labels {
             label.removeFromSuperview()
         }
         labels.removeAll(keepCapacity: true)
@@ -55,7 +55,7 @@ class IndoorMap: UIView {
     }
     
     func updateLabels() {
-        for (minor,beacon) in beacons {
+        for (_,beacon) in beacons {
             if let label = labels[beacon.id] {
                 label.text = String(format:"%.2f", Float(beacon.lastDistance()))
             }
@@ -77,18 +77,18 @@ class IndoorMap: UIView {
     
     override func drawRect(rect: CGRect) {
         if (environment != nil) {
-            var context = UIGraphicsGetCurrentContext()
+            let context = UIGraphicsGetCurrentContext()
             CGContextScaleCTM(context, 1, -1);
             CGContextTranslateCTM(context, 0, -self.bounds.size.height);
             
-            var inset = CGRectInset(rect, 40, 40)
-            var grid = environment!.perimeter
+            let inset = CGRectInset(rect, 40, 40)
+            let grid = environment!.perimeter
             
             insetCenter = centerPoint(inset)
             gridCenter = centerPoint(grid)
             
-            var xScale = inset.size.width / grid.size.width
-            var yScale = inset.size.height / grid.size.height
+            let xScale = inset.size.width / grid.size.width
+            let yScale = inset.size.height / grid.size.height
             scale = (xScale < yScale) ? xScale : yScale
             
             fillRect(grid, color: lightGray, inset: 0)
@@ -96,12 +96,12 @@ class IndoorMap: UIView {
             for zone in zones {
                 fillRect(zone.perimeter, color: lightGray, inset: 2)
 
-                var label = labelForFlare(zone)
+                let label = labelForFlare(zone)
                 label.center = flipPoint(convertPoint(centerPoint(zone.perimeter)))
             }
 
             if device != nil && nearbyThing != nil {
-                var line = UIBezierPath()
+                let line = UIBezierPath()
                 line.moveToPoint(convertPoint(device!.position))
                 line.addLineToPoint(convertPoint(nearbyThing!.position))
                 line.lineWidth = 3
@@ -109,7 +109,7 @@ class IndoorMap: UIView {
                 line.stroke()
             }
 
-            for (minor,beacon) in beacons {
+            for (_,beacon) in beacons {
                 var colorName = "red"
                 var brightness = 0.5
                     
@@ -126,7 +126,7 @@ class IndoorMap: UIView {
                 if beacon == nearbyThing { fillCircle(beacon.position, radius: 15, color: halo) }
                 fillCircle(beacon.position, radius: 10, color: color)
                 
-                var label = labelForFlare(beacon)
+                let label = labelForFlare(beacon)
                 label.center = flipPoint(convertPoint(beacon.position) + CGSize(width: 2, height: -22))
             }
             
@@ -134,7 +134,7 @@ class IndoorMap: UIView {
                 if nearbyThing != nil { fillCircle(device!.position, radius: 15, color: halo) }
                 fillCircle(device!.position, radius: 10, color: blue)
                 
-                var label = labelForFlare(device!)
+                let label = labelForFlare(device!)
                 label.center = flipPoint(convertPoint(device!.position) + CGSize(width: 2, height: -22))
             }
         }
@@ -158,15 +158,15 @@ class IndoorMap: UIView {
     }
     
     func fillRect(rect: CGRect, color: UIColor, inset: CGFloat) {
-        var path = UIBezierPath(rect: CGRectInset(convertRect(rect), inset, inset))
+        let path = UIBezierPath(rect: CGRectInset(convertRect(rect), inset, inset))
         color.setFill()
         path.fill()
     }
     
     func fillCircle(center: CGPoint, radius: CGFloat, color: UIColor) {
-        var newCenter = convertPoint(center)
-        var rect = CGRect(x: newCenter.x - radius, y: newCenter.y - radius, width: radius * 2, height: radius * 2)
-        var path = UIBezierPath(ovalInRect: rect)
+        let newCenter = convertPoint(center)
+        let rect = CGRect(x: newCenter.x - radius, y: newCenter.y - radius, width: radius * 2, height: radius * 2)
+        let path = UIBezierPath(ovalInRect: rect)
         color.setFill()
         path.fill()
     }
