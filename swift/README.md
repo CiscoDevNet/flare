@@ -33,6 +33,10 @@ By default, the app connects to the server on localhost at port 1234. You can sp
 
 To build for iOS, first build the SocketIO framework, then the Flare framework, then the [Trilateral app](trilateral-ios.md). 
 
+The iOS frameworks have an aggregate target with a build script that can produce a framework for both devices and the iOS Simulator. When building the frameworks for iOS, make sure to select the "Universal" target. Further, make sure to choose Edit Scheme and change the build configuration from Debug to Release. 
+
+Once you have done so, the build script will produce a universal framework. The built frameworks will be placed in the Output/Release-iphoneuniversal/ folder inside the folder for each project, where other projects link to them. You can verify that the framework has architectures for both the simulator (i386 and x86_64) and devices (armv7 and arm64) with this file command:
+
 ```all
 $ cd /path/to/Flare 
 $ cd Output/Release-iphoneuniversal/Flare.framework/
@@ -43,7 +47,6 @@ Flare (for architecture x86_64):	Mach-O 64-bit dynamically linked shared library
 Flare (for architecture armv7):	Mach-O dynamically linked shared library arm
 Flare (for architecture arm64):	Mach-O 64-bit dynamically linked shared library
 ```
-The iOS frameworks have a build script that can produce a framework for both devices and the iOS Simulator. When building the frameworks, make sure to choose Edit Scheme and change the build configuration from Debug to Release. It is necessary to build once for the iOS Simualtor (by selecting any device model) and then once again for devices (by selecting either "Device" or the name of an attached device). Once you have done so, the build script will produce a universal framework. The built frameworks will be placed in the Output/Release-iphoneuniversal/ folder inside the folder for each project, where other projects link to them. You can verify that the framework has architectures for both the simulator (i386 and x86_64) and devices (armv7 and arm64) with this file command.
 
 By default, the app connects to the server on localhost at port 1234. That works fine in the simulator, but on a device you'll need to specify the server and port in the Settings app.
 
