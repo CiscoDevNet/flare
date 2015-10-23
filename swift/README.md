@@ -1,6 +1,17 @@
 # Swift
 
-This folder contains sample code in Swift for OS X, iOS and watchOS.
+The Flare.xcworkspace contains several projects:
+
+- SocketIO: a framework for connecting to Socket.IO servers
+- Flare: a framework for connecting to the Flare server
+- Explorer: a Mac app for browsing and editing Flare objects
+- Trialteral: an iOS app that displays a map of the environment
+- ReflektorRemote: a small app that synchronizes data with a thing
+- Importer: a simple app for importing data into the server
+
+## Requirements
+
+The Swift sample code is designed to work with Xcode 7.1, Swift 2.1, iOS 9.1 and OS X 10.11. 
 
 ## Setup
 
