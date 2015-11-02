@@ -74,7 +74,7 @@ public class GraphicsView extends CommonView {
         float strokeWidth = mFinStrokeWidth;// + finWidthNearestDefault - nearFinStrokeWidth;
         mPaint.setStrokeWidth(strokeWidth);
 
-        if (mSelectedZone != null) {
+        if (mSelectedZone != null && mDevice != null) {
 
             // draw things
             for (Thing thing : mSelectedZone.getThings()) {
