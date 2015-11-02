@@ -19,8 +19,8 @@
 -dontobfuscate
 -dontshrink
 -dontwarn java.lang.invoke.*
-#-dontwarn org.codehaus.mojo.animal_sniffer.*
-#-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.*
+-dontwarn java.nio.file.*
 
 -keep public class * {
     public protected *;

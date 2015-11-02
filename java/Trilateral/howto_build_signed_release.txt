@@ -1,0 +1,2 @@
+To build a signed release version, run the following command (you might have to change the path and version of Java 8):
+JAVA8_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home gradle clean build
