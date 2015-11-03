@@ -30,7 +30,6 @@ function createEnvironment(environment) {
 		console.log('Environment ' + newEnvironment._id + ': ' + newEnvironment.name);
 
 		for (var j = 0; j < environment.zones.length; j++) {
-			console.log('Zone ' + environment.zones[j].name + '...');
 			createZone(newEnvironment._id, environment.zones[j]);
 		}
 
