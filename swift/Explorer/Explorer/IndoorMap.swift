@@ -47,6 +47,7 @@ class IndoorMap: NSView {
             self.environment = value
             
             if environment != nil {
+                updateScale()
                 self.zones = environment!.zones
                 self.things = environment!.things()
                 self.needsDisplay = true
@@ -75,17 +76,22 @@ class IndoorMap: NSView {
         return label!
     }
 
+    func updateScale() {
+        let inset = CGRectInset(self.frame, 20, 20)
+        let grid = environment!.perimeter
+        let xScale = inset.size.width / grid.size.width
+        let yScale = inset.size.height / grid.size.height
+        scale = (xScale < yScale) ? xScale : yScale
+    }
+    
     override func drawRect(rect: CGRect) {
         if (environment != nil) {
-            let inset = CGRectInset(rect, 20, 20)
+            let inset = CGRectInset(NSRect(origin: CGPointZero, size: self.frame.size), 20, 20)
             let grid = environment!.perimeter
-            
+
+            updateScale()
             insetCenter = centerPoint(inset)
             gridCenter = centerPoint(grid)
-            
-            let xScale = inset.size.width / grid.size.width
-            let yScale = inset.size.height / grid.size.height
-            scale = (xScale < yScale) ? xScale : yScale
             
             fillRect(grid, color: white, inset: 0)
             
@@ -155,14 +161,11 @@ class IndoorMap: NSView {
     
     func fillRect(rect: CGRect, color: NSColor, inset: CGFloat) {
         let converted = convertRect(rect)
-        let inset = CGRectInset(convertRect(rect), inset, inset)
+        let inset = CGRectInset(converted, inset, inset)
         if inset.size.width > 0 && inset.size.height > 0 {
             let path = NSBezierPath(rect: inset)
             color.setFill()
             path.fill()
-        } else {
-            NSLog("Rect: \(rect)")
-            NSLog("Converted: \(converted)")
         }
     }
     
@@ -173,9 +176,6 @@ class IndoorMap: NSView {
             let path = NSBezierPath(ovalInRect: rect)
             color.setFill()
             path.fill()
-        } else {
-            NSLog("Center: \(center)")
-            NSLog("Rect: \(rect)")
         }
     }
     

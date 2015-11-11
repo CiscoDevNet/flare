@@ -19,11 +19,14 @@
                 <outlet property="commentField" destination="vJi-yz-jwL" id="UnX-0w-Wax"/>
                 <outlet property="deviceXField" destination="6rd-uT-a28" id="VS3-2G-Kbz"/>
                 <outlet property="deviceYField" destination="sdY-f4-Khl" id="xn3-3A-oTY"/>
+                <outlet property="environmentAngleField" destination="GYB-Sb-nxY" id="pgF-fC-KN3"/>
                 <outlet property="environmentHeightField" destination="bux-gy-mPb" id="LRV-Ep-nlZ"/>
                 <outlet property="environmentWidthField" destination="qwe-cw-yxv" id="OMy-Rb-RVm"/>
                 <outlet property="environmentXField" destination="wmE-27-6i4" id="mRF-CZ-WKO"/>
                 <outlet property="environmentYField" destination="7e2-wu-j30" id="BfJ-R0-bcT"/>
                 <outlet property="idField" destination="QsS-jj-YNt" id="srr-aj-XxD"/>
+                <outlet property="latitudeField" destination="ewo-Ic-V61" id="N3X-04-Yi0"/>
+                <outlet property="longitudeField" destination="wiT-yQ-EFt" id="GmG-w0-CH9"/>
                 <outlet property="majorField" destination="WrS-Zt-fW5" id="Wax-1M-VfB"/>
                 <outlet property="map" destination="dqH-xO-e6J" id="q0k-RE-I59"/>
                 <outlet property="minorField" destination="tHz-I8-RU1" id="RNE-2r-FU9"/>
@@ -35,6 +38,7 @@
                 <outlet property="nearbyNameField" destination="DiX-dY-ZcH" id="pq6-Qd-ayq"/>
                 <outlet property="nearbyView" destination="hbP-dj-405" id="F0d-dF-1Ze"/>
                 <outlet property="outlineView" destination="JUj-qh-Hzt" id="Q9Y-Ju-8KG"/>
+                <outlet property="radiusField" destination="4Gk-9b-cf9" id="oQi-WL-Erg"/>
                 <outlet property="tabView" destination="Xey-RC-Uho" id="5CS-2g-51H"/>
                 <outlet property="uuidField" destination="LiY-kK-Nlg" id="1ff-kq-qI2"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
@@ -789,6 +793,52 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <textField verticalHuggingPriority="750" id="ewo-Ic-V61">
+                                            <rect key="frame" x="98" y="323" width="107" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="zLe-zx-WOr">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="changeGeofence:" target="Voe-Tx-rLC" id="i9s-2j-1ZO"/>
+                                            </connections>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" id="wiT-yQ-EFt">
+                                            <rect key="frame" x="213" y="323" width="107" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="JqS-qg-9Rd">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="changeGeofence:" target="Voe-Tx-rLC" id="EE5-zC-fPC"/>
+                                            </connections>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="M7F-o8-1Zu">
+                                            <rect key="frame" x="-21" y="324" width="113" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Geofence:" id="GS3-qJ-Ptg">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="qsW-AD-HpR">
+                                            <rect key="frame" x="204" y="324" width="14" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="," id="SMj-qk-mek">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                         <textField verticalHuggingPriority="750" id="qwe-cw-yxv">
                                             <rect key="frame" x="257" y="352" width="43" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -825,11 +875,57 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <textField verticalHuggingPriority="750" id="GYB-Sb-nxY">
+                                            <rect key="frame" x="436" y="352" width="43" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="7cs-T2-9P7">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="changeEnvironmentAngle:" target="Voe-Tx-rLC" id="4Ne-kO-tbQ"/>
+                                            </connections>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="qMh-pd-ruH">
+                                            <rect key="frame" x="383" y="353" width="47" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Angle:" id="QeU-gv-fXO">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" id="4Gk-9b-cf9">
+                                            <rect key="frame" x="415" y="323" width="64" height="22"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="gry-O6-0vd">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="changeGeofence:" target="Voe-Tx-rLC" id="KX4-Fb-R4f"/>
+                                            </connections>
+                                        </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="7Uz-RU-lXh">
                                             <rect key="frame" x="300" y="353" width="14" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="," id="20g-EN-eNd">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="VAC-go-g2U">
+                                            <rect key="frame" x="360" y="324" width="49" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Radius:" id="UL8-KS-kDh">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1659,16 +1755,20 @@
                     <toolbarItem implicitItemIdentifier="A0FDF997-F9FE-4744-846D-22CF4182F56D" label="Add/Remove" paletteLabel="Add/Remove" id="JqP-xW-evq">
                         <nil key="toolTip"/>
                         <size key="minSize" width="67" height="25"/>
-                        <size key="maxSize" width="100" height="25"/>
+                        <size key="maxSize" width="67" height="25"/>
                         <segmentedControl key="view" verticalHuggingPriority="750" id="anB-Eb-uW7">
-                            <rect key="frame" x="17" y="14" width="67" height="25"/>
+                            <rect key="frame" x="4" y="14" width="67" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <animations/>
                             <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="momentary" id="1T4-Tg-YcU">
                                 <font key="font" metaFont="system"/>
                                 <segments>
-                                    <segment image="NSAddTemplate" width="32"/>
-                                    <segment image="NSRemoveTemplate" width="32" tag="1"/>
+                                    <segment image="NSAddTemplate" width="32">
+                                        <nil key="label"/>
+                                    </segment>
+                                    <segment image="NSRemoveTemplate" width="32" tag="1">
+                                        <nil key="label"/>
+                                    </segment>
                                 </segments>
                             </segmentedCell>
                             <connections>
@@ -1676,9 +1776,27 @@
                             </connections>
                         </segmentedControl>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F1EE3BDF-E845-48C2-A487-71F4CCCC14C5" label="Refresh" paletteLabel="Refresh" image="NSRefreshTemplate" id="Wgu-Yw-6a3">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="40" height="25"/>
+                        <size key="maxSize" width="40" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="S8b-PD-yNb">
+                            <rect key="frame" x="4" y="14" width="40" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSRefreshTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="d5P-hj-x3n">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                        <connections>
+                            <action selector="refresh:" target="Voe-Tx-rLC" id="hD4-5D-hfI"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="JqP-xW-evq"/>
+                    <toolbarItem reference="Wgu-Yw-6a3"/>
                     <toolbarItem reference="rRa-bA-B8n"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -1750,6 +1868,7 @@
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRefreshTemplate" width="11" height="15"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
     </resources>
 </document>

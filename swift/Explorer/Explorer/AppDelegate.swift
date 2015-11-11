@@ -26,7 +26,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var environmentYField: NSTextField!
     @IBOutlet weak var environmentWidthField: NSTextField!
     @IBOutlet weak var environmentHeightField: NSTextField!
-
+    @IBOutlet weak var environmentAngleField: NSTextField!
+    @IBOutlet weak var latitudeField: NSTextField!
+    @IBOutlet weak var longitudeField: NSTextField!
+    @IBOutlet weak var radiusField: NSTextField!
+    
     @IBOutlet weak var majorField: NSTextField!
     @IBOutlet weak var zoneXField: NSTextField!
     @IBOutlet weak var zoneYField: NSTextField!
@@ -91,6 +95,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         loadEnvironments(selected)
     }
 
+    @IBAction func refresh(sender: AnyObject) {
+        let selected = defaults.stringForKey("selectedId")
+        loadEnvironments(selected)
+    }
+    
     func loadEnvironments(selectId: String?) {
         flareManager.loadEnvironments() {(environments)->() in
             self.environments = environments
@@ -340,6 +349,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             flareManager.setPosition(device, position: position, sender: nil)
         }
     }
+
+    @IBAction func changeGeofence(sender: NSTextField) {
+        if let environment = selectedFlare as? Environment {
+            let geofence = ["latitude":latitudeField.doubleValue,
+                            "longitude":longitudeField.doubleValue,
+                            "radius":radiusField.doubleValue]
+            flareManager.updateFlare(environment, json: ["geofence":geofence]) {json in }
+        }
+    }
+    
+    @IBAction func changeEnvironmentAngle(sender: NSTextField) {
+        if let environment = selectedFlare as? Environment {
+            let angle = environmentAngleField.doubleValue
+            environment.angle = angle
+            flareManager.updateFlare(environment, json: ["angle":angle]) {json in }
+        }
+    }
     
     @IBAction func changeEnvironmentPerimeter(sender: NSTextField) {
         if let environment = selectedFlare as? Environment {
@@ -457,6 +483,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             environmentYField.stringValue = ""
             environmentWidthField.stringValue = ""
             environmentHeightField.stringValue = ""
+            environmentAngleField.stringValue = ""
+            latitudeField.stringValue = ""
+            longitudeField.stringValue = ""
+            radiusField.stringValue = ""
             majorField.stringValue = ""
             zoneXField.stringValue = ""
             zoneYField.stringValue = ""
@@ -498,6 +528,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 environmentYField.doubleValue = Double(environment.perimeter.origin.y)
                 environmentWidthField.doubleValue = Double(environment.perimeter.size.width)
                 environmentHeightField.doubleValue = Double(environment.perimeter.size.height)
+                environmentAngleField.doubleValue = Double(environment.angle)
+                latitudeField.doubleValue = Double(environment.geofence.latitude)
+                longitudeField.doubleValue = Double(environment.geofence.longitude)
+                radiusField.doubleValue = Double(environment.geofence.radius)
             } else if let zone = selectedFlare as? Zone {
                 NSLog("Selected \(zone)")
                 tabView.selectTabViewItemAtIndex(1)
