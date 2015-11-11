@@ -44,6 +44,7 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
                 let uuid = NSUUID(UUIDString: uuidString)
                 region = CLBeaconRegion(proximityUUID: uuid!, identifier: environment!.name)
                 beacons = environment!.beacons()
+                // NSLog("Looking for \(beacons.count) beacons.")
             }
         }
     }
@@ -93,12 +94,15 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     public func locationManager(manager: CLLocationManager, didRangeBeacons clbeacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         var clBeaconIndex = [Int:CLBeacon]()
         
+        // NSLog("Found \(clbeacons.count) beacons.")
+        
         for clbeacon in clbeacons {
             clBeaconIndex[clbeacon.minor.integerValue] = clbeacon
         }
         
         for (_,beacon) in beacons {
             if let clbeacon = clBeaconIndex[beacon.minor!] {
+                // NSLog("Found beacon: \(beacon.name)")
                 beacon.addDistance(clbeacon.accuracy)
             } else {
                 beacon.addDistance(-1.0) // the beacon was not seen this time
