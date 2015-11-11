@@ -53,6 +53,17 @@ public class Flare: NSObject {
     public func children() -> [Flare] {
         return Array()
     }
+    
+    public func toJSON() -> JSONDictionary {
+        var json = JSONDictionary()
+        json["_id"] = self.id
+        json["name"] = self.name
+        json["description"] = self.comment
+        json["data"] = self.data
+        json["created"] = self.created
+        json["modified"] = self.modified
+        return json
+    }
 }
 
 public class Environment: Flare {
@@ -63,6 +74,15 @@ public class Environment: Flare {
 
     public var zones = [Zone]()
     public var devices = [Device]()
+    
+    public class func loadJson(json: JSONDictionary) -> [Environment] {
+        var results = [Environment]()
+        for child in json.getArray("environments") {
+            let environment = Environment(json: child)
+            results.append(environment)
+        }
+        return results
+    }
     
     public override init(json: JSONDictionary) {
         self.geofence = Geofence(json: json.getDictionary("geofence"))
@@ -85,6 +105,16 @@ public class Environment: Flare {
     
     public override func children() -> [Flare] {
         return self.zones
+    }
+    
+    public override func toJSON() -> JSONDictionary {
+        var json = super.toJSON()
+        json["geofence"] = self.geofence.toJSON()
+        json["perimeter"] = self.perimeter.toJSON()
+        json["angle"] = self.angle
+        json["zones"] = self.zones.map({ $0.toJSON()})
+        json["devices"] = self.devices.map({ $0.toJSON()})
+        return json
     }
 
     public override func setDistanceFrom(latlong: CGPoint) {
@@ -159,6 +189,13 @@ public class Zone: Flare {
         return self.things
     }
 
+    public override func toJSON() -> JSONDictionary {
+        var json = super.toJSON()
+        json["perimeter"] = self.perimeter.toJSON()
+        json["things"] = self.things.map({ $0.toJSON()})
+        return json
+    }
+
     public override func setDistanceFrom(currentPosition: CGPoint) {
         self.distance = perimeter.contains(currentPosition) ? 0.0 : Double(currentPosition - self.center)
     }
@@ -195,6 +232,12 @@ public class Thing: Flare {
         return zoneId
     }
 
+    public override func toJSON() -> JSONDictionary {
+        var json = super.toJSON()
+        json["position"] = self.position.toJSON()
+        return json
+    }
+    
     public override func setDistanceFrom(currentPosition: CGPoint) {
         self.distance = Double(currentPosition - self.position)
     }
@@ -254,6 +297,12 @@ public class Device: Flare {
         return environmentId
     }
     
+    public override func toJSON() -> JSONDictionary {
+        var json = super.toJSON()
+        json["position"] = self.position.toJSON()
+        return json
+    }
+    
     public func distanceTo(thing: Thing) -> Double {
         return self.position - thing.position
     }
@@ -299,6 +348,10 @@ public class Geofence: NSObject {
         let R = 6372.8
         
         return R * c
+    }
+    
+    public func toJSON() -> JSONDictionary {
+        return ["latitude": self.latitude, "longitude": self.longitude, "radius": self.radius]
     }
 }
 

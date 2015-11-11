@@ -133,6 +133,10 @@ extension CGRect {
         return CGPoint(x: (self.minX + self.maxX) / 2.0,
             y: (self.minY + self.maxY) / 2.0)
     }
+
+    public func toJSON() -> JSONDictionary {
+        return ["origin": self.origin.toJSON(), "size": self.size.toJSON()]
+    }
 }
 
 public extension CGSize {
@@ -143,6 +147,10 @@ public extension CGSize {
         let y2 = Double(self.height * self.height)
         return sqrt(x2 + y2)
     }
+    
+    public func toJSON() -> JSONDictionary {
+        return ["width": self.width, "height": self.height]
+    }
 }
 
 public extension CGPoint {
@@ -150,6 +158,10 @@ public extension CGPoint {
     // rounds the point's x and y values to the given precision
     public func roundTo(precision: Double) -> CGPoint {
         return CGPoint(x: self.x.roundTo(precision), y: self.y.roundTo(precision))
+    }
+    
+    public func toJSON() -> JSONDictionary {
+        return ["x": self.x, "y": self.y]
     }
 }
 

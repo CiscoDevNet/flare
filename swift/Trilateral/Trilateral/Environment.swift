@@ -64,7 +64,7 @@ public class Environment: Flare {
     public var zones = [Zone]()
     public var devices = [Device]()
     
-    public class func getAll(json: JSONDictionary) -> [Environment] {
+    public class func loadJson(json: JSONDictionary) -> [Environment] {
         var results = [Environment]()
         for child in json.getArray("environments") {
             let environment = Environment(json: child)
