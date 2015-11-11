@@ -42,7 +42,7 @@ node import.js model.json
 ```
 You can initialize the database using the import.js script with some default environments. This may be useful when you are getting started with the Flare API. 
 
-For production use, you'll want to use your own data. See the [environments](environments.html) page for further instructions on setting up your environments. 
+For production use, you'll want to use your own data. See the [environments](https://developer.cisco.com/site/flare/learn/environments/) page for further instructions on setting up your environments. 
 
 ### Start the server
 
