@@ -28,7 +28,7 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     public var environment: Environment?
     public var beacons = [Int:Thing]()
 
-    override public init() {
+    public override init() {
         super.init()
         
         self.locationManager.delegate = self

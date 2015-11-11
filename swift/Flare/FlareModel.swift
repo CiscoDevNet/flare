@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 public class Flare: NSObject {
     public var id: String
@@ -15,6 +16,7 @@ public class Flare: NSObject {
     public var data: JSONDictionary
     public var created: NSDate
     public var modified: NSDate
+    public var distance: Double? // the distance from the current position
     
     public init(json: JSONDictionary) {
         self.id = json.getString("_id")
@@ -30,8 +32,12 @@ public class Flare: NSObject {
         return className.componentsSeparatedByString(".").last!
     }
     
-    override public var description: String {
+    public override var description: String {
         return "\(self.flareClass) \(self.id) - \(self.name)"
+    }
+
+    public func setDistanceFrom(currentPosition: CGPoint) {
+        // override to calculate the distance
     }
     
     public var flareInfo: JSONDictionary {
@@ -58,7 +64,7 @@ public class Environment: Flare {
     public var zones = [Zone]()
     public var devices = [Device]()
     
-    override public init(json: JSONDictionary) {
+    public override init(json: JSONDictionary) {
         self.geofence = Geofence(json: json.getDictionary("geofence"))
         self.perimeter = getRect(json.getDictionary("perimeter"))
         self.angle = json.getDouble("angle")
@@ -70,7 +76,6 @@ public class Environment: Flare {
         
         super.init(json: json)
         
-        
         if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
     }
     
@@ -80,6 +85,14 @@ public class Environment: Flare {
     
     public override func children() -> [Flare] {
         return self.zones
+    }
+
+    public override func setDistanceFrom(latlong: CGPoint) {
+        self.distance = self.geofence.distanceFrom(latlong)
+    }
+
+    public func here() -> Bool {
+        return distance != nil && distance! * 1000 < self.geofence.radius
     }
 
     public func things() -> [Thing] {
@@ -113,14 +126,16 @@ public class Zone: Flare {
     public var environmentId: String
     
     public var perimeter: CGRect
+    public var center: CGPoint
     public var major: Int?
     
     public var things = [Thing]()
     
-    override public init(json: JSONDictionary) {
+    public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
 
         self.perimeter = getRect(json.getDictionary("perimeter"))
+        self.center = self.perimeter.center()
         
         for child: JSONDictionary in json.getArray("things") {
             let thing = Thing(json: child)
@@ -132,7 +147,7 @@ public class Zone: Flare {
         if let major = self.data["major"] as? Int { self.major = major }
     }
     
-    override public var description: String {
+    public override var description: String {
         return "\(super.description) - \(perimeter)"
     }
 
@@ -140,8 +155,12 @@ public class Zone: Flare {
         return environmentId
     }
     
-    override public func children() -> [Flare] {
+    public override func children() -> [Flare] {
         return self.things
+    }
+
+    public override func setDistanceFrom(currentPosition: CGPoint) {
+        self.distance = perimeter.contains(currentPosition) ? 0.0 : Double(currentPosition - self.center)
     }
 }
 
@@ -156,7 +175,7 @@ public class Thing: Flare {
     public var distances = [Double]()
     public var inverseDistance = 0.0
     
-    override public init(json: JSONDictionary) {
+    public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
         self.zoneId = json.getString("zone")
         
@@ -175,7 +194,11 @@ public class Thing: Flare {
     public override func parentId() -> String? {
         return zoneId
     }
-    
+
+    public override func setDistanceFrom(currentPosition: CGPoint) {
+        self.distance = Double(currentPosition - self.position)
+    }
+
     public func addDistance(distance: Double) {
         distances.append(distance)
         while distances.count > 5 {
@@ -214,7 +237,7 @@ public class Device: Flare {
 
     public var position: CGPoint
     
-    override public init(json: JSONDictionary) {
+    public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
 
         self.position = getPoint(json.getDictionary("position"))
@@ -223,7 +246,7 @@ public class Device: Flare {
         
     }
     
-    override public var description: String {
+    public override var description: String {
         return "\(super.description) - \(position)"
     }
 
@@ -256,14 +279,14 @@ public class Geofence: NSObject {
         self.radius = json.getDouble("radius")
     }
     
-    override public var description: String {
+    public override var description: String {
         let latLabel = self.latitude >= 0 ? "°N" : "°S"
         let longLabel = self.latitude >= 0 ? "°E" : "°W"
         return "\(self.latitude)\(latLabel), \(self.longitude)\(longLabel), \(self.radius)m))"
     }
 
     // calculates the distance in meters along the Earth's surface between the geofence and the given location
-    func distanceFrom(latlong: CGPoint) -> Double {
+    public func distanceFrom(latlong: CGPoint) -> Double {
         let lat1rad = latitude * M_PI/180
         let lon1rad = longitude * M_PI/180
         let lat2rad = Double(latlong.x) * M_PI/180

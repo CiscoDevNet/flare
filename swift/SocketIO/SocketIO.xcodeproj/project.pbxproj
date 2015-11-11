@@ -686,6 +686,7 @@
 				C9A518871BD9D30A00C98545 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
