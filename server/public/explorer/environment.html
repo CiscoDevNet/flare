@@ -25,6 +25,7 @@ $(function() {
 		$("input#latitude").val(environment.geofence.latitude);
 		$("input#longitude").val(environment.geofence.longitude);
 		$("input#radius").val(environment.geofence.radius);
+		$("input#angle").val(environment.angle);
 		$("input#x").val(environment.perimeter.origin.x);
 		$("input#y").val(environment.perimeter.origin.y);
 		$("input#width").val(environment.perimeter.size.width);
@@ -87,6 +88,15 @@ function updatePerimeter() {
 		origin: {x: 1.0 * $("input#x").val(), y: 1.0 * $("input#y").val()},
 		size: {width: 1.0 * $("input#width").val(), height: 1.0 * $("input#height").val()},
 	}};
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateEnvironment(environment_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function updateAngle() {
+	var data = {angle: 1.0 * $("input#angle").val()};
 	
 	console.log("Update: " + JSON.stringify(data));
 	updateEnvironment(environment_id, data, function(updated) {
@@ -184,6 +194,13 @@ function removeEnvironment() {
 	<td align="right">Geofence:</td>
 	<td>
 		<input type="text" size="10" id="latitude" onchange="return updateGeofence();" />,<input type="text" size="10" id="longitude" onchange="return updateGeofence();" />,<input type="text" size="4" id="radius" onchange="return updateGeofence();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Angle:</td>
+	<td>
+		<input type="text" size="4" id="angle" onchange="return updateAngle();" />
 	</td>
 </tr>
 
