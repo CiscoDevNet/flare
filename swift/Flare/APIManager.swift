@@ -8,9 +8,6 @@
 
 import Foundation
 
-public typealias JSONDictionary = [String:AnyObject]
-public typealias JSONArray = [JSONDictionary]
-
 public class APIManager: NSObject {
     
     public var server = "http://localhost:80"
@@ -137,90 +134,5 @@ public class APIManager: NSObject {
     // this handler can be used to print out the json from an API call
     public var printJson = {(json: JSONDictionary) -> () in
         print("json: \(json)")
-    }
-}
-
-// objects that can be initialized with no arguments
-// necessary for getValue() to instantiate a new object of arbitrary type
-// most classes can implement this protocol with no additional methods
-protocol JSONValue {
-    init()
-    init(string: String)
-}
-
-// adds Initible conformace to basic types so they can be used by getValue()
-extension String: JSONValue {
-    init(string: String) {
-        self.init(string)
-    }
-}
-
-extension Int: JSONValue {
-    init(string: String) {
-        self.init((string as NSString).integerValue)
-    }
-}
-extension Double: JSONValue {
-    init(string: String) {
-        self.init((string as NSString).doubleValue)
-    }
-}
-extension Array: JSONValue {
-    init(string: String) {
-        self.init()
-    }
-}
-
-extension Dictionary {
-    
-    // getValue will try to get an object with the given key from the dictionary
-    // returns an object of the given type rather than AnyObject?
-    // if the object is not found, returns a new object of the type
-    func getValue<T: JSONValue>(key: String, type: T.Type) -> T {
-        if let value = self[key as! Key] {
-            if let typedValue = value as? T {
-                return typedValue
-            } else if let stringValue = value as? String {
-                // NSLog("Got string: \(value)")
-                return T(string:stringValue)
-            }
-        }
-        
-        return T()
-    }
-    
-    func getString(key: String) -> String {
-        return getValue(key, type: String.self)
-    }
-    
-    func getInt(key: String) -> Int {
-        return getValue(key, type: Int.self)
-    }
-    
-    func getDouble(key: String) -> Double {
-        return getValue(key, type: Double.self)
-    }
-    
-    func getArray(key: String) -> JSONArray {
-        return getValue(key, type: JSONArray.self)
-    }
-    
-    func getDate(key: String) -> NSDate {
-        let dateString = getString(key)
-        let mongoFormatter = NSDateFormatter()
-        mongoFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        if let date = mongoFormatter.dateFromString(dateString) {
-            return date
-        } else {
-            return NSDate()
-        }
-    }
-    
-    func getDictionary(key: String) -> JSONDictionary {
-        if let value = self[key as! Key] {
-            return value as! JSONDictionary
-        } else {
-            return [:]
-        }
     }
 }
