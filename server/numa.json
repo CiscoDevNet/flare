@@ -1,0 +1,319 @@
+{
+    "environments": [
+        {
+            "angle": 300,
+            "description": "39 rue du Caire",
+            "geofence": {
+                "latitude": 48.8684287,
+                "longitude": 2.3500192,
+                "radius": 1000
+            },
+            "name": "NUMA",
+			"data": {
+                "uuid": "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6"
+			},
+            "perimeter": {
+                "origin": {
+                    "x": -1,
+                    "y": -1
+                },
+                "size": {
+                    "height": 14,
+                    "width": 27
+                }
+            },
+            "zones": [
+                {
+                    "data": {
+                        "major": 1
+                    },
+                    "name": "4eme étage",
+                    "perimeter": {
+                        "origin": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "size": {
+                            "height": 12,
+                            "width": 12
+                        }
+                    },
+                    "things": [
+                        {
+                            "data": {
+                                "minor": 1,
+                                "color": "white"
+                            },
+                            "description": "top right corner",
+                            "name": "Flare 1979.1",
+                            "position": {
+                                "x": 0,
+                                "y": 0
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 2,
+                                "color": "white"
+                            },
+                            "description": "top left corner",
+                            "name": "Flare 1979.2",
+                            "position": {
+                                "x": 0,
+                                "y": 9
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 3,
+                                "color": "white"
+                            },
+                            "description": "bottom left corner",
+                            "name": "Flare 1979.3",
+                            "position": {
+                                "x": 9,
+                                "y": 9
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 4,
+                                "color": "white"
+                            },
+                            "description": "bottom right corner",
+                            "name": "Flare 1979.4",
+                            "position": {
+                                "x": 9,
+                                "y": 0
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 5,
+                                "color": "white"
+                            },
+                            "description": "beacon iPad 1",
+                            "name": "Flare 1979.5",
+                            "position": {
+                                "x": 0,
+                                "y": 6
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 6,
+                                "color": "white"
+                            },
+                            "description": "beacon iPad 2",
+                            "name": "Flare 1979.6",
+                            "position": {
+                                "x": 9,
+                                "y": 8
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 7,
+                                "color": "white"
+                            },
+                            "description": "beacon iPad 3",
+                            "name": "Flare 1979.7",
+                            "position": {
+                                "x": 5,
+                                "y": 0
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "description": "2 person sofa - $350",
+                            "name": "Coombe",
+                            "position": {
+                                "x": 0,
+                                "y": 6
+                            },
+                            "data": {
+                                "images": [
+                                    "/assets/small/karlstad_01_Grey.png",
+                                    "/assets/small/karlstad_02_LightGrey.png",
+                                    "/assets/small/karlstad_03_Black.png",
+                                    "/assets/small/karlstad_04_Mustard.png",
+                                    "/assets/small/karlstad_05_Red.png"
+                                ]
+                            }
+                        },
+                        {
+                            "description": "Wicker Chair - $50",
+                            "name": "Hythe",
+                            "position": {
+                                "x": 9,
+                                "y": 8
+                            },
+                            "data": {
+                                "images": [
+                                    "/assets/small/wickerChair.png"
+                                ]
+                            }
+                        },
+                        {
+                            "description": "Office Chair - $40",
+                            "name": "Purlieu",
+                            "position": {
+                                "x": 5,
+                                "y": 0
+                            },
+                            "data": {
+                                "images": [
+                                    "/assets/small/officeChair.png"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "data": {
+                        "major": 101
+                    },
+                    "name": "1er étage",
+                    "perimeter": {
+                        "origin": {
+                            "x": 13,
+                            "y": 0
+                        },
+                        "size": {
+                            "height": 12,
+                            "width": 12
+                        }
+                    },
+                    "things": [
+                        {
+                            "data": {
+                                "minor": 62708
+                            },
+                            "description": "8Kzf",
+                            "name": "Kontakt 1",
+                            "position": {
+                                "x": 14,
+                                "y": 1
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 4922
+                            },
+                            "description": "O7LU",
+                            "name": "Kontakt 2",
+                            "position": {
+                                "x": 15,
+                                "y": 2
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 11177
+                            },
+                            "description": "OlQm",
+                            "name": "Kontakt 3",
+                            "position": {
+                                "x": 16,
+                                "y": 3
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 7427
+                            },
+                            "description": "SgAk",
+                            "name": "Kontakt 4",
+                            "position": {
+                                "x": 17,
+                                "y": 4
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 44748
+                            },
+                            "description": "UtNz",
+                            "name": "Kontakt 5",
+                            "position": {
+                                "x": 18,
+                                "y": 5
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 18942
+                            },
+                            "description": "VEZU",
+                            "name": "Kontakt 6",
+                            "position": {
+                                "x": 19,
+                                "y": 6
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 60120
+                            },
+                            "description": "ZGsJ",
+                            "name": "Kontakt 7",
+                            "position": {
+                                "x": 20,
+                                "y": 7
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 29164
+                            },
+                            "description": "ayuk",
+                            "name": "Kontakt 8",
+                            "position": {
+                                "x": 21,
+                                "y": 8
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 17942
+                            },
+                            "description": "g1Py",
+                            "name": "Kontakt 9",
+                            "position": {
+                                "x": 22,
+                                "y": 9
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 15222
+                            },
+                            "description": "gYHW",
+                            "name": "Kontakt 10",
+                            "position": {
+                                "x": 23,
+                                "y": 10
+                            },
+                            "type": "beacon"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
