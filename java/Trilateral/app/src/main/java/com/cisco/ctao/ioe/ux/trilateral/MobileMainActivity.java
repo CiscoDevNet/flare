@@ -317,6 +317,7 @@ public class MobileMainActivity extends Activity implements FlareManager.Delegat
 //                        positionTextView.setText(position.x + ", " + position.y);
                             if (this.mDevice != null) {
                                 mFlareManager.setPosition(this.mDevice, position, this.mDevice);
+                                mDevice.setPosition(position);
                             } else {
                                 Log.d(TAG, "Device is null.");
                             }
@@ -657,7 +658,7 @@ public class MobileMainActivity extends Activity implements FlareManager.Delegat
     @Override
     protected void onResume() {
         super.onResume();
-        // FlareBeaconManager.resume();
+        FlareBeaconManager.resume();
 
         // start updating the current time being displayed in 1.5 seconds (there's no rush, that leaves time for the debugger to start)
        mTimeHandler.postDelayed(updateCurrentTime, 1500);
