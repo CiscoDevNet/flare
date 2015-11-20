@@ -116,6 +116,14 @@ protocols: [ HTTP, HTTPS ]
         description: Filter by location
         type: number
         required: false
+	  key:
+        description: Filter by data key/value pair
+        type: string
+        required: false
+	  value:
+        description: Filter by data key/value pair
+        type: string
+        required: false
     responses:
       200:
         body:
@@ -386,6 +394,14 @@ protocols: [ HTTP, HTTPS ]
             description: Filter zones containing a given point
             type: number
             required: false
+		  key:
+	        description: Filter by data key/value pair
+	        type: string
+	        required: false
+		  value:
+	        description: Filter by data key/value pair
+	        type: string
+	        required: false
         responses:
           200:
             body:
@@ -600,6 +616,27 @@ protocols: [ HTTP, HTTPS ]
                   }
           get:
             description: Get a list of things
+	        queryParameters:
+	          x:
+	            description: Filter things within a distance from a given x/y point
+	            type: number
+	            required: false
+	          y:
+	            description: Filter things within a distance from a given x/y point
+	            type: number
+	            required: false
+	          distance:
+	            description: Filter things within a distance from a given x/y point
+	            type: number
+	            required: false
+			  key:
+		        description: Filter by data key/value pair
+		        type: string
+		        required: false
+			  value:
+		        description: Filter by data key/value pair
+		        type: string
+		        required: false
             responses:
               200:
                 body:
@@ -845,6 +882,27 @@ protocols: [ HTTP, HTTPS ]
               }
       get:
         description: Get a list of things
+        queryParameters:
+          x:
+            description: Filter devices within a distance from a given x/y point
+            type: number
+            required: false
+          y:
+            description: Filter devices within a distance from a given x/y point
+            type: number
+            required: false
+          distance:
+            description: Filter devices within a distance from a given x/y point
+            type: number
+            required: false
+		  key:
+	        description: Filter by data key/value pair
+	        type: string
+	        required: false
+		  value:
+	        description: Filter by data key/value pair
+	        type: string
+	        required: false
         responses:
           200:
             body:

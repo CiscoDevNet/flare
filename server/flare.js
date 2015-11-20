@@ -58,7 +58,15 @@ app.get('/environments', function (req, res) {
 					closeTo(longitude, environment.geofence.longitude, radiusDegrees);
 			});
 		}
-
+		
+		var key = req.query.key;
+		var value = req.query.value;
+		if (key !== undefined && value !== undefined) {
+			list = list.filter(function(environment) {
+				return environment.data != undefined && environment.data[key] == value;
+			});
+		}
+		
 	    res.json(list);
 	});
 });
@@ -130,6 +138,14 @@ app.get('/environments/:environment_id/zones', function (req, res) {
 			});
 		}
 		
+		var key = req.query.key;
+		var value = req.query.value;
+		if (key !== undefined && value !== undefined) {
+			list = list.filter(function(zone) {
+				return zone.data != undefined && zone.data[key] == value;
+			});
+		}
+		
 	    res.json(list);
 	});
 });
@@ -188,6 +204,25 @@ app.delete('/environments/:environment_id/zones/:zone_id', function (req, res) {
 app.get('/environments/:environment_id/zones/:zone_id/things', function (req, res) {
 	flaredb.Thing.find({zone:req.params.zone_id}, function (err, list) {
 	    if (err) return res.send(err);
+		
+		var x = req.query.x;
+		var y = req.query.y;
+		var distance = req.query.distance;
+		if (x !== undefined && y !== undefined && distance !== undefined) {
+			var point = {x:x, y:y};
+			list = list.filter(function(thing) {
+				return distanceBetween(thing.position, point) < distance;
+			});
+		}
+		
+		var key = req.query.key;
+		var value = req.query.value;
+		if (key !== undefined && value !== undefined) {
+			list = list.filter(function(thing) {
+				return thing.data != undefined && thing.data[key] == value;
+			});
+		}
+		
 	    res.json(list);
 	});
 });
@@ -261,6 +296,25 @@ app.delete('/environments/:environment_id/zones/:zone_id/things/:thing_id', func
 app.get('/environments/:environment_id/devices', function (req, res) {
 	flaredb.Device.find({environment:req.params.environment_id}, function (err, list) {
 	    if (err) return res.send(err);
+		
+		var x = req.query.x;
+		var y = req.query.y;
+		var distance = req.query.distance;
+		if (x !== undefined && y !== undefined && distance !== undefined) {
+			var point = {x:x, y:y};
+			list = list.filter(function(device) {
+				return distanceBetween(device.position, point) < distance;
+			});
+		}
+		
+		var key = req.query.key;
+		var value = req.query.value;
+		if (key !== undefined && value !== undefined) {
+			list = list.filter(function(thing) {
+				return thing.data != undefined && thing.data[key] == value;
+			});
+		}
+
 	    res.json(list);
 	});
 });

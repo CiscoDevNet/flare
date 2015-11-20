@@ -271,6 +271,12 @@ public class FlareManager {
         sendListRequest(Request.Method.GET, uri, handler);
     }
 
+    public void listEnvironments(Location location, ListHandler handler) {
+        String uri = "/environments";
+        if (location != null) uri += "?latitude=" + location.getLatitude() + "&longitude=" + location.getLongitude();
+        sendListRequest(Request.Method.GET, uri, handler);
+    }
+
     public void newEnvironment(JSONObject message, Handler handler) {
         String uri = "/environments";
         sendRequest(Request.Method.POST, uri, message, handler);
@@ -326,6 +332,12 @@ public class FlareManager {
         sendListRequest(Request.Method.GET, uri, handler);
     }
 
+    public void listThings(String zoneId, String environmentId, PointF point, double distance, ListHandler handler) {
+        String uri = "/environments/" + environmentId + "/zones/" + zoneId + "/things";
+		if (point != null) uri += "?x=" + point.x + "&y=" + point.y + "&distance=" + distance;
+        sendListRequest(Request.Method.GET, uri, handler);
+    }
+
     public void newThing(String zoneId, String environmentId, JSONObject message, Handler handler) {
         String uri = "/environments/" + environmentId + "/zones/" + zoneId + "/things";
         sendRequest(Request.Method.POST, uri, message, handler);
@@ -358,6 +370,12 @@ public class FlareManager {
 
     public void listDevices(String environmentId, ListHandler handler) {
         String uri = "/environments/" + environmentId + "/devices";
+        sendListRequest(Request.Method.GET, uri, handler);
+    }
+
+    public void listDevices(String environmentId, PointF point, double distance, ListHandler handler) {
+        String uri = "/environments/" + environmentId + "/devices";
+		if (point != null) uri += "?x=" + point.x + "&y=" + point.y + "&distance=" + distance;
         sendListRequest(Request.Method.GET, uri, handler);
     }
 

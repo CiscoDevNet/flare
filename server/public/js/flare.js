@@ -29,8 +29,8 @@ function getEnvironments(callback) {
 	$.getJSON('/environments', callback);
 }
 
-function getEnvironmentsWithPoint(point, callback) {
-	$.getJSON('/environments?latitude=' + point.latitude + '&longitude=' + point.longitude, callback);
+function getEnvironmentsWithParams(params, callback) {
+	$.getJSON('/environments?' + $.param(params), callback);
 }
 
 function newEnvironment(data, callback) {
@@ -55,8 +55,8 @@ function getZones(environment_id, callback) {
 	$.getJSON('/environments/' + environment_id + '/zones', callback);
 }
 
-function getZonesWithPoint(point, environment_id, callback) {
-	$.getJSON('/environments/' + environment_id + '/zones?x=' + point.x + '&y=' + point.y, callback);
+function getZonesWithParams(params, environment_id, callback) {
+	$.getJSON('/environments/' + environment_id + '/zones?' + $.param(params), callback);
 }
 
 function newZone(environment_id, data, callback) {
@@ -79,6 +79,10 @@ function deleteZone(environment_id, zone_id, callback) {
 
 function getThings(environment_id, zone_id, callback) {
 	$.getJSON('/environments/' + environment_id + '/zones/' + zone_id + '/things', callback);
+}
+
+function getThingsWithParams(environment_id, zone_id, params, callback) {
+	$.getJSON('/environments/' + environment_id + '/zones/' + zone_id + '/things?' + $.param(params), callback);
 }
 
 function newThing(environment_id, zone_id, data, callback) {
@@ -109,6 +113,10 @@ function deleteThing(environment_id, zone_id, thing_id, callback) {
 
 function getDevices(environment_id, callback) {
 	$.getJSON('/environments/' + environment_id + '/devices', callback);
+}
+
+function getDevicesWithParams(environment_id, params, callback) {
+	$.getJSON('/environments/' + environment_id + '/devices?' + $.param(params), callback);
 }
 
 function newDevice(environment_id, data, callback) {

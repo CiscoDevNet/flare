@@ -23,9 +23,11 @@ def delete(uri):
 
 # Environments
 
-def getEnvironments(location={}):
-    'Gets a list of environments. Pass a dictionary with latitude and longitude values to filter by location.'
-    return get('/environments', params=location)
+def getEnvironments(params={}):
+    'Gets a list of environments. Params can include:'
+    'latitude, longitude: filter environments by location'
+    'key, value: filter by data key/value pair'
+    return get('/environments', params=params)
 
 def newEnvironment(json):
     return post('/environments', json=json)
@@ -41,9 +43,11 @@ def deleteEnvironment(environment_id):
 
 # Zones
 
-def getZones(environment_id, position={}):
-    'Gets a list of zones. Pass a dictionary with x and y values to filter by position.'
-    return get('/environments/' + environment_id + '/zones', params=position)
+def getZones(environment_id, params={}):
+    'Gets a list of zones. Params can include:'
+    'x, y: filter zones that contain a given location'
+    'key, value: filter by data key/value pair'
+    return get('/environments/' + environment_id + '/zones', params=params)
 
 def newZone(environment_id, json):
     return post('/environments/' + environment_id + '/zones', json=json)
@@ -59,8 +63,11 @@ def deleteZone(environment_id, zone_id):
 
 # Things
 
-def getThings(environment_id, zone_id):
-    return get('/environments/' + environment_id + '/zones/' + zone_id + '/things')
+def getThings(environment_id, zone_id, params={}):
+    'Gets a list of things. Params can include:'
+    'x, y, distance: filter things less than a given distance from a point'
+    'key, value: filter by data key/value pair'
+    return get('/environments/' + environment_id + '/zones/' + zone_id + '/things', params=params)
 
 def newThing(environment_id, zone_id, json):
     return post('/environments/' + environment_id + '/zones/' + zone_id + '/things', json=json)
@@ -85,8 +92,11 @@ def deleteThing(environment_id, zone_id, thing_id):
 
 # Devices
  
-def getDevices(environment_id):
-    return get('/environments/' + environment_id + '/devices')
+def getDevices(environment_id, params={}):
+    'Gets a list of devices. Params can include:'
+    'x, y, distance: filter devices less than a given distance from a point'
+    'key, value: filter by data key/value pair'
+    return get('/environments/' + environment_id + '/devices', params=params)
 
 def newDevice(environment_id, json):
     return post('/environments/' + environment_id + '/devices', json=json)

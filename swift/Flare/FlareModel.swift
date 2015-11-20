@@ -60,8 +60,8 @@ public class Flare: NSObject {
         json["name"] = self.name
         json["description"] = self.comment
         json["data"] = self.data
-        json["created"] = self.created
-        json["modified"] = self.modified
+        // json["created"] = self.created
+        // json["modified"] = self.modified
         return json
     }
 }
@@ -93,7 +93,12 @@ public class Environment: Flare {
             let zone = Zone(json: child)
             zones.append(zone)
         }
-        
+
+        for child: JSONDictionary in json.getArray("devices") {
+            let device = Device(json: child)
+            devices.append(device)
+        }
+
         super.init(json: json)
         
         if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
@@ -112,8 +117,8 @@ public class Environment: Flare {
         json["geofence"] = self.geofence.toJSON()
         json["perimeter"] = self.perimeter.toJSON()
         json["angle"] = self.angle
-        json["zones"] = self.zones.map({ $0.toJSON()})
-        json["devices"] = self.devices.map({ $0.toJSON()})
+        if zones.count > 0 {json["zones"] = self.zones.map({$0.toJSON()})}
+        if devices.count > 0 {json["devices"] = self.devices.map({$0.toJSON()})}
         return json
     }
 
@@ -143,6 +148,7 @@ public class Environment: Flare {
                 for thing in zone.things {
                     if let minor = thing.minor {
                         results[minor] = thing
+                        NSLog("Beacon \(thing.name): \(zone.major!) \(thing.minor!)")
                     }
                 }
             }
@@ -192,7 +198,7 @@ public class Zone: Flare {
     public override func toJSON() -> JSONDictionary {
         var json = super.toJSON()
         json["perimeter"] = self.perimeter.toJSON()
-        json["things"] = self.things.map({ $0.toJSON()})
+        if things.count > 0 {json["things"] = self.things.map({$0.toJSON()})}
         return json
     }
 

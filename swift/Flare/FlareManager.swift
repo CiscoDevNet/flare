@@ -252,8 +252,9 @@ public class FlareManager: APIManager {
             {json in handler(json as! JSONArray)}
     }
     
-    // return only environments whose geofence contains the given coordinate
-    // params should contain latitude and longitude
+    // return environments filtered by parameters
+    // latitude, longitude: filter environments whose geofence contains the given point
+    // key, value: filter environments whose data contains the given key/value pair
     public func listEnvironments(params: JSONDictionary?, handler:(JSONArray) -> ()) {
         sendRequest("environments", params: params)
             {json in handler(json as! JSONArray)}
@@ -289,6 +290,13 @@ public class FlareManager: APIManager {
     // return only zones in the environment containing the given point
     public func listZones(environmentId: String, point: CGPoint, handler:(JSONArray) -> ()) {
         let params = ["x":"\(point.x)", "y":"\(point.x)"]
+        listZones(environmentId, params: params, handler: handler)
+    }
+    
+    // return zones filtered by parameters
+    // x, y: filter zones whose perimeter contains the given point
+    // key, value: filter zones whose data contains the given key/value pair
+    public func listZones(environmentId: String, params: JSONDictionary?, handler:(JSONArray) -> ()) {
         sendRequest("environments/\(environmentId)/zones", params: params)
             {json in handler(json as! JSONArray)}
     }
@@ -317,6 +325,14 @@ public class FlareManager: APIManager {
     
     public func listThings(environmentId: String, zoneId: String, handler:(JSONArray) -> ()) {
         sendRequest("environments/\(environmentId)/zones/\(zoneId)/things")
+            {json in handler(json as! JSONArray)}
+    }
+    
+    // return things filtered by parameters
+    // x, y, distance: filter things whose position is within distance from the given point
+    // key, value: filter things whose data contains the given key/value pair
+    public func listThings(environmentId: String, zoneId: String, params: JSONDictionary?, handler:(JSONArray) -> ()) {
+        sendRequest("environments/\(environmentId)/zones/\(zoneId)/things", params: params)
             {json in handler(json as! JSONArray)}
     }
     
@@ -361,6 +377,14 @@ public class FlareManager: APIManager {
             {json in handler(json as! JSONArray)}
     }
     
+    // return things filtered by parameters
+    // x, y, distance: filter things whose position is within distance from the given point
+    // key, value: filter things whose data contains the given key/value pair
+    public func listDevices(environmentId: String, params: JSONDictionary?, handler:(JSONArray) -> ()) {
+        sendRequest("environments/\(environmentId)/devices", params: params)
+            {json in handler(json as! JSONArray)}
+    }
+
     public func newDevice(environmentId: String, device: JSONDictionary, handler:(JSONDictionary) -> ()) {
         sendRequest("environments/\(environmentId)/devices", params: nil, method: .POST, message: device)
             {json in handler(json as! JSONDictionary)}
@@ -503,6 +527,10 @@ public class FlareManager: APIManager {
     
     public func setPosition(flare: Flare, position: CGPoint, sender: Flare?) {
         var message = flare.flareInfo
+        if position.x.isNaN || position.y.isNaN {
+            NSLog("Invalid position: \(position)")
+            return
+        }
         message["position"] = ["x":position.x, "y":position.y]
         if sender != nil { message["sender"] = sender!.id }
         emit("setPosition", message: message)
