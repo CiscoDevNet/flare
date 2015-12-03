@@ -16,6 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var outlineView: NSOutlineView!
     @IBOutlet weak var tabView: NSTabView!
     @IBOutlet weak var map: IndoorMap!
+    @IBOutlet weak var compass: CompassView!
     
     @IBOutlet weak var idField: NSTextField!
     @IBOutlet weak var nameField: NSTextField!
@@ -40,8 +41,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var minorField: NSTextField!
     @IBOutlet weak var colorField: NSTextField!
     @IBOutlet weak var brightnessField: NSTextField!
-    @IBOutlet weak var xField: NSTextField!
-    @IBOutlet weak var yField: NSTextField!
+    @IBOutlet weak var thingXField: NSTextField!
+    @IBOutlet weak var thingYField: NSTextField!
 
     @IBOutlet weak var angleField: NSTextField!
     @IBOutlet weak var deviceXField: NSTextField!
@@ -54,10 +55,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var nearbyDistanceField: NSTextField!
     @IBOutlet weak var nearbyAngleField: NSTextField!
     
+    @IBOutlet weak var mapDirectionButtons: NSView!
+    @IBOutlet weak var compassDirectionButtons: NSView!
+
+    
     var flareManager = FlareManager(host: "localhost", port: 1234)
     var environments = [Environment]()
     var selectedFlare, nearbyFlare: Flare?
     var defaults: NSUserDefaults
+    
+    let animationDelay = 0.5
+    let animationSteps = 30
     
     override init() {
         defaults = NSUserDefaults.standardUserDefaults()
@@ -226,18 +234,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 nearbyAngleField.doubleValue = angle
             }
         }
+        
+        map.dataChanged()
+        compass.dataChanged()
     }
     
-    func didReceivePosition(flare: Flare, position: CGPoint, sender: Flare?) {
-        NSLog("\(flare.name) position: \(position)")
+    func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?) {
+        NSLog("\(flare.name) position: \(newPosition)")
         
         if flare == selectedFlare {
             if flare is Thing {
-                xField.doubleValue = Double(position.x)
-                yField.doubleValue = Double(position.y)
+                thingXField.doubleValue = Double(newPosition.x)
+                thingYField.doubleValue = Double(newPosition.y)
             } else if flare is Device {
-                deviceXField.doubleValue = Double(position.x)
-                deviceYField.doubleValue = Double(position.y)
+                deviceXField.doubleValue = Double(newPosition.x)
+                deviceYField.doubleValue = Double(newPosition.y)
             }
         } else if flare == nearbyFlare {
             if let device = nearbyFlare as? Device, thing = selectedFlare as? Thing {
@@ -245,8 +256,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 nearbyDistanceField.doubleValue = distance
             }
         }
-        
-        map.dataChanged()
+
+        animateFlare(flare as! FlarePosition, oldPosition: oldPosition, newPosition: newPosition)
     }
     
     func handleAction(flare: Flare, action: String, sender: Flare?) {
@@ -326,6 +337,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         if let flare = selectedFlare {
             let value = sender.integerValue
             flare.data[sender.identifier!] = value
+            NSLog("Data: \(flare.data)")
             flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
         }
     }
@@ -334,22 +346,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         if let flare = selectedFlare {
             let value = sender.doubleValue
             flare.data[sender.identifier!] = value
+            NSLog("Data: \(flare.data)")
             flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
         }
     }
 
     @IBAction func changePosition(sender: NSTextField) {
         if let thing = selectedFlare as? Thing {
-            let position = CGPoint(x: xField.doubleValue, y: yField.doubleValue)
-            thing.position = position
-            flareManager.setPosition(thing, position: position, sender: nil)
+            let newPosition = CGPoint(x: thingXField.doubleValue, y: thingYField.doubleValue)
+            animateFlare(thing, oldPosition: thing.position, newPosition: newPosition)
+            flareManager.setPosition(thing, position: newPosition, sender: nil)
+            map.dataChanged()
         } else if let device = selectedFlare as? Device {
-            let position = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
-            device.position = position
-            flareManager.setPosition(device, position: position, sender: nil)
+            let newPosition = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
+            animateFlare(device, oldPosition: device.position, newPosition: newPosition)
+            flareManager.setPosition(device, position: newPosition, sender: nil)
         }
     }
 
+    func animateFlare(var flare: FlarePosition, oldPosition: CGPoint, newPosition: CGPoint) {
+        let dx = (newPosition.x - oldPosition.x) / CGFloat(animationSteps)
+        let dy = (newPosition.y - oldPosition.y) / CGFloat(animationSteps)
+
+        delayLoop(animationDelay, steps: animationSteps) { i in
+            flare.position = CGPoint(x: oldPosition.x + CGFloat(i) * dx,
+                                     y: oldPosition.y + CGFloat(i) * dy)
+            self.map.dataChanged()
+            self.compass.dataChanged()
+        }
+    }
+    
     @IBAction func changeGeofence(sender: NSTextField) {
         if let environment = selectedFlare as? Environment {
             let geofence = ["latitude":latitudeField.doubleValue,
@@ -396,7 +422,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     @IBAction func performAction(sender: NSButton) {
-        if let flare = selectedFlare, action = sender.identifier {
+        if let flare = selectedFlare, identifier = sender.identifier {
+            // hack to work around the issue that you can't have several buttons in the same .xib with the same identifier
+            let action = identifier.hasSuffix("2") || identifier.hasSuffix("3") || identifier.hasSuffix("4") ?
+                identifier.substringToIndex(identifier.endIndex.predecessor()) : identifier
             flareManager.performAction(flare, action: action, sender: nil)
         }
     }
@@ -495,14 +524,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             minorField.stringValue = ""
             colorField.stringValue = ""
             brightnessField.stringValue = ""
-            xField.stringValue = ""
-            yField.stringValue = ""
+            thingXField.stringValue = ""
+            thingYField.stringValue = ""
             angleField.stringValue = ""
             deviceXField.stringValue = ""
             deviceYField.stringValue = ""
         }
         
         selectedFlare = selectedItem()
+        map.selectedFlare = selectedFlare
         nearbyView.hidden = true
         nearbyFlare = nil
         
@@ -518,11 +548,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
 
             if let environment = flareManager.environmentForFlare(newFlare) {
                 self.map.loadEnvironment(environment)
-            }
 
+                if compass.device == nil {
+                    NSLog("Devices: \(environment.devices)")
+                    if let device = environment.devices.first {
+                        compass.environment = environment
+                        compass.device = device
+                        compass.dataChanged()
+                    }
+                }
+            }
+            
+            compass.selectedThing = nil
+            
             if let environment = selectedFlare as? Environment {
                 tabView.selectTabViewItemAtIndex(0)
-
+                mapDirectionButtons.hidden = true
+                compassDirectionButtons.hidden = true
+                
                 if let uuid = environment.data["uuid"] as? String { uuidField.stringValue = uuid }
                 environmentXField.doubleValue = Double(environment.perimeter.origin.x)
                 environmentYField.doubleValue = Double(environment.perimeter.origin.y)
@@ -535,6 +578,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             } else if let zone = selectedFlare as? Zone {
                 NSLog("Selected \(zone)")
                 tabView.selectTabViewItemAtIndex(1)
+                mapDirectionButtons.hidden = true
+                compassDirectionButtons.hidden = true
                 
                 if let major = zone.data["major"] as? String { majorField.stringValue = major }
                 zoneXField.doubleValue = Double(zone.perimeter.origin.x)
@@ -544,7 +589,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             } else if let thing = selectedFlare as? Thing {
                 NSLog("Selected \(thing)")
                 tabView.selectTabViewItemAtIndex(2)
-                
+                mapDirectionButtons.hidden = false
+                compassDirectionButtons.hidden = false
+
                 if thing.minor != nil { minorField.integerValue = thing.minor! }
 
                 flareManager.getPosition(thing)
@@ -552,17 +599,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 if let color = thing.data["color"] as? String { colorField.stringValue = color }
                 if let brightness = thing.data["brightness"] as? Double { brightnessField.doubleValue = brightness }
                 
-                xField.doubleValue = Double(thing.position.x)
-                yField.doubleValue = Double(thing.position.y)
+                thingXField.doubleValue = Double(thing.position.x)
+                thingYField.doubleValue = Double(thing.position.y)
+                
+                compass.selectedThing = thing
+                compass.dataChanged()
             } else if let device = selectedFlare as? Device {
                 NSLog("Selected \(device)")
+                defaults.setObject(newFlare.id, forKey: "selectedDeviceId")
                 tabView.selectTabViewItemAtIndex(3)
-                
+                mapDirectionButtons.hidden = false
+                compassDirectionButtons.hidden = false
+
                 if let angle = device.data["angle"] as? String { angleField.stringValue = angle }
                 deviceXField.doubleValue = Double(device.position.x)
                 deviceYField.doubleValue = Double(device.position.y)
+                
+                if let environment = flareManager.environmentForFlare(device) {
+                    compass.environment = environment
+                    compass.device = device
+                    compass.dataChanged()
+                }
             }
         }
+        
+        map.dataChanged()
     }
 }
-

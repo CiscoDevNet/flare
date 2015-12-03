@@ -21,6 +21,7 @@ class IndoorMap: NSView {
             self.needsDisplay = true
         }
     }
+    var selectedFlare: Flare?
     
     var labels = [String:NSTextField]()
     
@@ -30,12 +31,13 @@ class IndoorMap: NSView {
     var gridOrigin = CGPoint(x: 0,y: 0)
     var scale: CGFloat = 1.0
     
-    let white = NSColor(red:255, green:255, blue:255, alpha:0.5)
+    let white = NSColor(red:1, green:1, blue:1, alpha:0.5)
     let lightGray = NSColor(red:0, green:0, blue:0, alpha:0.1)
-    let pink = NSColor(red:255, green:0, blue:0, alpha:0.5)
-    let blue = NSColor(red:0, green:0, blue:255, alpha:0.5)
-    let lightBlue = NSColor(red:0, green:0, blue:255, alpha:0.15)
-    let halo = NSColor(red:255, green:255, blue:0, alpha:0.5)
+    let pink = NSColor(red:1, green:0, blue:0, alpha:0.5)
+    let blue = NSColor(red:0, green:0, blue:1, alpha:0.5)
+    let lightBlue = NSColor(red:0, green:0, blue:1, alpha:0.15)
+    let halo = NSColor(red:1, green:1, blue:0, alpha:0.5)
+    let selectedColor = NSColor(red:48.0/256.0, green:131.0/256.0, blue:251.0/256.0, alpha:0.5)
     
     func loadEnvironment(value: Environment) {
         if value != environment {
@@ -94,7 +96,7 @@ class IndoorMap: NSView {
             gridCenter = centerPoint(grid)
             
             fillRect(grid, color: white, inset: 0)
-            
+
             for zone in zones {
                 fillRect(zone.perimeter, color: white, inset: 2)
                 
@@ -103,19 +105,11 @@ class IndoorMap: NSView {
             }
             
             for thing in things {
-                var colorName = "red"
-                var brightness = 0.5
-                
-                if let value = thing.data["color"] as? String {
-                    colorName = value
+                let color = IndoorMap.colorForThing(thing)
+
+                if thing == selectedFlare {
+                    fillCircle(thing.position, radius: 15, color: selectedColor)
                 }
-                
-                if let value = thing.data["brightness"] as? Double {
-                    brightness = value
-                }
-                
-                let color = getColor(colorName, brightness: brightness)
-                
                 if thing == nearbyThing {
                     fillCircle(thing.position, radius: 15, color: halo)
                 }
@@ -126,6 +120,9 @@ class IndoorMap: NSView {
             }
 
             for device in environment!.devices {
+                if device == selectedFlare {
+                    fillCircle(device.position, radius: 15, color: selectedColor)
+                }
                 fillCircle(device.position, radius: 10, color: blue)
 
                 let label = labelForFlare(device)
@@ -142,14 +139,29 @@ class IndoorMap: NSView {
         }
     }
     
-    func getColor(name: String, brightness: Double) -> NSColor {
+    static func colorForThing(thing: Thing) -> NSColor {
+        var colorName = "red"
+        var brightness = 0.5
+        
+        if let value = thing.data["color"] as? String {
+            colorName = value
+        }
+        
+        if let value = thing.data["brightness"] as? Double {
+            brightness = value
+        }
+        
+        return getColor(colorName, brightness: brightness)
+    }
+    
+    static func getColor(name: String, brightness: Double) -> NSColor {
         return NSColor(hue: hue(name),
             saturation: CGFloat(1.0),
             brightness: CGFloat(brightness * 2.0),
             alpha: CGFloat(1.0))
     }
     
-    func hue(name: String) -> CGFloat {
+    static func hue(name: String) -> CGFloat {
         if name == "red" { return 0 }
         if name == "orange" { return 0.08333333 }
         if name == "yellow" { return 0.16666666 }
