@@ -173,7 +173,7 @@ public extension CGFloat {
     }
 }
 
-func radiansToDegrees(radians: Double) -> Double {
+public func radiansToDegrees(radians: Double) -> Double {
     return radians * 180.0 / M_PI;
 }
 
@@ -202,13 +202,25 @@ public func background(closure:()->()) {
 
 // calls the closure after the delay
 // e.g. delay(5.0) { // do stuff }
-public func delay(delay:Double, closure:()->()) {
+public func delay(duration:Double, closure:()->()) {
     dispatch_after(
         dispatch_time(
             DISPATCH_TIME_NOW,
-            Int64(delay * Double(NSEC_PER_SEC))
+            Int64(duration * Double(NSEC_PER_SEC))
         ),
         dispatch_get_main_queue(), closure)
+}
+
+// calls the closure repeatedly over a period of time
+// duration controls the total length of time
+// steps controls the number of intermediate steps
+// the counter variable i will be passed to the closure
+public func delayLoop(duration:Double, steps:Int, closure:(i:Int)->()) {
+    for i in 1...steps {
+        delay(Double(i) * (duration / Double(steps))) {
+            closure(i: i)
+        }
+    }
 }
 
 public extension String {
