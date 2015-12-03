@@ -12,7 +12,7 @@ import SocketIO
 
 @objc public protocol FlareManagerDelegate {
     optional func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?)
-    optional func didReceivePosition(flare: Flare, position: CGPoint, sender: Flare?)
+    optional func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?)
     optional func handleAction(flare: Flare, action: String, sender: Flare?)
     optional func enter(zone: Zone, device: Device)
     optional func exit(zone: Zone, device: Device)
@@ -571,12 +571,15 @@ public class FlareManager: APIManager {
                 positionDict = message["position"] as? JSONDictionary
             {
                 if self.debugSocket { NSLog("position: \(message)") }
-                let position = getPoint(positionDict);
+                let newPosition = getPoint(positionDict);
+                var oldPosition = CGPointZero
                 
                 if let thing = flare as? Thing {
-                    thing.position = position
+                    oldPosition = thing.position
+                    thing.position = newPosition
                 } else if let device = flare as? Device {
-                    device.position = position
+                    oldPosition = device.position
+                    device.position = newPosition
                 }
                 
                 var sender: Flare? = nil
@@ -584,7 +587,7 @@ public class FlareManager: APIManager {
                     sender = self.flareIndex[senderId]
                 }
                 
-                self.delegate?.didReceivePosition?(flare, position: position, sender: sender)
+                self.delegate?.didReceivePosition?(flare, oldPosition: oldPosition, newPosition: newPosition, sender: sender)
             }
         }
         
