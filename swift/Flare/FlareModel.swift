@@ -66,7 +66,15 @@ public class Flare: NSObject {
     }
 }
 
-public class Environment: Flare {
+public protocol FlarePosition {
+    var position: CGPoint { get set }
+}
+
+public protocol FlarePerimeter {
+    var perimeter: CGRect { get set }
+}
+
+public class Environment: Flare, FlarePerimeter {
     public var geofence: Geofence
     public var perimeter: CGRect
     public var angle: Double
@@ -158,7 +166,7 @@ public class Environment: Flare {
     }
 }
 
-public class Zone: Flare {
+public class Zone: Flare, FlarePerimeter {
     public var environmentId: String
     
     public var perimeter: CGRect
@@ -207,7 +215,7 @@ public class Zone: Flare {
     }
 }
 
-public class Thing: Flare {
+public class Thing: Flare, FlarePosition {
     public var environmentId: String
     public var zoneId: String
     
@@ -281,7 +289,7 @@ public class Thing: Flare {
     }
 }
 
-public class Device: Flare {
+public class Device: Flare, FlarePosition {
     public var environmentId: String
 
     public var position: CGPoint
