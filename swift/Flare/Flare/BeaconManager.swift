@@ -97,6 +97,7 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         // NSLog("Found \(clbeacons.count) beacons.")
         
         for clbeacon in clbeacons {
+            // NSLog("Found beacon with minor: \(clbeacon.minor.integerValue)")
             clBeaconIndex[clbeacon.minor.integerValue] = clbeacon
         }
         
@@ -105,6 +106,7 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
                 // NSLog("Found beacon: \(beacon.name)")
                 beacon.addDistance(clbeacon.accuracy)
             } else {
+                // NSLog("Couldn't find beacon: \(beacon.name)")
                 beacon.addDistance(-1.0) // the beacon was not seen this time
             }
         }
