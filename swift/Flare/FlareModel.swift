@@ -156,7 +156,7 @@ public class Environment: Flare, FlarePerimeter {
                 for thing in zone.things {
                     if let minor = thing.minor {
                         results[major * 10000 + minor] = thing
-                        NSLog("Beacon \(thing.name): \(zone.major!) \(thing.minor!)")
+                        // NSLog("Beacon \(thing.name): \(zone.major!) \(thing.minor!)")
                     }
                 }
             }
