@@ -152,10 +152,10 @@ public class Environment: Flare, FlarePerimeter {
     public func beacons() -> [Int:Thing] {
         var results = [Int:Thing]()
         for zone in zones {
-            if let _ = zone.major {
+            if let major = zone.major {
                 for thing in zone.things {
                     if let minor = thing.minor {
-                        results[minor] = thing
+                        results[major * 10000 + minor] = thing
                         NSLog("Beacon \(thing.name): \(zone.major!) \(thing.minor!)")
                     }
                 }
@@ -315,6 +315,14 @@ public class Device: Flare, FlarePosition {
         var json = super.toJSON()
         json["position"] = self.position.toJSON()
         return json
+    }
+    
+    public func angle() -> Double {
+        if let value = self.data["angle"] as? Double {
+            return value
+        } else {
+            return 0
+        }
     }
     
     public func distanceTo(thing: Thing) -> Double {
