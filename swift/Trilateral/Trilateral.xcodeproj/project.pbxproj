@@ -7,19 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C94290E71C1B83A400FFAA84 /* ColorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94290E61C1B83A400FFAA84 /* ColorButton.swift */; };
+		C95CEBF91C1209B100C3A226 /* CompassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95CEBF81C1209B100C3A226 /* CompassView.swift */; };
+		C95CEBFB1C163A1700C3A226 /* DeviceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95CEBFA1C163A1700C3A226 /* DeviceController.swift */; };
 		C98970751B81E90900DAB978 /* Flare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C98970741B81E90900DAB978 /* Flare.framework */; };
 		C98970771B81E91700DAB978 /* SocketIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C98970761B81E91700DAB978 /* SocketIO.framework */; };
 		C98970791B81E93100DAB978 /* SocketIO.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C98970761B81E91700DAB978 /* SocketIO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C989707A1B81E93100DAB978 /* Flare.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C98970741B81E90900DAB978 /* Flare.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C9C2DF141B98A334009E51AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C9C2DF131B98A334009E51AE /* Settings.bundle */; };
 		C9D1AA431AC1F5850003B8A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1AA421AC1F5850003B8A1 /* AppDelegate.swift */; };
-		C9D1AA451AC1F5850003B8A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1AA441AC1F5850003B8A1 /* ViewController.swift */; };
+		C9D1AA451AC1F5850003B8A1 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1AA441AC1F5850003B8A1 /* MapViewController.swift */; };
 		C9D1AA481AC1F5850003B8A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9D1AA461AC1F5850003B8A1 /* Main.storyboard */; };
 		C9D1AA4A1AC1F5850003B8A1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9D1AA491AC1F5850003B8A1 /* Images.xcassets */; };
 		C9D1AA4D1AC1F5850003B8A1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C9D1AA4B1AC1F5850003B8A1 /* LaunchScreen.xib */; };
 		C9D1AA631AC1F6F10003B8A1 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D1AA621AC1F6F10003B8A1 /* CoreLocation.framework */; };
 		C9D1AA651AC1FA100003B8A1 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D1AA641AC1FA100003B8A1 /* CoreBluetooth.framework */; };
 		C9D1AA7A1AC4575D0003B8A1 /* IndoorMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */; };
+		C9D397671C18B3FD006E6343 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C9C2DF131B98A334009E51AE /* Settings.bundle */; };
+		C9D397691C18CEB8006E6343 /* CompassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D397681C18CEB8006E6343 /* CompassViewController.swift */; };
+		C9D3976B1C18D424006E6343 /* NearbyThingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D3976A1C18D424006E6343 /* NearbyThingController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,19 +42,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C94290E61C1B83A400FFAA84 /* ColorButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorButton.swift; sourceTree = "<group>"; };
+		C95CEBF81C1209B100C3A226 /* CompassView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompassView.swift; sourceTree = "<group>"; };
+		C95CEBFA1C163A1700C3A226 /* DeviceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceController.swift; sourceTree = "<group>"; };
 		C98970741B81E90900DAB978 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = "../../Flare/Output/Release-iphoneuniversal/Flare.framework"; sourceTree = "<group>"; };
 		C98970761B81E91700DAB978 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = "../../SocketIO/Output/Release-iphoneuniversal/SocketIO.framework"; sourceTree = "<group>"; };
 		C9C2DF131B98A334009E51AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		C9D1AA3D1AC1F5850003B8A1 /* Trilateral.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trilateral.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D1AA411AC1F5850003B8A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9D1AA421AC1F5850003B8A1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C9D1AA441AC1F5850003B8A1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C9D1AA441AC1F5850003B8A1 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		C9D1AA471AC1F5850003B8A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C9D1AA491AC1F5850003B8A1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C9D1AA4C1AC1F5850003B8A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		C9D1AA621AC1F6F10003B8A1 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		C9D1AA641AC1FA100003B8A1 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorMap.swift; sourceTree = "<group>"; };
+		C9D397681C18CEB8006E6343 /* CompassViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompassViewController.swift; sourceTree = "<group>"; };
+		C9D3976A1C18D424006E6343 /* NearbyThingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyThingController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +77,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C9887ECE1C18EEDB008FBD21 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				C95CEBFA1C163A1700C3A226 /* DeviceController.swift */,
+				C9D1AA441AC1F5850003B8A1 /* MapViewController.swift */,
+				C9D397681C18CEB8006E6343 /* CompassViewController.swift */,
+				C9D3976A1C18D424006E6343 /* NearbyThingController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		C9887ECF1C18EEE4008FBD21 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */,
+				C95CEBF81C1209B100C3A226 /* CompassView.swift */,
+				C94290E61C1B83A400FFAA84 /* ColorButton.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		C9D1AA341AC1F5850003B8A1 = {
 			isa = PBXGroup;
 			children = (
@@ -87,8 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				C9D1AA421AC1F5850003B8A1 /* AppDelegate.swift */,
-				C9D1AA441AC1F5850003B8A1 /* ViewController.swift */,
-				C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */,
+				C9887ECE1C18EEDB008FBD21 /* View Controllers */,
+				C9887ECF1C18EEE4008FBD21 /* Views */,
 				C9D1AA461AC1F5850003B8A1 /* Main.storyboard */,
 				C9D1AA491AC1F5850003B8A1 /* Images.xcassets */,
 				C9D1AA4B1AC1F5850003B8A1 /* LaunchScreen.xib */,
@@ -179,7 +210,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9C2DF141B98A334009E51AE /* Settings.bundle in Resources */,
+				C9D397671C18B3FD006E6343 /* Settings.bundle in Resources */,
 				C9D1AA481AC1F5850003B8A1 /* Main.storyboard in Resources */,
 				C9D1AA4D1AC1F5850003B8A1 /* LaunchScreen.xib in Resources */,
 				C9D1AA4A1AC1F5850003B8A1 /* Images.xcassets in Resources */,
@@ -194,8 +225,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9D1AA7A1AC4575D0003B8A1 /* IndoorMap.swift in Sources */,
-				C9D1AA451AC1F5850003B8A1 /* ViewController.swift in Sources */,
+				C95CEBF91C1209B100C3A226 /* CompassView.swift in Sources */,
+				C95CEBFB1C163A1700C3A226 /* DeviceController.swift in Sources */,
+				C9D397691C18CEB8006E6343 /* CompassViewController.swift in Sources */,
+				C9D1AA451AC1F5850003B8A1 /* MapViewController.swift in Sources */,
 				C9D1AA431AC1F5850003B8A1 /* AppDelegate.swift in Sources */,
+				C9D3976B1C18D424006E6343 /* NearbyThingController.swift in Sources */,
+				C94290E71C1B83A400FFAA84 /* ColorButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

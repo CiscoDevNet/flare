@@ -10,17 +10,31 @@ import UIKit
 import Flare
 import CoreGraphics
 
-class IndoorMap: UIView {
+class IndoorMap: UIView, FlareController {
     
-    var environment: Environment?
-    var zones = [Zone]()
-    var beacons = [Int:Thing]()
-    var device: Device?
-    var nearbyThing: Thing? {
-        didSet {
-            setNeedsDisplay()
+    var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    var currentEnvironment: Environment? {
+        didSet(value) {
+            if value != currentEnvironment {
+                for (_,label) in labels {
+                    label.removeFromSuperview()
+                }
+                labels.removeAll(keepCapacity: true)
+                
+                if currentEnvironment != nil {
+                    updateScale()
+                    self.zones = currentEnvironment!.zones
+                    self.things = currentEnvironment!.things()
+                    setNeedsDisplay()
+                }
+            }
         }
     }
+    var currentZone: Zone? { didSet(value) { /* highlight? */ }}
+    var zones = [Zone]()
+    var things = [Thing]()
+    var device: Device? { didSet { setNeedsDisplay() }}
+    var nearbyThing: Thing? { didSet { setNeedsDisplay() }}
     
     var labels = [String:UILabel]()
     
@@ -33,35 +47,32 @@ class IndoorMap: UIView {
     let lightGray = UIColor(red:0, green:0, blue:0, alpha:0.1)
     let pink = UIColor(red:1, green:0, blue:0, alpha:0.5)
     let blue = UIColor(red:0.4, green:0.4, blue:1, alpha:1.0)
+    let lightBlue = UIColor(red:0, green:0, blue:1, alpha:0.15)
     let halo = UIColor(red:1, green:1, blue:0, alpha:0.5)
+    let selectedColor = UIColor(red:48.0/256.0, green:131.0/256.0, blue:251.0/256.0, alpha:0.5)
     
-    func loadEnvironment(value: Environment) {
-        for (_,label) in labels {
-            label.removeFromSuperview()
-        }
-        labels.removeAll(keepCapacity: true)
-
-        self.environment = value
-        
-        if environment != nil {
-            self.zones = environment!.zones
-            self.beacons = environment!.beacons()
-            self.setNeedsDisplay()
-        }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:"orientationDidChange:", name: UIApplicationDidChangeStatusBarOrientationNotification, object: nil)
     }
     
+    func orientationDidChange(note: NSNotification) {
+        dataChanged()
+    }
+
     func dataChanged() {
         self.setNeedsDisplay()
     }
     
-    func updateLabels() {
-        for (_,beacon) in beacons {
-            if let label = labels[beacon.id] {
-                label.text = String(format:"%.2f", Float(beacon.lastDistance()))
-            }
-        }
+    // sender.identifier can contain several words
+    // the first word is the action
+    @IBAction func performAction(sender: UIButton) {
+        let identifiers = sender.accessibilityIdentifier!.componentsSeparatedByString(" ")
+        let action = identifiers.first!
+        
+        if device != nil { appDelegate.flareManager.performAction(device!, action: action, sender: nil) }
     }
-    
+
     func labelForFlare(flare: Flare) -> UILabel {
         var label = labels[flare.id]
         if (label == nil) {
@@ -75,21 +86,36 @@ class IndoorMap: UIView {
         return label!
     }
     
+    func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        NSLog("Will rotate")
+
+        coordinator.animateAlongsideTransition(nil, completion: { context in
+            NSLog("Completion")
+            
+            self.dataChanged()
+        })
+    }
+            
+    func updateScale() {
+        let inset = CGRectInset(self.frame, 40, 40)
+        let grid = currentEnvironment!.perimeter
+        let xScale = inset.size.width / grid.size.width
+        let yScale = inset.size.height / grid.size.height
+        scale = (xScale < yScale) ? xScale : yScale
+    }
+
     override func drawRect(rect: CGRect) {
-        if (environment != nil) {
+        if (currentEnvironment != nil) {
             let context = UIGraphicsGetCurrentContext()
             CGContextScaleCTM(context, 1, -1);
             CGContextTranslateCTM(context, 0, -self.bounds.size.height);
             
-            let inset = CGRectInset(rect, 40, 40)
-            let grid = environment!.perimeter
+            let inset = CGRectInset(self.frame, 40, 40)
+            let grid = currentEnvironment!.perimeter
             
-            insetCenter = centerPoint(inset)
-            gridCenter = centerPoint(grid)
-            
-            let xScale = inset.size.width / grid.size.width
-            let yScale = inset.size.height / grid.size.height
-            scale = (xScale < yScale) ? xScale : yScale
+            updateScale()
+            insetCenter = inset.center()
+            gridCenter = grid.center()
             
             fillRect(grid, color: lightGray, inset: 0)
             
@@ -97,7 +123,7 @@ class IndoorMap: UIView {
                 fillRect(zone.perimeter, color: lightGray, inset: 2)
 
                 let label = labelForFlare(zone)
-                label.center = flipPoint(convertPoint(centerPoint(zone.perimeter)))
+                label.center = flipPoint(convertPoint(zone.perimeter.center()))
             }
 
             if device != nil && nearbyThing != nil {
@@ -105,33 +131,22 @@ class IndoorMap: UIView {
                 line.moveToPoint(convertPoint(device!.position))
                 line.addLineToPoint(convertPoint(nearbyThing!.position))
                 line.lineWidth = 3
-                halo.setStroke()
+                selectedColor.setStroke()
                 line.stroke()
             }
 
-            for (_,beacon) in beacons {
-                var colorName = "red"
-                var brightness = 0.5
-                    
-                if let value = beacon.data["color"] as? String {
-                    colorName = value
-                }
+            for thing in things {
+                let color = IndoorMap.colorForThing(thing)
                 
-                if let value = beacon.data["brightness"] as? Double {
-                    brightness = value
-                }
+                if thing == nearbyThing { fillCircle(thing.position, radius: 15, color: selectedColor) }
+                fillCircle(thing.position, radius: 10, color: color)
                 
-                let color = getColor(colorName, brightness: brightness)
-                
-                if beacon == nearbyThing { fillCircle(beacon.position, radius: 15, color: halo) }
-                fillCircle(beacon.position, radius: 10, color: color)
-                
-                let label = labelForFlare(beacon)
-                label.center = flipPoint(convertPoint(beacon.position) + CGSize(width: 2, height: -22))
+                let label = labelForFlare(thing)
+                label.center = flipPoint(convertPoint(thing.position) + CGSize(width: 2, height: -22))
             }
             
-            if device != nil {
-                if nearbyThing != nil { fillCircle(device!.position, radius: 15, color: halo) }
+            if device != nil && !device!.position.x.isNaN && !device!.position.y.isNaN {
+                if nearbyThing != nil { fillCircle(device!.position, radius: 15, color: selectedColor) }
                 fillCircle(device!.position, radius: 10, color: blue)
                 
                 let label = labelForFlare(device!)
@@ -140,14 +155,29 @@ class IndoorMap: UIView {
         }
     }
     
-    func getColor(name: String, brightness: Double) -> UIColor {
+    static func colorForThing(thing: Thing) -> UIColor {
+        var colorName = "red"
+        var brightness = 0.5
+        
+        if let value = thing.data["color"] as? String {
+            colorName = value
+        }
+        
+        if let value = thing.data["brightness"] as? Double {
+            brightness = value
+        }
+        
+        return getColor(colorName, brightness: brightness)
+    }
+
+    static func getColor(name: String, brightness: Double) -> UIColor {
         return UIColor(hue: hue(name),
             saturation: CGFloat(1.0),
             brightness: CGFloat(brightness * 2.0),
             alpha: CGFloat(1.0))
     }
     
-    func hue(name: String) -> CGFloat {
+    static func hue(name: String) -> CGFloat {
         if name == "red" { return 0 }
         if name == "orange" { return 0.08333333 }
         if name == "yellow" { return 0.16666666 }
@@ -169,10 +199,6 @@ class IndoorMap: UIView {
         let path = UIBezierPath(ovalInRect: rect)
         color.setFill()
         path.fill()
-    }
-    
-    func centerPoint(rect: CGRect) -> CGPoint {
-        return CGPoint(x: CGRectGetMidX(rect), y: CGRectGetMidY(rect))
     }
     
     func flipPoint(point: CGPoint) -> CGPoint {

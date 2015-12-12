@@ -38,6 +38,42 @@
 			<key>Key</key>
 			<string>port</string>
 		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Location</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Use GPS</string>
+			<key>Key</key>
+			<string>useGPS</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Use Beacons</string>
+			<key>Key</key>
+			<string>useBeacons</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Use Compass</string>
+			<key>Key</key>
+			<string>useCompass</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
 	</array>
 	<key>StringsTable</key>
 	<string>Root</string>
