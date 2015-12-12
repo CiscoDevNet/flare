@@ -13,6 +13,7 @@ import CoreGraphics
 public protocol BeaconManagerDelegate {
     func devicePositionDidChange(position: CGPoint)
     func deviceLocationDidChange(location: CLLocation)
+    func deviceAngleDidChange(angle: Double)
 }
 
 public class BeaconManager: NSObject, CLLocationManagerDelegate {
@@ -69,6 +70,14 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         self.locationManager.stopMonitoringSignificantLocationChanges()
     }
     
+    public func startUpdatingHeading() {
+        self.locationManager.startUpdatingHeading()
+    }
+    
+    public func stopUpdatingHeading() {
+        self.locationManager.stopUpdatingHeading()
+    }
+    
     public func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         switch status {
             case .NotDetermined: NSLog("Not determined")
@@ -80,7 +89,7 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     }
 
     public func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        NSLog("Did update locations")
+        // NSLog("Did update locations")
         if let location = locations.last {
             // NSLog("Location: \(location)")
             currentLatlong = location
@@ -97,22 +106,40 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         // NSLog("Found \(clbeacons.count) beacons.")
         
         for clbeacon in clbeacons {
-            // NSLog("Found beacon with minor: \(clbeacon.minor.integerValue)")
-            clBeaconIndex[clbeacon.minor.integerValue] = clbeacon
+            let index = clbeacon.major.integerValue * 10000 + clbeacon.minor.integerValue
+            // NSLog("Saw beacon: \(clbeacon.major.integerValue) - \(clbeacon.minor.integerValue) (\(index))")
+            clBeaconIndex[index] = clbeacon
         }
         
-        for (_,beacon) in beacons {
-            if let clbeacon = clBeaconIndex[beacon.minor!] {
+        for (index, beacon) in beacons {
+            if let clbeacon = clBeaconIndex[index] {
                 // NSLog("Found beacon: \(beacon.name)")
                 beacon.addDistance(clbeacon.accuracy)
             } else {
-                // NSLog("Couldn't find beacon: \(beacon.name)")
+                // NSLog("Couldn't find beacon: \(beacon.name) (\(index))")
                 beacon.addDistance(-1.0) // the beacon was not seen this time
             }
         }
         
         if delegate != nil {
-            delegate!.devicePositionDidChange(weightedLocation(false))
+            let position = weightedLocation(false)
+            if !position.x.isNaN && !position.y.isNaN {
+                delegate!.devicePositionDidChange(position.roundTo(0.01))
+            }
+        }
+    }
+    
+    var angleDelay = 1.0
+    var lastAngleTime = NSDate()
+    var lastAngle = -1.0
+
+    public func locationManager(manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        let newAngle = newHeading.magneticHeading.roundTo(5.0)
+        
+        if newAngle != lastAngle && lastAngleTime.timeIntervalSinceNow < -angleDelay {
+            lastAngleTime = NSDate()
+            lastAngle = newAngle
+            delegate!.deviceAngleDidChange(newAngle)
         }
     }
     
