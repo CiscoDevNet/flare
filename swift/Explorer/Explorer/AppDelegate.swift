@@ -622,7 +622,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 mapDirectionButtons.hidden = true
                 compassDirectionButtons.hidden = true
                 
-                if let major = zone.data["major"] as? String { majorField.stringValue = major }
+                if let major = zone.data["major"] as? Int { majorField.integerValue = major }
+                
                 zoneXField.doubleValue = Double(zone.perimeter.origin.x)
                 zoneYField.doubleValue = Double(zone.perimeter.origin.y)
                 zoneWidthField.doubleValue = Double(zone.perimeter.size.width)
@@ -633,7 +634,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 mapDirectionButtons.hidden = false
                 compassDirectionButtons.hidden = false
 
-                if thing.minor != nil { minorField.integerValue = thing.minor! }
+                if let minor = thing.data["minor"] as? Int { minorField.integerValue = minor }
 
                 flareManager.getPosition(thing)
                 
