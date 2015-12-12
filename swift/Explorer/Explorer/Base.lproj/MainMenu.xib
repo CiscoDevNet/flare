@@ -19,6 +19,7 @@
                 <outlet property="commentField" destination="vJi-yz-jwL" id="UnX-0w-Wax"/>
                 <outlet property="compass" destination="3XB-GB-NCn" id="fWf-rX-SGl"/>
                 <outlet property="compassDirectionButtons" destination="jnw-TS-1Fd" id="seR-q1-K9i"/>
+                <outlet property="compassWindow" destination="VbT-AE-Yye" id="u3d-rQ-yIh"/>
                 <outlet property="deviceXField" destination="6rd-uT-a28" id="VS3-2G-Kbz"/>
                 <outlet property="deviceYField" destination="sdY-f4-Khl" id="xn3-3A-oTY"/>
                 <outlet property="environmentAngleField" destination="GYB-Sb-nxY" id="pgF-fC-KN3"/>
@@ -32,14 +33,22 @@
                 <outlet property="majorField" destination="WrS-Zt-fW5" id="Wax-1M-VfB"/>
                 <outlet property="map" destination="dqH-xO-e6J" id="fOz-jN-Vlj"/>
                 <outlet property="mapDirectionButtons" destination="K6D-EF-uTr" id="SVI-yh-1bH"/>
+                <outlet property="mapWindow" destination="PT3-ci-6mA" id="wdm-dK-8Lm"/>
                 <outlet property="minorField" destination="tHz-I8-RU1" id="RNE-2r-FU9"/>
                 <outlet property="nameField" destination="dlF-2V-NOX" id="pV2-ZT-bt4"/>
-                <outlet property="nearbyAngleField" destination="8zm-w2-Pi5" id="XRM-SW-u42"/>
-                <outlet property="nearbyCommentField" destination="FF6-TY-eOF" id="CjF-DI-WOw"/>
-                <outlet property="nearbyDistanceField" destination="IZM-ax-hvg" id="L8Q-1P-0cp"/>
-                <outlet property="nearbyIdField" destination="v9q-rx-517" id="x8k-tg-hqt"/>
-                <outlet property="nearbyNameField" destination="DiX-dY-ZcH" id="pq6-Qd-ayq"/>
-                <outlet property="nearbyView" destination="hbP-dj-405" id="F0d-dF-1Ze"/>
+                <outlet property="nearbyDeviceAngleField" destination="8zm-w2-Pi5" id="lGN-Rx-Mta"/>
+                <outlet property="nearbyDeviceCommentField" destination="FF6-TY-eOF" id="oSP-GL-OKr"/>
+                <outlet property="nearbyDeviceDistanceField" destination="IZM-ax-hvg" id="3wP-JS-Gou"/>
+                <outlet property="nearbyDeviceIdField" destination="v9q-rx-517" id="PTW-da-RnM"/>
+                <outlet property="nearbyDeviceNameField" destination="DiX-dY-ZcH" id="LTr-4a-eyB"/>
+                <outlet property="nearbyDeviceView" destination="hbP-dj-405" id="Rgv-ty-znk"/>
+                <outlet property="nearbyThingBrightnessField" destination="cOh-9k-935" id="uEx-Ef-UI6"/>
+                <outlet property="nearbyThingColorField" destination="nBE-XX-rlo" id="T0G-oP-hXr"/>
+                <outlet property="nearbyThingCommentField" destination="IqU-wL-qwA" id="hLs-de-66u"/>
+                <outlet property="nearbyThingDistanceField" destination="5dS-Xa-K3E" id="isW-ra-CKS"/>
+                <outlet property="nearbyThingIdField" destination="aS7-Xd-dFF" id="wZy-XR-ufy"/>
+                <outlet property="nearbyThingNameField" destination="A4P-fj-5Wd" id="gpJ-Ht-E21"/>
+                <outlet property="nearbyThingView" destination="jR7-ub-RQf" id="eJu-Zj-ceH"/>
                 <outlet property="outlineView" destination="JUj-qh-Hzt" id="Q9Y-Ju-8KG"/>
                 <outlet property="radiusField" destination="4Gk-9b-cf9" id="oQi-WL-Erg"/>
                 <outlet property="tabView" destination="Xey-RC-Uho" id="5CS-2g-51H"/>
@@ -683,6 +692,17 @@
                                     <action selector="performZoom:" target="-1" id="DIl-cC-cCs"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="9IT-mL-RpE"/>
+                            <menuItem title="Map" keyEquivalent="1" id="AtJ-uh-9fF">
+                                <connections>
+                                    <action selector="makeKeyAndOrderFront:" target="PT3-ci-6mA" id="TJf-6H-U2Z"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Compass" keyEquivalent="2" id="hn8-Nm-oBA">
+                                <connections>
+                                    <action selector="makeKeyAndOrderFront:" target="VbT-AE-Yye" id="6SR-6a-D2H"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
                             <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
@@ -709,6 +729,7 @@
         </menu>
         <window title="Flare Explorer" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="flare" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="728" height="478"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
@@ -716,7 +737,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="728" height="478"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <tabView type="noTabsNoBorder" id="OVs-Jc-ytR">
+                    <tabView type="noTabsNoBorder" initialItem="3Rj-pe-1Lw" id="OVs-Jc-ytR">
                         <rect key="frame" x="220" y="-1" width="508" height="478"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
@@ -758,7 +779,7 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="changeDataString:" target="Voe-Tx-rLC" id="aDQ-0K-82D"/>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="OOj-Zd-ThF"/>
                                                                 </connections>
                                                             </textField>
                                                             <textField verticalHuggingPriority="750" id="wmE-27-6i4">
@@ -964,7 +985,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <textField identifier="major" verticalHuggingPriority="750" id="WrS-Zt-fW5">
+                                                            <textField identifier="major integer" verticalHuggingPriority="750" id="WrS-Zt-fW5">
                                                                 <rect key="frame" x="97.5" y="353" width="95" height="22"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -974,7 +995,7 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="changeDataInteger:" target="Voe-Tx-rLC" id="CKM-KS-cPI"/>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="eGT-V9-sZH"/>
                                                                 </connections>
                                                             </textField>
                                                             <textField verticalHuggingPriority="750" id="HiQ-CM-wZU">
@@ -1078,7 +1099,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="501.5" height="377"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
-                                                            <textField identifier="brightness" verticalHuggingPriority="750" id="b29-It-XNn">
+                                                            <textField identifier="brightness double" verticalHuggingPriority="750" id="b29-It-XNn">
                                                                 <rect key="frame" x="96.5" y="266" width="95" height="22"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1088,7 +1109,7 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="changeDataDouble:" target="Voe-Tx-rLC" id="n4l-o9-QlO"/>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="2D1-HJ-BDt"/>
                                                                 </connections>
                                                             </textField>
                                                             <button identifier="lighter" verticalHuggingPriority="750" id="JXr-j0-xUR">
@@ -1113,7 +1134,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <button identifier="east" verticalHuggingPriority="750" id="Ezo-w3-83f">
+                                                            <button identifier="east thing" verticalHuggingPriority="750" id="Ezo-w3-83f">
                                                                 <rect key="frame" x="263.5" y="315" width="69" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1173,18 +1194,6 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <button identifier="south" verticalHuggingPriority="750" id="qaF-Jy-iUg">
-                                                                <rect key="frame" x="330.5" y="315" width="79" height="33"/>
-                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                <animations/>
-                                                                <buttonCell key="cell" type="push" title="South" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NfI-Lt-N2G">
-                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                    <font key="font" metaFont="system"/>
-                                                                </buttonCell>
-                                                                <connections>
-                                                                    <action selector="performAction:" target="Voe-Tx-rLC" id="QCW-Ib-Hd1"/>
-                                                                </connections>
-                                                            </button>
                                                             <button identifier="darker" verticalHuggingPriority="750" id="jKI-S3-UUo">
                                                                 <rect key="frame" x="192.5" y="258" width="83" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1217,7 +1226,7 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="changeDataString:" target="Voe-Tx-rLC" id="YI9-dn-aLd"/>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="zAg-8u-xca"/>
                                                                 </connections>
                                                             </textField>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="7a3-xP-YFq">
@@ -1230,7 +1239,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <button identifier="west" verticalHuggingPriority="750" id="8Ud-Vp-iMV">
+                                                            <button identifier="west thing" verticalHuggingPriority="750" id="8Ud-Vp-iMV">
                                                                 <rect key="frame" x="192.5" y="315" width="73" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1242,7 +1251,7 @@
                                                                     <action selector="performAction:" target="Voe-Tx-rLC" id="QSe-pc-GEE"/>
                                                                 </connections>
                                                             </button>
-                                                            <button identifier="north" verticalHuggingPriority="750" id="twB-fV-a4W">
+                                                            <button identifier="north thing" verticalHuggingPriority="750" id="twB-fV-a4W">
                                                                 <rect key="frame" x="407.5" y="315" width="77" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1276,7 +1285,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <textField identifier="minor" verticalHuggingPriority="750" id="tHz-I8-RU1">
+                                                            <textField identifier="minor integer" verticalHuggingPriority="750" id="tHz-I8-RU1">
                                                                 <rect key="frame" x="96.5" y="353" width="95" height="22"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1286,14 +1295,14 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="changeDataInteger:" target="Voe-Tx-rLC" id="eQ0-9r-SnI"/>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="jrv-xF-iKR"/>
                                                                 </connections>
                                                             </textField>
                                                             <customView id="hbP-dj-405">
                                                                 <rect key="frame" x="13.5" y="85" width="463" height="176"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <subviews>
-                                                                    <button identifier="counterclockwise" verticalHuggingPriority="750" id="7Ha-vq-FtE">
+                                                                    <button identifier="counterclockwise nearby" verticalHuggingPriority="750" id="7Ha-vq-FtE">
                                                                         <rect key="frame" x="177" y="13" width="155" height="33"/>
                                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                         <animations/>
@@ -1302,7 +1311,7 @@
                                                                             <font key="font" metaFont="system"/>
                                                                         </buttonCell>
                                                                         <connections>
-                                                                            <action selector="nearbyPerformAction:" target="Voe-Tx-rLC" id="ieR-uS-D8s"/>
+                                                                            <action selector="performAction:" target="Voe-Tx-rLC" id="gKz-Rl-okQ"/>
                                                                         </connections>
                                                                     </button>
                                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Loh-9p-Rpz">
@@ -1395,7 +1404,7 @@
                                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                         </textFieldCell>
                                                                     </textField>
-                                                                    <textField verticalHuggingPriority="750" id="8zm-w2-Pi5">
+                                                                    <textField identifier="angle nearby double" verticalHuggingPriority="750" id="8zm-w2-Pi5">
                                                                         <rect key="frame" x="81" y="21" width="95" height="22"/>
                                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                         <animations/>
@@ -1405,10 +1414,10 @@
                                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                         </textFieldCell>
                                                                         <connections>
-                                                                            <action selector="changeAngle:" target="Voe-Tx-rLC" id="nRQ-63-FcH"/>
+                                                                            <action selector="changeData:" target="Voe-Tx-rLC" id="ucq-P7-4kK"/>
                                                                         </connections>
                                                                     </textField>
-                                                                    <button identifier="clockwise" verticalHuggingPriority="750" id="2zy-p1-SD1">
+                                                                    <button identifier="clockwise nearby" verticalHuggingPriority="750" id="2zy-p1-SD1">
                                                                         <rect key="frame" x="332" y="13" width="104" height="33"/>
                                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                         <animations/>
@@ -1417,12 +1426,24 @@
                                                                             <font key="font" metaFont="system"/>
                                                                         </buttonCell>
                                                                         <connections>
-                                                                            <action selector="nearbyPerformAction:" target="Voe-Tx-rLC" id="1Qr-yr-eOC"/>
+                                                                            <action selector="performAction:" target="Voe-Tx-rLC" id="bch-Vv-kg3"/>
                                                                         </connections>
                                                                     </button>
                                                                 </subviews>
                                                                 <animations/>
                                                             </customView>
+                                                            <button identifier="south thing" verticalHuggingPriority="750" id="qaF-Jy-iUg">
+                                                                <rect key="frame" x="328" y="315" width="79" height="33"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <animations/>
+                                                                <buttonCell key="cell" type="push" title="South" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NfI-Lt-N2G">
+                                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <action selector="performAction:" target="Voe-Tx-rLC" id="QCW-Ib-Hd1"/>
+                                                                </connections>
+                                                            </button>
                                                         </subviews>
                                                         <animations/>
                                                     </view>
@@ -1432,7 +1453,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="501.5" height="377"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
-                                                            <button identifier="counterclockwise2" verticalHuggingPriority="750" id="Cwc-Mi-G5z">
+                                                            <button identifier="counterclockwise" verticalHuggingPriority="750" id="Cwc-Mi-G5z">
                                                                 <rect key="frame" x="193" y="345" width="155" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1454,7 +1475,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <textField identifier="angle" verticalHuggingPriority="750" id="Dd9-n2-FCo">
+                                                            <textField identifier="angle double" verticalHuggingPriority="750" id="Dd9-n2-FCo">
                                                                 <rect key="frame" x="97" y="353" width="95" height="22"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1464,10 +1485,10 @@
                                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                                 <connections>
-                                                                    <action selector="changeDataDouble:" target="Voe-Tx-rLC" id="oxE-VN-fWD"/>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="OCd-Cu-4r7"/>
                                                                 </connections>
                                                             </textField>
-                                                            <button identifier="clockwise2" verticalHuggingPriority="750" id="Abe-Aq-gcs">
+                                                            <button identifier="clockwise" verticalHuggingPriority="750" id="Abe-Aq-gcs">
                                                                 <rect key="frame" x="348" y="345" width="104" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1479,7 +1500,7 @@
                                                                     <action selector="performAction:" target="Voe-Tx-rLC" id="gxC-Eg-74q"/>
                                                                 </connections>
                                                             </button>
-                                                            <button identifier="east2" verticalHuggingPriority="750" id="zvp-HU-hYO">
+                                                            <button identifier="east device" verticalHuggingPriority="750" id="zvp-HU-hYO">
                                                                 <rect key="frame" x="264" y="315" width="69" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1517,7 +1538,7 @@
                                                                     <action selector="changePosition:" target="Voe-Tx-rLC" id="RV4-il-eki"/>
                                                                 </connections>
                                                             </textField>
-                                                            <button identifier="south2" verticalHuggingPriority="750" id="EMT-7O-GWy">
+                                                            <button identifier="south device" verticalHuggingPriority="750" id="EMT-7O-GWy">
                                                                 <rect key="frame" x="331" y="315" width="79" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1549,7 +1570,7 @@
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                 </textFieldCell>
                                                             </textField>
-                                                            <button identifier="west2" verticalHuggingPriority="750" id="EN8-Qg-fqO">
+                                                            <button identifier="west device" verticalHuggingPriority="750" id="EN8-Qg-fqO">
                                                                 <rect key="frame" x="193" y="315" width="73" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1561,7 +1582,7 @@
                                                                     <action selector="performAction:" target="Voe-Tx-rLC" id="n9Z-Io-Wu2"/>
                                                                 </connections>
                                                             </button>
-                                                            <button identifier="north2" verticalHuggingPriority="750" id="2OV-bn-vC6">
+                                                            <button identifier="north device" verticalHuggingPriority="750" id="2OV-bn-vC6">
                                                                 <rect key="frame" x="408" y="315" width="77" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <animations/>
@@ -1573,6 +1594,187 @@
                                                                     <action selector="performAction:" target="Voe-Tx-rLC" id="kNe-iX-0jQ"/>
                                                                 </connections>
                                                             </button>
+                                                            <customView id="jR7-ub-RQf">
+                                                                <rect key="frame" x="16" y="114" width="463" height="205"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <subviews>
+                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="mgp-Ae-1wl">
+                                                                        <rect key="frame" x="-38" y="165" width="113" height="17"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Thing:" id="SmO-HX-FHY">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField verticalHuggingPriority="750" id="A4P-fj-5Wd">
+                                                                        <rect key="frame" x="81" y="135" width="382" height="22"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="str-OD-zDa">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="9JH-ew-AL8">
+                                                                        <rect key="frame" x="-38" y="109" width="113" height="17"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Description:" id="Zwy-bi-0d5">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="UYK-qU-FgC">
+                                                                        <rect key="frame" x="-38" y="137" width="113" height="17"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Name:" id="Nk7-Ed-SXk">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="eJW-x8-w7a">
+                                                                        <rect key="frame" x="-38" y="81" width="113" height="17"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Distance:" id="acf-4F-nNn">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField verticalHuggingPriority="750" id="aS7-Xd-dFF">
+                                                                        <rect key="frame" x="81" y="163" width="382" height="22"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="4NA-sx-zKy">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField verticalHuggingPriority="750" id="IqU-wL-qwA">
+                                                                        <rect key="frame" x="81" y="107" width="382" height="22"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="VSH-On-U71">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <textField verticalHuggingPriority="750" id="5dS-Xa-K3E">
+                                                                        <rect key="frame" x="81" y="79" width="95" height="22"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="P0E-J2-Tg1">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <button identifier="lighter nearby" verticalHuggingPriority="750" id="By5-7f-HmB">
+                                                                        <rect key="frame" x="258" y="14" width="87" height="33"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <buttonCell key="cell" type="push" title="Lighter" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="y1h-ig-upy">
+                                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                            <font key="font" metaFont="system"/>
+                                                                        </buttonCell>
+                                                                        <connections>
+                                                                            <action selector="performAction:" target="Voe-Tx-rLC" id="Z4B-sz-OgU"/>
+                                                                        </connections>
+                                                                    </button>
+                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="m75-v8-DtY">
+                                                                        <rect key="frame" x="-38" y="24" width="113" height="17"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Brightness:" id="Fu5-ax-hEu">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <button identifier="invert nearby" verticalHuggingPriority="750" id="OX1-bg-gcV">
+                                                                        <rect key="frame" x="271" y="43" width="77" height="33"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <buttonCell key="cell" type="push" title="Invert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cWw-LR-QAp">
+                                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                            <font key="font" metaFont="system"/>
+                                                                        </buttonCell>
+                                                                        <connections>
+                                                                            <action selector="performAction:" target="Voe-Tx-rLC" id="uBP-1E-u46"/>
+                                                                        </connections>
+                                                                    </button>
+                                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="eVi-3x-K1R">
+                                                                        <rect key="frame" x="-38" y="53" width="113" height="17"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Color:" id="Gnt-3w-EIv">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                    </textField>
+                                                                    <button identifier="darker nearby" verticalHuggingPriority="750" id="Lcy-U7-4cU">
+                                                                        <rect key="frame" x="177" y="14" width="83" height="33"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <buttonCell key="cell" type="push" title="Darker" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="huB-ec-Koa">
+                                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                            <font key="font" metaFont="system"/>
+                                                                        </buttonCell>
+                                                                        <connections>
+                                                                            <action selector="performAction:" target="Voe-Tx-rLC" id="8xb-sg-nlc"/>
+                                                                        </connections>
+                                                                    </button>
+                                                                    <textField identifier="color nearby" verticalHuggingPriority="750" id="nBE-XX-rlo">
+                                                                        <rect key="frame" x="81" y="51" width="95" height="22"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="AIU-1w-0bq">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                        <connections>
+                                                                            <action selector="changeData:" target="Voe-Tx-rLC" id="sIQ-ZX-qhq"/>
+                                                                        </connections>
+                                                                    </textField>
+                                                                    <button identifier="rainbow nearby" verticalHuggingPriority="750" id="A7K-Bs-xlS">
+                                                                        <rect key="frame" x="177" y="43" width="96" height="33"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <buttonCell key="cell" type="push" title="Rainbow" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dzP-Va-agT">
+                                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                            <font key="font" metaFont="system"/>
+                                                                        </buttonCell>
+                                                                        <connections>
+                                                                            <action selector="performAction:" target="Voe-Tx-rLC" id="bi2-0g-jjp"/>
+                                                                        </connections>
+                                                                    </button>
+                                                                    <textField identifier="brightness nearby double" verticalHuggingPriority="750" id="cOh-9k-935">
+                                                                        <rect key="frame" x="81" y="22" width="95" height="22"/>
+                                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                        <animations/>
+                                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="lcg-r1-9Pv">
+                                                                            <font key="font" metaFont="system"/>
+                                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                        </textFieldCell>
+                                                                        <connections>
+                                                                            <action selector="changeData:" target="Voe-Tx-rLC" id="c5B-wL-7EN"/>
+                                                                        </connections>
+                                                                    </textField>
+                                                                </subviews>
+                                                                <animations/>
+                                                            </customView>
                                                         </subviews>
                                                         <animations/>
                                                     </view>
@@ -1653,70 +1855,6 @@
                                 <view key="view" id="tf1-Ko-Vi7">
                                     <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <customView id="dqH-xO-e6J" customClass="IndoorMap" customModule="Explorer" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <customView id="K6D-EF-uTr">
-                                                    <rect key="frame" x="397" y="-11" width="121" height="110"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                    <subviews>
-                                                        <button identifier="north3" verticalHuggingPriority="750" id="wEC-8x-M5P">
-                                                            <rect key="frame" x="42" y="66" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="▲" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YIX-yu-EYp">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="m82-Al-FeJ"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button identifier="west3" verticalHuggingPriority="750" id="6eB-9K-oUw">
-                                                            <rect key="frame" x="20" y="42" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="◀︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uy8-uj-6dK">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="5BG-gt-V2R"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button identifier="south3" verticalHuggingPriority="750" id="78q-df-0jG">
-                                                            <rect key="frame" x="42" y="18" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="▼" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gIr-Y2-yuw">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="AXB-dk-oeg"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button identifier="east3" verticalHuggingPriority="750" id="1DK-YT-zr2">
-                                                            <rect key="frame" x="65" y="42" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="▶︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="h9R-ji-bFi">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="oY7-VS-6Qx"/>
-                                                            </connections>
-                                                        </button>
-                                                    </subviews>
-                                                    <animations/>
-                                                </customView>
-                                            </subviews>
-                                            <animations/>
-                                        </customView>
-                                    </subviews>
                                     <animations/>
                                 </view>
                             </tabViewItem>
@@ -1724,77 +1862,10 @@
                                 <view key="view" id="ouN-ZX-4YM">
                                     <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <customView id="3XB-GB-NCn" customClass="CompassView" customModule="Explorer" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <customView id="jnw-TS-1Fd">
-                                                    <rect key="frame" x="397" y="-11" width="121" height="110"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                    <subviews>
-                                                        <button identifier="south4" verticalHuggingPriority="750" id="Ffc-Hj-i6Z">
-                                                            <rect key="frame" x="42" y="18" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="▼" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Upf-Ls-bRd">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="lPH-GZ-n2G"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button identifier="west4" verticalHuggingPriority="750" id="pib-RG-eZr">
-                                                            <rect key="frame" x="20" y="42" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="◀︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jzw-Qb-oOA">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="B57-mH-VOZ"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button identifier="north4" verticalHuggingPriority="750" id="JNl-Jl-iJb">
-                                                            <rect key="frame" x="42" y="66" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="▲" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pcj-cJ-tgb">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="G51-zi-FN1"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button identifier="east4" verticalHuggingPriority="750" id="xK4-t7-ppZ">
-                                                            <rect key="frame" x="65" y="42" width="36" height="25"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                                            <animations/>
-                                                            <buttonCell key="cell" type="roundTextured" title="▶︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iqc-el-3R0">
-                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                                <font key="font" metaFont="system"/>
-                                                            </buttonCell>
-                                                            <connections>
-                                                                <action selector="performAction:" target="Voe-Tx-rLC" id="0Rl-o1-Gnh"/>
-                                                            </connections>
-                                                        </button>
-                                                    </subviews>
-                                                    <animations/>
-                                                </customView>
-                                            </subviews>
-                                            <animations/>
-                                        </customView>
-                                    </subviews>
                                     <animations/>
                                 </view>
                             </tabViewItem>
                         </tabViewItems>
-                        <connections>
-                            <binding destination="Z0Z-8V-NPF" name="selectedIndex" keyPath="values.selectedTab" id="sCD-wS-dwT"/>
-                        </connections>
                     </tabView>
                     <customView id="Xyr-f5-LtC">
                         <rect key="frame" x="0.0" y="-1" width="221" height="478"/>
@@ -1953,6 +2024,43 @@
                             <action selector="refresh:" target="Voe-Tx-rLC" id="hD4-5D-hfI"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="A01BA1E7-75FE-4655-8872-1FCAA2684EE9" label="Map" paletteLabel="Map" id="inc-FP-ydZ">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="40" height="25"/>
+                        <size key="maxSize" width="58" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="u7P-AR-bvO">
+                            <rect key="frame" x="0.0" y="14" width="58" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
+                            <buttonCell key="cell" type="roundTextured" title="Map" bezelStyle="texturedRounded" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cU3-UO-Y3Q">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="makeKeyAndOrderFront:" target="PT3-ci-6mA" id="bnu-ny-eCQ"/>
+                            </connections>
+                        </button>
+                        <connections>
+                            <action selector="refresh:" target="Voe-Tx-rLC" id="d5E-TF-h51"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="3B8953D6-5A7D-4F37-86AB-BFC16C18B336" label="Compass" paletteLabel="Compass" id="Ql9-rK-4F7">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="40" height="25"/>
+                        <size key="maxSize" width="84" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="cCB-eF-I9u">
+                            <rect key="frame" x="0.0" y="14" width="84" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <animations/>
+                            <buttonCell key="cell" type="roundTextured" title="Compass" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zy0-Im-C6g">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                        <connections>
+                            <action selector="makeKeyAndOrderFront:" target="VbT-AE-Yye" id="PcJ-aW-WcR"/>
+                        </connections>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="D3CF0573-CFBC-40B2-AB0B-D2199261C318" label="View" paletteLabel="View" id="24V-DH-3dY">
                         <nil key="toolTip"/>
                         <size key="minSize" width="100" height="25"/>
@@ -1979,14 +2087,11 @@
                     <toolbarItem reference="JqP-xW-evq"/>
                     <toolbarItem reference="Wgu-Yw-6a3"/>
                     <toolbarItem reference="rRa-bA-B8n"/>
-                    <toolbarItem reference="24V-DH-3dY"/>
-                    <toolbarItem reference="rRa-bA-B8n"/>
-                    <toolbarItem reference="Kvm-5X-kBB"/>
-                    <toolbarItem reference="Kvm-5X-kBB"/>
-                    <toolbarItem reference="Kvm-5X-kBB"/>
+                    <toolbarItem reference="inc-FP-ydZ"/>
+                    <toolbarItem reference="Ql9-rK-4F7"/>
                 </defaultToolbarItems>
             </toolbar>
-            <point key="canvasLocation" x="697" y="-25"/>
+            <point key="canvasLocation" x="697" y="37"/>
         </window>
         <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Preferences" animationBehavior="default" id="sap-Jw-qdY">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
@@ -2050,6 +2155,160 @@
             <point key="canvasLocation" x="454.5" y="298"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="Z0Z-8V-NPF"/>
+        <window title="Map" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Map" animationBehavior="default" id="PT3-ci-6mA">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="131" y="158" width="508" height="478"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="MKG-TA-e8e">
+                <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView id="dqH-xO-e6J" customClass="IndoorMap" customModule="Explorer" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <customView id="K6D-EF-uTr">
+                                <rect key="frame" x="397" y="-11" width="121" height="110"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button identifier="north map" verticalHuggingPriority="750" id="wEC-8x-M5P">
+                                        <rect key="frame" x="42" y="66" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="▲" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YIX-yu-EYp">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="m82-Al-FeJ"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="west map" verticalHuggingPriority="750" id="6eB-9K-oUw">
+                                        <rect key="frame" x="20" y="42" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="◀︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="uy8-uj-6dK">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="5BG-gt-V2R"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="south map" verticalHuggingPriority="750" id="78q-df-0jG">
+                                        <rect key="frame" x="42" y="18" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="▼" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gIr-Y2-yuw">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="AXB-dk-oeg"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="east map" verticalHuggingPriority="750" id="1DK-YT-zr2">
+                                        <rect key="frame" x="65" y="42" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="▶︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="h9R-ji-bFi">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="oY7-VS-6Qx"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <animations/>
+                            </customView>
+                        </subviews>
+                        <animations/>
+                    </customView>
+                </subviews>
+                <animations/>
+            </view>
+            <point key="canvasLocation" x="661" y="101"/>
+        </window>
+        <window title="Compass" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Compass" animationBehavior="default" id="VbT-AE-Yye">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="131" y="158" width="508" height="478"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="RGC-Qu-RnZ">
+                <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView id="3XB-GB-NCn" customClass="CompassView" customModule="Explorer" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="508" height="478"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <customView id="jnw-TS-1Fd">
+                                <rect key="frame" x="397" y="-11" width="121" height="110"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button identifier="south compass" verticalHuggingPriority="750" id="Ffc-Hj-i6Z">
+                                        <rect key="frame" x="42" y="18" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="▼" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Upf-Ls-bRd">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="lPH-GZ-n2G"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="west compass" verticalHuggingPriority="750" id="pib-RG-eZr">
+                                        <rect key="frame" x="20" y="42" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="◀︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jzw-Qb-oOA">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="B57-mH-VOZ"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="north compass" verticalHuggingPriority="750" id="JNl-Jl-iJb">
+                                        <rect key="frame" x="42" y="66" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="▲" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pcj-cJ-tgb">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="G51-zi-FN1"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="east compass" verticalHuggingPriority="750" id="xK4-t7-ppZ">
+                                        <rect key="frame" x="65" y="42" width="36" height="25"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <buttonCell key="cell" type="roundTextured" title="▶︎" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iqc-el-3R0">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="performAction:" target="Voe-Tx-rLC" id="0Rl-o1-Gnh"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <animations/>
+                            </customView>
+                        </subviews>
+                        <animations/>
+                    </customView>
+                </subviews>
+                <animations/>
+            </view>
+            <point key="canvasLocation" x="884" y="292"/>
+        </window>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>

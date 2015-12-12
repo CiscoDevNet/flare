@@ -13,6 +13,8 @@ import Flare
 class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBOutlet weak var window: NSWindow!
+    @IBOutlet weak var mapWindow: NSWindow!
+    @IBOutlet weak var compassWindow: NSWindow!
     @IBOutlet weak var outlineView: NSOutlineView!
     @IBOutlet weak var tabView: NSTabView!
     @IBOutlet weak var map: IndoorMap!
@@ -48,12 +50,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var deviceXField: NSTextField!
     @IBOutlet weak var deviceYField: NSTextField!
 
-    @IBOutlet weak var nearbyView: NSView!
-    @IBOutlet weak var nearbyIdField: NSTextField!
-    @IBOutlet weak var nearbyNameField: NSTextField!
-    @IBOutlet weak var nearbyCommentField: NSTextField!
-    @IBOutlet weak var nearbyDistanceField: NSTextField!
-    @IBOutlet weak var nearbyAngleField: NSTextField!
+    @IBOutlet weak var nearbyDeviceView: NSView!
+    @IBOutlet weak var nearbyDeviceIdField: NSTextField!
+    @IBOutlet weak var nearbyDeviceNameField: NSTextField!
+    @IBOutlet weak var nearbyDeviceCommentField: NSTextField!
+    @IBOutlet weak var nearbyDeviceDistanceField: NSTextField!
+    @IBOutlet weak var nearbyDeviceAngleField: NSTextField!
+    
+    @IBOutlet weak var nearbyThingView: NSView!
+    @IBOutlet weak var nearbyThingIdField: NSTextField!
+    @IBOutlet weak var nearbyThingNameField: NSTextField!
+    @IBOutlet weak var nearbyThingCommentField: NSTextField!
+    @IBOutlet weak var nearbyThingDistanceField: NSTextField!
+    @IBOutlet weak var nearbyThingColorField: NSTextField!
+    @IBOutlet weak var nearbyThingBrightnessField: NSTextField!
     
     @IBOutlet weak var mapDirectionButtons: NSView!
     @IBOutlet weak var compassDirectionButtons: NSView!
@@ -231,7 +241,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             }
         } else if flare == nearbyFlare {
             if let angle = data["angle"] as? Double {
-                nearbyAngleField.doubleValue = angle
+                nearbyDeviceAngleField.doubleValue = angle
+            }
+
+            if let color = data["color"] as? String {
+                nearbyThingColorField.stringValue = color
+            }
+
+            if let brightness = data["brightness"] as? Double {
+                nearbyThingBrightnessField.doubleValue = brightness
             }
         }
         
@@ -240,7 +258,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?) {
-        NSLog("\(flare.name) position: \(newPosition)")
+        // NSLog("\(flare.name) position: \(newPosition)")
         
         if flare == selectedFlare {
             if flare is Thing {
@@ -253,7 +271,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         } else if flare == nearbyFlare {
             if let device = nearbyFlare as? Device, thing = selectedFlare as? Thing {
                 let distance = device.position - thing.position
-                nearbyDistanceField.doubleValue = distance
+                nearbyDeviceDistanceField.doubleValue = distance
+            } else if let thing = nearbyFlare as? Thing, device = selectedFlare as? Device {
+                let distance = thing.position - device.position
+                nearbyThingDistanceField.doubleValue = distance
             }
         }
 
@@ -275,34 +296,63 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     func near(thing: Thing, device: Device, distance: Double) {
         NSLog("\(thing.name) near: \(device.name) (\(distance))")
         
-        if thing == selectedFlare && nearbyFlare != device {
+        if selectedFlare == thing && nearbyFlare != device {
             nearbyFlare = device
             
             flareManager.subscribe(device)
             flareManager.getData(device)
             flareManager.getPosition(device)
             
-            nearbyIdField.stringValue = device.id
-            nearbyNameField.stringValue = device.name
-            nearbyCommentField.stringValue = device.comment
-            nearbyDistanceField.doubleValue = distance
+            nearbyDeviceIdField.stringValue = device.id
+            nearbyDeviceNameField.stringValue = device.name
+            nearbyDeviceCommentField.stringValue = device.comment
+            nearbyDeviceDistanceField.doubleValue = distance
             if let angle = device.data["angle"] as? Double {
-                nearbyAngleField.doubleValue = angle
+                nearbyDeviceAngleField.doubleValue = angle
             }
             
-            nearbyView.hidden = false
-        }
+            nearbyDeviceView.hidden = false
+        } else if selectedFlare == device && nearbyFlare != thing {
+            nearbyFlare = thing
+            map.nearbyThing = thing
+            compass.nearbyThing = thing
+            
+            flareManager.subscribe(thing)
+            flareManager.getData(thing)
+            flareManager.getPosition(thing)
+
+            nearbyThingIdField.stringValue = thing.id
+            nearbyThingNameField.stringValue = thing.name
+            nearbyThingCommentField.stringValue = thing.comment
+            nearbyThingDistanceField.doubleValue = distance
+            if let color = thing.data["color"] as? String {
+                nearbyThingColorField.stringValue = color
+            }
+            if let brightness = thing.data["brightness"] as? Double {
+                nearbyThingBrightnessField.doubleValue = brightness
+            }
+            
+            nearbyThingView.hidden = false
+}
     }
     
     func far(thing: Thing, device: Device) {
         NSLog("\(device.name) far: \(thing.name)")
         
-        if thing == selectedFlare && device == nearbyFlare {
-            nearbyView.hidden = true
+        if selectedFlare == thing && nearbyFlare == device {
+            nearbyDeviceView.hidden = true
             
             flareManager.unsubscribe(device)
             
             nearbyFlare = nil
+        } else if selectedFlare == device && nearbyFlare == thing {
+            nearbyThingView.hidden = true
+            
+            flareManager.unsubscribe(thing)
+            
+            nearbyFlare = nil
+            map.nearbyThing = nil
+            compass.nearbyThing = nil
         }
     }
     
@@ -325,38 +375,38 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         }
     }
     
-    @IBAction func changeDataString(sender: NSTextField) {
-        if let flare = selectedFlare {
-            let value = sender.stringValue
-            flare.data[sender.identifier!] = value
-            flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
+    // sender.identifier can contain several words
+    // the first word is the key
+    // if the words contains "nearby", sends the message for the nearby flare rather than the selected flare
+    // if the words contains "integer" or "double", formats the value as a number
+    @IBAction func changeData(sender: NSTextField) {
+        let identifiers = sender.identifier!.componentsSeparatedByString(" ")
+        let key = identifiers.first!
+        let nearby = identifiers.contains("nearby")
+        
+        var value: AnyObject? = nil
+        if identifiers.contains("integer") {
+            value = sender.integerValue
+        } else if identifiers.contains("double") {
+            value = sender.doubleValue
+        } else {
+            value = sender.stringValue
+        }
+        
+        if let flare = nearby ? nearbyFlare : selectedFlare {
+            flare.data[key] = value!
+            flareManager.setData(flare, key: key, value: value!, sender: nil)
+            
+            map.dataChanged()
+            compass.dataChanged()
         }
     }
     
-    @IBAction func changeDataInteger(sender: NSTextField) {
-        if let flare = selectedFlare {
-            let value = sender.integerValue
-            flare.data[sender.identifier!] = value
-            NSLog("Data: \(flare.data)")
-            flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
-        }
-    }
-    
-    @IBAction func changeDataDouble(sender: NSTextField) {
-        if let flare = selectedFlare {
-            let value = sender.doubleValue
-            flare.data[sender.identifier!] = value
-            NSLog("Data: \(flare.data)")
-            flareManager.setData(flare, key: sender.identifier!, value: sender.stringValue, sender: nil)
-        }
-    }
-
     @IBAction func changePosition(sender: NSTextField) {
         if let thing = selectedFlare as? Thing {
             let newPosition = CGPoint(x: thingXField.doubleValue, y: thingYField.doubleValue)
             animateFlare(thing, oldPosition: thing.position, newPosition: newPosition)
             flareManager.setPosition(thing, position: newPosition, sender: nil)
-            map.dataChanged()
         } else if let device = selectedFlare as? Device {
             let newPosition = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
             animateFlare(device, oldPosition: device.position, newPosition: newPosition)
@@ -413,25 +463,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         }
     }
     
-    @IBAction func changeAngle(sender: NSTextField) {
-        if let flare = nearbyFlare {
-            let value = sender.doubleValue
-            flare.data["angle"] = value
-            flareManager.setData(flare, key: "angle", value: value, sender: nil)
-        }
-    }
-    
+    // sender.identifier can contain several words
+    // the first word is the action
+    // if the words contains "nearby", sends the message for the nearby flare rather than the selected flare
     @IBAction func performAction(sender: NSButton) {
-        if let flare = selectedFlare, identifier = sender.identifier {
-            // hack to work around the issue that you can't have several buttons in the same .xib with the same identifier
-            let action = identifier.hasSuffix("2") || identifier.hasSuffix("3") || identifier.hasSuffix("4") ?
-                identifier.substringToIndex(identifier.endIndex.predecessor()) : identifier
-            flareManager.performAction(flare, action: action, sender: nil)
-        }
-    }
-    
-    @IBAction func nearbyPerformAction(sender: NSButton) {
-        if let flare = nearbyFlare, action = sender.identifier {
+        let identifiers = sender.identifier!.componentsSeparatedByString(" ")
+        let action = identifiers.first!
+        let nearby = identifiers.contains("nearby")
+        
+        if let flare = nearby ? nearbyFlare : selectedFlare {
             flareManager.performAction(flare, action: action, sender: nil)
         }
     }
@@ -533,7 +573,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         
         selectedFlare = selectedItem()
         map.selectedFlare = selectedFlare
-        nearbyView.hidden = true
+        nearbyDeviceView.hidden = true
+        nearbyThingView.hidden = true
         nearbyFlare = nil
         
         if let newFlare = selectedFlare {

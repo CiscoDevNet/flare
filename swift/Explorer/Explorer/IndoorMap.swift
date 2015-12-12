@@ -18,7 +18,7 @@ class IndoorMap: NSView {
     var things = [Thing]()
     var nearbyThing: Thing? {
         didSet {
-            self.needsDisplay = true
+            // self.needsDisplay = true
         }
     }
     var selectedFlare: Flare?
@@ -36,7 +36,7 @@ class IndoorMap: NSView {
     let pink = NSColor(red:1, green:0, blue:0, alpha:0.5)
     let blue = NSColor(red:0, green:0, blue:1, alpha:0.5)
     let lightBlue = NSColor(red:0, green:0, blue:1, alpha:0.15)
-    let halo = NSColor(red:1, green:1, blue:0, alpha:0.5)
+    let halo = NSColor(red:48.0/256.0, green:131.0/256.0, blue:251.0/256.0, alpha:0.5)
     let selectedColor = NSColor(red:48.0/256.0, green:131.0/256.0, blue:251.0/256.0, alpha:0.5)
     
     func loadEnvironment(value: Environment) {
@@ -49,6 +49,10 @@ class IndoorMap: NSView {
             self.environment = value
             
             if environment != nil {
+                if self.window != nil {
+                    self.window!.title = environment!.name
+                }
+
                 updateScale()
                 self.zones = environment!.zones
                 self.things = environment!.things()
@@ -92,8 +96,8 @@ class IndoorMap: NSView {
             let grid = environment!.perimeter
 
             updateScale()
-            insetCenter = centerPoint(inset)
-            gridCenter = centerPoint(grid)
+            insetCenter = inset.center()
+            gridCenter = grid.center()
             
             fillRect(grid, color: white, inset: 0)
 
@@ -101,7 +105,7 @@ class IndoorMap: NSView {
                 fillRect(zone.perimeter, color: white, inset: 2)
                 
                 let label = labelForFlare(zone)
-                label.frame.origin = convertPoint(centerPoint(zone.perimeter)) - CGSize(width: 100, height: 10)
+                label.frame.origin = convertPoint(zone.perimeter.center()) - CGSize(width: 100, height: 10)
             }
             
             for thing in things {
@@ -127,14 +131,6 @@ class IndoorMap: NSView {
 
                 let label = labelForFlare(device)
                 label.frame.origin = convertPoint(device.position) - CGSize(width: 100, height: 33)
-                /*
-                // example of using distanceTo() and angleTo()
-                for thing in things {
-                    let distance = device.distanceTo(thing)
-                    let angle = device.angleTo(thing)
-                    NSLog("\(device.name) to \(thing.name): \(distance) meters, \(angle) degrees")
-                }
-                */
             }
         }
     }
@@ -189,10 +185,6 @@ class IndoorMap: NSView {
             color.setFill()
             path.fill()
         }
-    }
-    
-    func centerPoint(rect: CGRect) -> CGPoint {
-        return CGPoint(x: CGRectGetMidX(rect), y: CGRectGetMidY(rect))
     }
     
     func flipPoint(point: CGPoint) -> CGPoint {

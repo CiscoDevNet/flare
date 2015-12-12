@@ -26,8 +26,16 @@ let circleColor = NSColor.blackColor()
 class CompassView: NSView {
     
     var environment: Environment?
-    var device: Device?
+    var device: Device?{
+        didSet(value) {
+            if self.window != nil && value != nil {
+                self.window!.title = value!.name
+            }
+        }
+    }
+
     var selectedThing: Thing?
+    var nearbyThing: Thing?
     
     func dataChanged() {
         self.needsDisplay = true
@@ -39,7 +47,7 @@ class CompassView: NSView {
         // background.fill()
         
         let bounds = self.bounds.insetBy(dx: inset, dy: inset)
-        let center = centerPoint(bounds)
+        let center = bounds.center()
         
         let radiusX = bounds.size.width / 2
         let radiusY = bounds.size.height / 2
@@ -56,15 +64,13 @@ class CompassView: NSView {
         circleColor.setFill()
         innerRing.fill()
         
-        // drawFin(CGPoint(x: 5, y: 12), color: NSColor.redColor(), selected: false, center: center, radius: radius)
-        // drawFin(CGPoint(x: 7, y: 7), color: NSColor.greenColor(), selected: false, center: center, radius: radius)
-        // drawFin(CGPoint(x: 7, y: 5), color: NSColor.blueColor(), selected: true, center: center, radius: radius)
-        
         if environment != nil && device != nil {
             for zone in environment!.zones {
                 if zone.perimeter.contains(device!.position) {
-                    for thing in zone.things {
-                        drawFin(thing, color: IndoorMap.colorForThing(thing), selected: selectedThing == thing,
+                    let things = zone.things.sort({device!.distanceTo($0) > device!.distanceTo($1)})
+                    for thing in things {
+                        let selected = selectedThing == thing || nearbyThing == thing
+                        drawFin(thing, color: IndoorMap.colorForThing(thing), selected: selected,
                             center: center, radius: radius)
                     }
                 }
@@ -79,10 +85,6 @@ class CompassView: NSView {
         }
     }
 
-    func angleTowards(one: CGPoint, two: CGPoint) -> CGFloat {
-        return CGFloat(90) - CGFloat(radiansToDegrees(atan2(Double(two.x - one.x), Double(two.y - one.y))))
-    }
-    
     func sweepForDistance(distance: CGFloat) -> CGFloat {
         if distance < minDistance {
             return maxSweep
@@ -116,9 +118,4 @@ class CompassView: NSView {
         color.setFill()
         arc.fill()
     }
-    
-    func centerPoint(rect: CGRect) -> CGPoint {
-        return CGPoint(x: CGRectGetMidX(rect), y: CGRectGetMidY(rect))
-    }
-    
 }
