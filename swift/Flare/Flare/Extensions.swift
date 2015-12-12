@@ -87,7 +87,7 @@ public func randomSize(min: Int, max: Int) -> CGSize {
     return CGSize(width:width, height:height)
 }
 
-extension Array {
+public extension Array {
     
     // returns a random object from the array
     func randomObject() -> Element  {
@@ -126,7 +126,7 @@ public extension Double {
     }
 }
 
-extension CGRect {
+public extension CGRect {
     
     // returns the point at the center of the rectangle
     func center() -> CGPoint {
@@ -174,7 +174,11 @@ public extension CGFloat {
 }
 
 public func radiansToDegrees(radians: Double) -> Double {
-    return radians * 180.0 / M_PI;
+    return radians * 180.0 / M_PI
+}
+
+public func degreesToRadians(degrees: Double) -> Double {
+    return degrees * M_PI / 180.0
 }
 
 public extension Int {
