@@ -136,6 +136,22 @@ public class FlareManager: APIManager {
         }
     }
 
+    public func getCurrentZone(environment: Environment, device: Device, handler: (Zone) -> ()) {
+        listZones(environment.id, point: device.position) { zones in
+            if let json = zones.first, id = json["_id"] as? String, zone = self.flareIndex[id] as? Zone {
+                handler(zone)
+            }
+        }
+    }
+    
+    public func getNearestThing(environment: Environment, device: Device, handler: (Thing) -> ()) {
+        getDevice(device.id, environmentId: environment.id) { json in
+            if let nearest = json["nearest"] as? String, thing = self.flareIndex[nearest] as? Thing {
+                handler(thing)
+            }
+        }
+    }
+    
     // used to safely modify a Flare object on the server
     // the handler takes the current JSON as input, and should return the modified JSON as output
     public func modifyFlare(flare: Flare, handler:(JSONDictionary) -> (JSONDictionary)) {
