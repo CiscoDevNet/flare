@@ -1,4 +1,4 @@
-package com.cisco.ctao.ioe.ux.trilateral;
+package com.cisco.flare.trilateral;
 
 import android.content.Context;
 import android.graphics.Canvas;

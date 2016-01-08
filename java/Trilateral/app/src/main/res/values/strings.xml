@@ -1,17 +1,22 @@
 <resources>
     <string name="app_name">Trilateral</string>
-
-    <string name="http">http://</string>
-    <string name="default_server"></string>
-    <string name="default_port"></string>
     <string name="action_settings">Settings</string>
-    <string name="ok_button">Connect</string>
-    <string name="select_button">Select</string>
+    <string name="action_reload">Reload</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="environment">Environment</string>
+    <string name="zone">Zone</string>
+    <string name="device">Device</string>
+    <string name="position">Position</string>
+    <string name="angle">Angle</string>
+    <string name="nearby_thing">Nearby Thing</string>
+    <string name="color">Color</string>
+    <string name="brightness">Brightness</string>
 
     <string name="time">00:00</string>
     <string name="am_pm">am</string>
 
-    <string name="appVersion">App Ver: 1.0</string>
-
-    <string name="connectionError">Cannot connect to Flare server</string>
+    <string name="use_gps_title">Use GPS</string>
+    <string name="use_beacons_title">Use Beacons</string>
+    <string name="use_compass_title">Use Compass</string>
 </resources>

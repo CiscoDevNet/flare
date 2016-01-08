@@ -9,11 +9,22 @@ import org.json.JSONObject;
 /**
  * Created by azamlerc on 3/23/15.
  */
+
 public abstract class Flare {
 	protected String id;
 	protected String name;
 	protected String description;
 	protected JSONObject data;
+
+	public interface PositionObject {
+		public PointF getPosition();
+		public void setPosition(PointF position);
+	}
+
+	public interface PerimeterObject {
+		public RectF getPerimeter();
+		public void setPerimeter(RectF perimeter);
+	}
 
 	public Flare() {
 

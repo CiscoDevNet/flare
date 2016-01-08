@@ -10,7 +10,7 @@ import org.json.JSONObject;
 /**
  * Created by azamlerc on 3/23/15.
  */
-public class Thing extends Flare {
+public class Thing extends Flare implements Flare.PositionObject {
 
     private final int defaultColor = 0xffffcd00;
     private static final String THING_TYPE_DEFAULT = "default";

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 /**
  * Created by azamlerc on 3/23/15.
  */
-public class Device extends Flare {
+public class Device extends Flare implements Flare.PositionObject {
 
     protected PointF position;
 

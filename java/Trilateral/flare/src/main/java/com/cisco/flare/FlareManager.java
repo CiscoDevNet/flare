@@ -1,6 +1,7 @@
 package com.cisco.flare;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.PointF;
 import android.location.Location;
 import android.util.Log;
@@ -13,9 +14,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
-import com.github.nkzawa.emitter.Emitter;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,9 +60,25 @@ public class FlareManager {
         public void gotResponse(ArrayList<Environment> environments);
     }
 
+    public interface EnvironmentHandler {
+        public void gotResponse(Environment environment);
+    }
+
+    public interface ZoneHandler {
+        public void gotResponse(Zone zone);
+    }
+
+    public interface ThingHandler {
+        public void gotResponse(Thing thing);
+    }
+
+    public interface DeviceHandler {
+        public void gotResponse(Device device);
+    }
+
     public interface Delegate {
         void didReceiveData(Flare flare, JSONObject data, Flare sender);
-        void didReceivePosition(Flare flare, PointF position, Flare sender);
+        void didReceivePosition(Flare flare, PointF oldPosition, PointF newPosition, Flare sender);
         void handleAction(Flare flare, String action, Flare sender);
         void enter(Zone zone, Device device);
         void exit(Zone zone, Device device);
@@ -101,55 +118,55 @@ public class FlareManager {
         requests++;
         listEnvironments(location, (environmentsList) -> {
             if (environmentsList == null) {
-                Log.e(TAG, "Error receiving environments");
+                Log.d(TAG, "Could not load environments.");
                 handler.gotResponse(null);
+                return;
             }
-            else {
-                if (environmentsList.isEmpty() && location != null) {
-                    Log.d(TAG, "No environments found for location: " + location);
-                }
 
-                for (JSONObject environmentJson : environmentsList) {
-                    Environment environment = new Environment(environmentJson);
-                    environments.add(environment);
-                    addToIndex(environment);
+            if (environmentsList.isEmpty() && location != null) {
+                Log.d(TAG, "No environments found for location: " + location);
+            }
 
-                    requests++;
-                    listZones(environment.getId(), (zonesList) -> {
-                        for (JSONObject zoneJson : zonesList) {
-                            Zone zone = new Zone(zoneJson);
-                            environment.getZones().add(zone);
-                            addToIndex(zone);
+            for (JSONObject environmentJson : environmentsList) {
+                Environment environment = new Environment(environmentJson);
+                environments.add(environment);
+                addToIndex(environment);
 
-                            requests++;
-                            listThings(zone.getId(), environment.getId(), (thingsList) -> {
-                                for (JSONObject thingJson : thingsList) {
-                                    Thing thing = new Thing(thingJson);
-                                    zone.getThings().add(thing);
-                                    addToIndex(thing);
-                                }
+                requests++;
+                listZones(environment.getId(), (zonesList) -> {
+                    for (JSONObject zoneJson : zonesList) {
+                        Zone zone = new Zone(zoneJson);
+                        environment.getZones().add(zone);
+                        addToIndex(zone);
 
-                                requests--;
-                                if (requests == 0) handler.gotResponse(environments);
-                            });
-                        }
+                        requests++;
+                        listThings(zone.getId(), environment.getId(), (thingsList) -> {
+                            for (JSONObject thingJson : thingsList) {
+                                Thing thing = new Thing(thingJson);
+                                zone.getThings().add(thing);
+                                addToIndex(thing);
+                            }
 
-                        requests--;
-                        if (requests == 0) handler.gotResponse(environments);
-                    });
+                            requests--;
+                            if (requests == 0) handler.gotResponse(environments);
+                        });
+                    }
 
-                    requests++;
-                    listDevices(environment.getId(), (devicesList) -> {
-                        for (JSONObject deviceJson : devicesList) {
-                            Device device = new Device(deviceJson);
-                            environment.getDevices().add(device);
-                            addToIndex(device);
-                        }
+                    requests--;
+                    if (requests == 0) handler.gotResponse(environments);
+                });
 
-                        requests--;
-                        if (requests == 0) handler.gotResponse(environments);
-                    });
-                }
+                requests++;
+                listDevices(environment.getId(), (devicesList) -> {
+                    for (JSONObject deviceJson : devicesList) {
+                        Device device = new Device(deviceJson);
+                        environment.getDevices().add(device);
+                        addToIndex(device);
+                    }
+
+                    requests--;
+                    if (requests == 0) handler.gotResponse(environments);
+                });
             }
 
             requests--;
@@ -157,6 +174,93 @@ public class FlareManager {
         });
     }
 
+    // tries to find an existing device object in the current environment
+    // if one is not found, creates a new device object
+    public void getCurrentDevice(String environmentId, JSONObject template, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
+        savedDevice(environmentId, prefs, (savedDevice) -> {
+            if (savedDevice != null) {
+                handler.gotResponse(savedDevice);
+            } else {
+                newDeviceObject(environmentId, template, prefs, (newDevice) -> {
+                    if (newDevice != null) {
+                        handler.gotResponse(newDevice);
+                    }
+                });
+            }
+        });
+    }
+
+    // looks for an existing device object in the current environment, and if found calls the handler with it
+    public void savedDevice(String environmentId, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
+        String deviceId = prefs.getString("deviceId", null);
+        if (deviceId != null) {
+            getDevice(deviceId, environmentId, (json) -> {
+                try {
+                    String validId = json.getString("_id");
+                    String deviceEnvironment = json.getString("environment");
+
+                    if (deviceEnvironment.equals(environmentId)) {
+                        Device device = new Device(json);
+                        addToIndex(device);
+
+                        Log.d(TAG, "Found existing device: " + device.getName());
+                        handler.gotResponse(device);
+                    } else {
+                        Log.d(TAG, "Device in wrong environment");
+                        handler.gotResponse(null);
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, "Device not found in current environment");
+                    handler.gotResponse(null);
+                }
+            });
+        } else {
+            Log.d(TAG, "No saved device");
+            handler.gotResponse(null);
+        }
+    }
+
+    public void getCurrentZone(String environmentId, PointF position, FlareManager.ZoneHandler handler) {
+        listZones(environmentId, position, (jsonArray) -> {
+            if (jsonArray != null && !jsonArray.isEmpty()) {
+                try {
+                    JSONObject json = jsonArray.get(0);
+                    String zoneId = json.getString("_id");
+                    Zone zone = (Zone) flareIndex.get(zoneId);
+                    handler.gotResponse(zone);
+                } catch (Exception e) {
+                    handler.gotResponse(null);
+                }
+            }
+        });
+    }
+
+    public void getNearbyThing(String environmentId, String deviceId, FlareManager.ThingHandler handler) {
+        getDevice(deviceId, environmentId, (json) -> {
+            try {
+                String nearestId = json.getString("nearest");
+                Thing thing = (Thing) flareIndex.get(nearestId);
+                handler.gotResponse(thing);
+            } catch (Exception e) {
+                handler.gotResponse(null);
+            }
+        });
+    }
+
+    // creates a new device object using the template
+    public void newDeviceObject(String environmentId, JSONObject template, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
+        newDevice(environmentId, template, (json) -> {
+            Device device = new Device(json);
+            addToIndex(device);
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("deviceId", device.getId());
+            editor.commit();
+
+            Log.d(TAG, "Created new device: " + device.getName());
+            handler.gotResponse(device);
+        });
+    }
     public Flare flareForMessage(JSONObject message) {
         try {
             String id = message.getString("thing");
@@ -205,7 +309,7 @@ public class FlareManager {
         if (flareSocket != null) {
             flareSocket.disconnect();
             flareSocket = null;
-            if (debugSocket) Log.d(TAG, "Disconnected from Flare server.");
+            if (debugSocket) Log.d(TAG, "Disconected from Flare server.");
         }
     }
 
@@ -229,7 +333,8 @@ public class FlareManager {
             if (debugRest) Log.d(TAG, uri + ": " + response.toString());
             handler.gotResponse(response);
         }, (error) -> {
-            Log.e(TAG, uri, error);
+            Log.e(TAG, "Could not connect to: " + uri);
+            handler.gotResponse(null);
         });
         queue.add(request);
     }
@@ -240,7 +345,7 @@ public class FlareManager {
             if (debugRest) Log.d(TAG, uri + ": " + response.toString());
             handler.gotResponse(toList(response));
         }, (error) -> {
-            Log.e(TAG, uri, error);
+            Log.e(TAG, "Could not connect to: " + uri);
             handler.gotResponse(null);
         });
         queue.add(request);
@@ -263,12 +368,6 @@ public class FlareManager {
 
     public void listEnvironments(ListHandler handler) {
         listEnvironments(null, handler);
-    }
-
-    public void listEnvironments(Location location, ListHandler handler) {
-        String uri = "/environments";
-        if (location != null) uri += "?latitude=" + location.getLatitude() + "&longitude=" + location.getLongitude();
-        sendListRequest(Request.Method.GET, uri, handler);
     }
 
     public void listEnvironments(Location location, ListHandler handler) {
@@ -332,12 +431,6 @@ public class FlareManager {
         sendListRequest(Request.Method.GET, uri, handler);
     }
 
-    public void listThings(String zoneId, String environmentId, PointF point, double distance, ListHandler handler) {
-        String uri = "/environments/" + environmentId + "/zones/" + zoneId + "/things";
-		if (point != null) uri += "?x=" + point.x + "&y=" + point.y + "&distance=" + distance;
-        sendListRequest(Request.Method.GET, uri, handler);
-    }
-
     public void newThing(String zoneId, String environmentId, JSONObject message, Handler handler) {
         String uri = "/environments/" + environmentId + "/zones/" + zoneId + "/things";
         sendRequest(Request.Method.POST, uri, message, handler);
@@ -370,12 +463,6 @@ public class FlareManager {
 
     public void listDevices(String environmentId, ListHandler handler) {
         String uri = "/environments/" + environmentId + "/devices";
-        sendListRequest(Request.Method.GET, uri, handler);
-    }
-
-    public void listDevices(String environmentId, PointF point, double distance, ListHandler handler) {
-        String uri = "/environments/" + environmentId + "/devices";
-		if (point != null) uri += "?x=" + point.x + "&y=" + point.y + "&distance=" + distance;
         sendListRequest(Request.Method.GET, uri, handler);
     }
 
@@ -492,21 +579,30 @@ public class FlareManager {
                     Flare flare = flareForMessage(message);
                     JSONObject data = message.getJSONObject("data");
                     Flare sender = senderForMessage(message);
+
+                    try {
+                        String key = (String)data.names().get(0);
+                        flare.getData().put(key, data.get(key));
+                    } catch (Exception e) {}
+
                     this.delegate.didReceiveData(flare, data, sender);
                 } catch (Exception e) {}
             });
         });
 
-        // position messages can be received for a Thing or for a Device
         flareSocket.on("position", (args) -> {
             final JSONObject message = (JSONObject) args[0];
             activity.runOnUiThread(() -> {
                 if (debugSocket) Log.d(TAG, "position: " + message.toString());
                 try {
                     Flare flare = flareForMessage(message);
-                    PointF point = Flare.getPoint(message.getJSONObject("position"));
+                    PointF newPosition = Flare.getPoint(message.getJSONObject("position"));
                     Flare sender = senderForMessage(message);
-                    this.delegate.didReceivePosition(flare, point, sender);
+
+                    PointF oldPosition = ((Flare.PositionObject)flare).getPosition();
+                    ((Flare.PositionObject)flare).setPosition(newPosition);
+
+                    this.delegate.didReceivePosition(flare, oldPosition, newPosition, sender);
                 } catch (Exception e) {}
             });
         });

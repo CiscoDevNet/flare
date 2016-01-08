@@ -1,144 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#ff0000">
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <TextView android:text="@string/http"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/http"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentStart="false"
-                android:layout_gravity="center_vertical" />
-
-            <EditText
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/server"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/http"
-                android:text="@string/default_server" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text=":"
-                android:id="@+id/separator"
-                android:layout_alignTop="@+id/port"
-                android:layout_toEndOf="@+id/server"
-                android:layout_gravity="center_vertical" />
-
-            <EditText
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/port"
-                android:layout_alignTop="@+id/server"
-                android:layout_toEndOf="@+id/separator"
-                android:text="@string/default_port" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ok_button"
-                android:id="@+id/flare_connect_button" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:id="@+id/environment_row"
-            android:visibility="invisible">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/environment_list"
-                android:spinnerMode="dropdown"
-                android:layout_span="4" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_button"
-                android:id="@+id/env_select_button"
-                android:layout_column="4" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:id="@+id/zone_row"
-            android:visibility="invisible">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/zone_list"
-                android:spinnerMode="dropdown"
-                android:layout_span="4" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_button"
-                android:id="@+id/zone_select_button"
-                android:layout_column="4" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:id="@+id/error_status_row"
-            android:visibility="invisible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/status"
-                android:layout_span="5"
-                android:textColor="#e00000"
-                android:text="@string/connectionError" />
-        </TableRow>
-
-    </TableLayout>
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/map_view_layout"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/angle_seek_bar"
-        android:background="@drawable/shadow"
-        android:paddingBottom="5dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:visibility="invisible">
-
-        <com.cisco.ctao.ioe.ux.trilateral.MapView
-            android:layout_width="@dimen/map_view_width"
-            android:layout_height="@dimen/map_view_height"
-            android:id="@+id/map_view"
-            android:layout_centerHorizontal="true"
-            android:visibility="invisible" />
-    </FrameLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              tools:context="com.cisco.flare.trilateral.MainActivity$CompassFragment">
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -150,25 +20,15 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/round_view_layout">
 
-        <com.cisco.ctao.ioe.ux.trilateral.ClippedRoundLayout
+        <com.cisco.flare.trilateral.ClippedRoundLayout
             android:layout_width="@dimen/ring_width"
             android:layout_height="@dimen/ring_height"
             android:id="@+id/round_layout"
             android:layout_gravity="center"
             android:rotation = "0"
             android:background="@color/background_colour"
-            android:visibility="invisible">
+            android:visibility="visible">
 
-            <!--
-                        <view
-                            android:layout_width="320dp"
-                            android:layout_height="161dp"
-                            class="android.support.v4.view.ViewPager"
-                            android:id="@+id/quickStatus_carousel"
-                            android:overScrollMode="never"
-                            android:layout_marginTop="84dp"
-                            android:visibility="invisible" />
-            -->
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,14 +39,14 @@
             <view
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                class="com.cisco.ctao.ioe.ux.trilateral.GraphicsView"
+                class="com.cisco.flare.trilateral.GraphicsView"
                 android:id="@+id/graphical_view"
                 android:background="@android:color/transparent"
                 android:layout_alignTop="@+id/ring"
                 android:layout_alignLeft="@+id/ring"
                 android:layout_alignStart="@+id/ring"
                 android:rotation = "0"
-                android:visibility="invisible" />
+                android:visibility="visible" />
 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -233,14 +93,14 @@
                         android:textColor="#ffffff" />
 
                     <TextView android:id="@+id/text_time" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/time"
-                        android:textSize="78dp"
-                        android:textColor="#ffffff"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:fontFamily="sans-serif-light"
-                        android:letterSpacing="-0.04" />
+                              android:layout_height="wrap_content"
+                              android:text="@string/time"
+                              android:textSize="78dp"
+                              android:textColor="#ffffff"
+                              android:layout_centerVertical="true"
+                              android:layout_centerHorizontal="true"
+                              android:fontFamily="sans-serif-light"
+                              android:letterSpacing="-0.04" />
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -338,19 +198,7 @@
                     android:background="@null" />
             </RelativeLayout>
 
-        </com.cisco.ctao.ioe.ux.trilateral.ClippedRoundLayout>
+        </com.cisco.flare.trilateral.ClippedRoundLayout>
 
     </FrameLayout>
-
-    <SeekBar
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/angle_seek_bar"
-        android:max="1080"
-        android:visibility="invisible"
-        android:layout_above="@+id/round_view_layout"
-        android:mirrorForRtl="false"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp" />
-
-</RelativeLayout>
+</LinearLayout>

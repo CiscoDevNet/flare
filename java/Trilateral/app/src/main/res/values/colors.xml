@@ -1,4 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
     <color name="black_overlay">#66000000</color>
     <color name="background_colour">#ff494949</color>
     <color name="ring_colour">#ff2f2f2f</color>
@@ -17,4 +22,5 @@
     <color name="transparent">#00494949</color>
     <color name="hover_object_name_color">#ffffffff</color>
     <color name="hover_object_desc_color">#ffffffff</color>
+
 </resources>

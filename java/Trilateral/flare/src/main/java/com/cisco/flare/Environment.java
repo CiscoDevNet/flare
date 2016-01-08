@@ -15,7 +15,7 @@ import java.util.ArrayList;
 // TODO: make Environment, Flare, Thing and Zone implement Parcelable
 // in order to be able to pass custom objects between Android activities
 // more info: http://sohailaziz05.blogspot.com/2012/04/passing-custom-objects-between-android.html
-public class Environment extends Flare {
+public class Environment extends Flare implements Flare.PerimeterObject {
 
 	private Geofence geofence;
 	private RectF perimeter;

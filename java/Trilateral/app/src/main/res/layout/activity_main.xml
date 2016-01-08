@@ -1,359 +1,41 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:id="@+id/main_content"
+                                                 xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:fitsSystemWindows="true"
+                                                 tools:context="com.cisco.flare.trilateral.MainActivity">
 
-    <TableLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000">
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <TextView android:text="@string/http"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/http"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentStart="false"
-                android:layout_gravity="center_vertical" />
-
-            <EditText
-                android:layout_width="140dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/server"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/http"
-                android:text="@string/default_server" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text=":"
-                android:id="@+id/separator"
-                android:layout_alignTop="@+id/port"
-                android:layout_toEndOf="@+id/server"
-                android:layout_gravity="center_vertical" />
-
-            <EditText
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/port"
-                android:layout_alignTop="@+id/server"
-                android:layout_toEndOf="@+id/separator"
-                android:text="@string/default_port" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ok_button"
-                android:id="@+id/flare_connect_button" />
-        </TableRow>
-
-        <TableRow
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:id="@+id/environment_row"
-            android:visibility="invisible">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/environment_list"
-                android:spinnerMode="dropdown"
-                android:layout_span="4" />
+        </android.support.v7.widget.Toolbar>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_button"
-                android:id="@+id/env_select_button"
-                android:layout_column="4" />
-        </TableRow>
-
-        <TableRow
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:id="@+id/zone_row"
-            android:visibility="invisible">
+            android:layout_height="wrap_content"/>
 
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/zone_list"
-                android:spinnerMode="dropdown"
-                android:layout_span="4" />
+    </android.support.design.widget.AppBarLayout>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/select_button"
-                android:id="@+id/zone_select_button"
-                android:layout_column="4" />
-        </TableRow>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="false"
-            android:id="@+id/error_status_row"
-            android:visibility="invisible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/status"
-                android:layout_span="5"
-                android:textColor="#e00000"
-                android:text="@string/connectionError" />
-        </TableRow>
-
-    </TableLayout>
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/map_view_layout"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/shadow"
-        android:paddingBottom="1dp"
-        android:paddingLeft="1dp"
-        android:paddingRight="1dp"
-        android:paddingTop="1dp"
-        android:visibility="invisible">
-
-        <com.cisco.ctao.ioe.ux.trilateral.MapView
-            android:layout_width="@dimen/map_view_width"
-            android:layout_height="@dimen/map_view_height"
-            android:id="@+id/map_view"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="0dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginRight="1dp"
-            android:layout_marginTop="0dp"
-            android:visibility="invisible" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentRight="false"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/round_view_layout">
-
-        <com.cisco.ctao.ioe.ux.trilateral.ClippedRoundLayout
-            android:layout_width="@dimen/ring_width"
-            android:layout_height="@dimen/ring_height"
-            android:id="@+id/round_layout"
-            android:layout_gravity="center"
-            android:rotation = "0"
-            android:background="@color/background_colour"
-            android:visibility="invisible">
-
-            <!--
-                        <view
-                            android:layout_width="320dp"
-                            android:layout_height="161dp"
-                            class="android.support.v4.view.ViewPager"
-                            android:id="@+id/quickStatus_carousel"
-                            android:overScrollMode="never"
-                            android:layout_marginTop="84dp"
-                            android:visibility="invisible" />
-            -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ring"
-                android:background="@drawable/shape_ring"
-                android:layout_centerInParent="true" />
-
-            <view
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                class="com.cisco.ctao.ioe.ux.trilateral.GraphicsView"
-                android:id="@+id/graphical_view"
-                android:background="@android:color/transparent"
-                android:layout_alignTop="@+id/ring"
-                android:layout_alignLeft="@+id/ring"
-                android:layout_alignStart="@+id/ring"
-                android:rotation = "0"
-                android:visibility="invisible" />
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/rim_fins">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/selectedZone"
-                    android:paddingTop="87dp"
-                    android:textColor="@color/fin_arc_ikea"
-                    android:ellipsize="marquee"
-                    android:autoText="false"
-                    android:singleLine="true"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_centerInParent="true"
-                    android:textSize="21sp"
-                    android:layout_alignParentBottom="false" />
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/time_layout"
-                    android:layout_centerInParent="true">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/am_pm"
-                        android:id="@+id/text_amPm"
-                        android:layout_alignTop="@+id/text_time"
-                        android:layout_toEndOf="@+id/text_time"
-                        android:layout_toRightOf="@+id/text_time"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentStart="false"
-                        android:layout_alignParentLeft="false"
-                        android:layout_marginTop="13dp"
-                        android:fontFamily="sans-serif-light"
-                        android:textSize="26dp"
-                        android:textColor="#ffffff" />
-
-                    <TextView android:id="@+id/text_time" android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/time"
-                        android:textSize="78dp"
-                        android:textColor="#ffffff"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
-                        android:fontFamily="sans-serif-light"
-                        android:letterSpacing="-0.04" />
-                </RelativeLayout>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/rim_hover_info"
-                android:layout_centerInParent="true"
-                android:visibility="invisible" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Object Name"
-                    android:id="@+id/hover_objectName"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="false"
-                    android:layout_alignParentLeft="false"
-                    android:layout_centerHorizontal="true"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:textColor="@color/hover_object_name_color" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="description"
-                    android:id="@+id/hover_description"
-                    android:layout_below="@+id/hover_objectName"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/hover_object_desc_color" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/quick_statuses"
-                android:visibility="invisible">
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/quickStatus_nameAndDesc"
-                    android:layout_marginTop="25dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Object Name"
-                        android:id="@+id/quickStatus_objectName"
-                        android:singleLine="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="18dp"
-                        android:layout_marginRight="18dp"
-                        android:ellipsize="end"
-                        android:textSize="30sp"
-                        android:letterSpacing="-0.04" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="description"
-                        android:id="@+id/quickStatus_description"
-                        android:layout_marginLeft="18dp"
-                        android:layout_marginRight="18dp"
-                        android:ellipsize="end"
-                        android:layout_centerHorizontal="true"
-                        android:textSize="20sp"
-                        android:layout_marginTop="32dp"
-                        android:letterSpacing="-0.04" />
-
-                </RelativeLayout>
-
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/quickStatus_closeButton"
-                    android:layout_centerHorizontal="true"
-                    android:layout_alignParentStart="false"
-                    android:layout_alignParentLeft="false"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="35dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/close_button"
-                    android:background="@null" />
-            </RelativeLayout>
-
-        </com.cisco.ctao.ioe.ux.trilateral.ClippedRoundLayout>
-
-    </FrameLayout>
-
-    <SeekBar
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/angle_seek_bar"
-        android:max="360"
-        android:visibility="invisible"
-        android:layout_above="@+id/round_view_layout"
-        android:mirrorForRtl="false"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="-5dp" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

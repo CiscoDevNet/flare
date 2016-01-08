@@ -1,0 +1,115 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="com.cisco.flare.trilateral.MainActivity$PhoneFragment">
+
+    <TextView android:text="@string/environment" android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/environmentLabel"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Environment name"
+        android:id="@+id/environmentTextView"
+        android:layout_below="@+id/environmentLabel"
+        />
+
+    <TextView
+        android:text="@string/zone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/zoneLabel"
+        android:layout_below="@+id/environmentTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Zone name"
+        android:id="@+id/zoneTextView"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/zoneLabel"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Device name"
+        android:id="@+id/deviceTextView"
+        android:layout_below="@+id/deviceLabel"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:text="@string/device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/deviceLabel"
+        android:layout_below="@+id/zoneTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:text="@string/position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/positionLabel"
+        android:layout_below="@+id/deviceTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0.0, 0.0"
+        android:id="@+id/positionTextView"
+        android:layout_below="@+id/positionLabel"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:text="@string/angle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/angleLabel"
+        android:layout_below="@+id/positionTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="0°"
+        android:id="@+id/angleTextView"
+        android:layout_below="@+id/angleLabel"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:text="@string/nearby_thing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nearbyThingLabel"
+        android:layout_below="@+id/angleTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Thing name"
+        android:id="@+id/nearbyThingTextView"
+        android:layout_below="@+id/nearbyThingLabel"
+        android:layout_alignParentStart="true"/>
+
+</RelativeLayout>

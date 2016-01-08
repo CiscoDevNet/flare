@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by azamlerc on 3/23/15.
  */
-public class Zone extends Flare {
+public class Zone extends Flare implements Flare.PerimeterObject {
 
 	private RectF perimeter;
 	private int major;
@@ -65,13 +65,5 @@ public class Zone extends Flare {
 		return things;
 	}
 
-	public Thing getThing(String id) {
-		for (Thing thing : things) {
-			if (thing.getId().equals(id)) {
-				return thing;
-			}
-		}
-		return null;
-	}
 
 }

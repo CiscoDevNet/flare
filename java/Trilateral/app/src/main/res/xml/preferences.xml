@@ -15,5 +15,17 @@
             android:summary=""
             android:dialogTitle="Flare Server"
             android:defaultValue="1234" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="use_gps"
+            android:title="@string/use_gps_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="use_beacons"
+            android:title="@string/use_beacons_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="use_compass"
+            android:title="@string/use_compass_title" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -1,4 +1,4 @@
-package com.cisco.ctao.ioe.ux.trilateral;
+package com.cisco.flare.trilateral;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -91,7 +91,7 @@ public class GraphicsView extends CommonView {
                 mPaint.setColor(adjustAlpha(mPaint.getColor(), (float)finOpacity(distanceFromDevice)));
 
                 // calculate the angle (orientation) of the fin from the position of the device
-                arcStartAngle = (float)mDevice.angleTo(thing);
+                arcStartAngle = -(float)mDevice.angleTo(thing);
                 arcStartAngle -= arcSweepAngle/2;
 
                 // draw the fin for this Thing

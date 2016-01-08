@@ -15,19 +15,3 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--verbose
--dontobfuscate
--dontshrink
--dontwarn java.lang.invoke.*
--dontwarn org.codehaus.mojo.animal_sniffer.*
--dontwarn java.nio.file.*
-
--keep public class * {
-    public protected *;
-}
-
--assumenosideeffects class android.util.Log {
-  public static *** i(...);
-  public static *** d(...);
-  public static *** v(...);
-}

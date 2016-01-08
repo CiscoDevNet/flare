@@ -1,4 +1,4 @@
-package com.cisco.ctao.ioe.ux.trilateral;
+package com.cisco.flare.trilateral;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -77,23 +77,32 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
         public void run() {
             while (mRun) {
                 Canvas c = null;
-                try {
-                    c = mSurfaceHolder.lockCanvas(null);
-                    synchronized (mSurfaceHolder) {
-                        if (mFlareVariablesChanged) {
-                            onFlareVariablesChanged();
-                            mFlareVariablesChanged = false;
+                if (mDataChanged) {
+                    try {
+                        c = mSurfaceHolder.lockCanvas(null);
+                        synchronized (mSurfaceHolder) {
+                            if (mFlareVariablesChanged) {
+                                onFlareVariablesChanged();
+                                mFlareVariablesChanged = false;
+                            }
+                            if (c != null) {
+                                mDataChanged = false;
+                                doDraw(c);
+                            }
                         }
-                        if (c != null) doDraw(c);
-                    }
-                } finally {
-                    // do this in a finally so that if an exception is thrown
-                    // during the above, we don't leave the Surface in an
-                    // inconsistent state
-                    if (c != null) {
-                        mSurfaceHolder.unlockCanvasAndPost(c);
+                    } finally {
+                        // do this in a finally so that if an exception is thrown
+                        // during the above, we don't leave the Surface in an
+                        // inconsistent state
+                        if (c != null) {
+                            mSurfaceHolder.unlockCanvasAndPost(c);
+                        }
                     }
                 }
+
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {}
             }
             Log.d(TAG, "finishing running thread");
         }
@@ -133,6 +142,7 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
     protected Zone mSelectedZone;
     protected Device mDevice;
     protected boolean mFlareVariablesChanged;
+    protected boolean mDataChanged;
     protected int mThingDefaultColor;
 
     protected ArrayList<Thing> mThingsNearDevice;
@@ -143,6 +153,7 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
 
         mContext = context;
         mFlareVariablesChanged = false;
+        mDataChanged = false;
 
         mThingsNearDevice = new ArrayList<>();
 
@@ -227,6 +238,13 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
             mSelectedZone = zone;
             mDevice = device;
             mFlareVariablesChanged = true;
+            mDataChanged = true;
+        }
+    }
+
+    public void dataChanged() {
+        synchronized (mSurfaceHolder) {
+            mDataChanged = true;
         }
     }
 
@@ -248,6 +266,7 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
                             mThingsNearDevice.add(thing);
                         }
                     }
+                    dataChanged();
                     break;
                 }
             }
@@ -271,6 +290,7 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
                 synchronized (mSurfaceHolder) {
                     mThingsNearDevice.remove(i);
                 }
+                dataChanged();
                 break;
             }
             i++;
@@ -290,12 +310,13 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
             String thingColor = "unknown";
             try {
                 thingColor = data.getString("color");
+                if ("orange".equals(thingColor)) thingColor = "#FF8F00"; // for some reason Java doesn't know about orange
                 chosenColor = Color.parseColor(thingColor);
             } catch (JSONException e) {
                 // the color of this Thing wasn't specified so we'll go with the default one
             } catch (Exception e) {
                 // this exception is being thrown when the color is invalid
-//              Log.e(TAG, "Invalid color "+thingColor);
+                // Log.e(TAG, "Invalid color "+thingColor);
             }
         }
         return chosenColor;

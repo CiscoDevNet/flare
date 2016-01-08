@@ -11,13 +11,8 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "22.0.1"
-
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -25,30 +20,16 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.cisco.ctao.ioe.ux.Trilateral"
-        minSdkVersion 19
-        targetSdkVersion 22
+        applicationId "com.cisco.flare.trilateral"
+        minSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
-    signingConfigs {
-        release {
-            storeFile file("../trilateral-key.jks")
-            storePassword "ciscoFlare2015"
-            keyAlias "trilateral-key"
-            keyPassword "ciscoFlare2015"
-        }
-    }
     buildTypes {
-        debug {
-            minifyEnabled false
-            debuggable true
-        }
         release {
-            minifyEnabled true
-            debuggable false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 
@@ -59,8 +40,14 @@ android {
     apply plugin: 'me.tatarka.retrolambda'
 }
 
+ext {
+    supportLibVersion = '23.1.1'  // variable that can be referenced to keep support libs consistent
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
     compile project(':flare')
+    testCompile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
 }

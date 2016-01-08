@@ -1,4 +1,4 @@
-package com.cisco.ctao.ioe.ux.trilateral;
+package com.cisco.flare.trilateral;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -79,8 +79,8 @@ public class MapView extends CommonView {
 
         RectF perimeter = mSelectedZone.getPerimeter();
         // leave a margin on the canvas to be able to draw Things (half a Thing on each side) on the perimeter if needed
-        float halfThingWidth = (float)mDrawableDeviceDimensions.width()*0.5f,
-              halfThingHeight = (float)mDrawableDeviceDimensions.height()*0.5f;
+        float halfThingWidth = (float)mDrawableDeviceDimensions.width()*0.7f, // changed from 0.5f
+              halfThingHeight = (float)mDrawableDeviceDimensions.height()*0.7f;
         float canvasWidth = (float)mCanvasWidth - 2*halfThingWidth,
               canvasHeight = (float)mCanvasHeight - 2*halfThingHeight;
 
@@ -103,6 +103,8 @@ public class MapView extends CommonView {
     public void doDraw(Canvas canvas) {
         // draw the background (clear the screen)
         canvas.drawColor(mMapBgColor, PorterDuff.Mode.SRC);
+
+        Log.e(TAG, "doDraw");
 
         // draw perimeter
         if (mSelectedZone != null) {
@@ -153,7 +155,7 @@ public class MapView extends CommonView {
 
     private PointF positionInCanvas(PointF pos) {
         float xInCanvas = mPerimeterOriginOnCanvas.x+mPerimeterToCanvasMultiplier*pos.x;
-        float yInCanvas = mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier*pos.y;
+        float yInCanvas = mCanvasHeight - (mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier*pos.y);
         return new PointF(xInCanvas, yInCanvas);
     }
 
@@ -167,7 +169,7 @@ public class MapView extends CommonView {
         int halfWidth = object.getMinimumWidth()/2,
             halfHeight = object.getMinimumHeight()/2;
         int xInCanvas = (int)(mPerimeterOriginOnCanvas.x+mPerimeterToCanvasMultiplier*x);
-        int yInCanvas = (int)(mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier*y);
+        int yInCanvas = mCanvasHeight - (int)(mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier*y);
         object.setBounds(xInCanvas - halfWidth, yInCanvas - halfHeight, xInCanvas + halfWidth, yInCanvas + halfHeight);
         object.draw(canvas);
     }
