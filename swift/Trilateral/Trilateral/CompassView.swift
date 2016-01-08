@@ -31,8 +31,17 @@ class CompassView: UIView, FlareController {
     var currentZone: Zone? { didSet { setNeedsDisplay() }}
     var device: Device? { didSet { setNeedsDisplay() }}
     var selectedThing: Thing? { didSet { setNeedsDisplay() }}
-    var nearbyThing: Thing? { didSet { setNeedsDisplay() }}
+    var nearbyThing: Thing? {
+        didSet {
+            updateLayout()
+            updateThing()
+            setNeedsDisplay()
+        }
+    }
 
+    @IBOutlet weak var nearbyThingLabel: UILabel!
+    @IBOutlet weak var nearbyThingComment: UILabel!
+    
     var offset: CGFloat = 0.0
     var heading: CGFloat = 0.0
     
@@ -44,12 +53,35 @@ class CompassView: UIView, FlareController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector:"orientationDidChange:", name: UIApplicationDidChangeStatusBarOrientationNotification, object: nil)
     }
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        updateLayout()
+    }
+    
     func orientationDidChange(note: NSNotification) {
+        updateLayout()
         dataChanged()
     }
     
     func dataChanged() {
         setNeedsDisplay()
+    }
+    
+    func updateLayout() {
+        if nearbyThingLabel != nil && nearbyThingComment != nil {
+            let y = (self.frame.size.height - nearbyThingLabel.frame.size.height) / 2.0
+            nearbyThingLabel.frame.origin.y = y
+            nearbyThingComment.frame.origin.y = y + 27.0
+            nearbyThingLabel.setNeedsDisplay()
+            nearbyThingComment.setNeedsDisplay()
+        }
+    }
+ 
+    func updateThing() {
+        if nearbyThingLabel != nil && nearbyThingComment != nil {
+            nearbyThingLabel.text = nearbyThing?.name ?? ""
+            nearbyThingComment.text = nearbyThing?.comment ?? ""
+        }
     }
     
     override func drawRect(rect: CGRect) {
