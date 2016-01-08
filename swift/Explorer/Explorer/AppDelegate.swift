@@ -431,6 +431,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             let geofence = ["latitude":latitudeField.doubleValue,
                             "longitude":longitudeField.doubleValue,
                             "radius":radiusField.doubleValue]
+            environment.geofence = Geofence(json: geofence)
             flareManager.updateFlare(environment, json: ["geofence":geofence]) {json in }
         }
     }
