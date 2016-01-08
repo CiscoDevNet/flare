@@ -81,6 +81,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         NSLog("Location: \(location.coordinate.latitude),\(location.coordinate.longitude)")
         let params = ["latitude":location.coordinate.latitude, "longitude":location.coordinate.longitude]
         
+        loadEnvironments(params)
+    }
+    
+    func loadEnvironments(params: JSONDictionary?) {
         self.flareManager.loadEnvironments(params, loadDevices: false) { (environments) -> () in // load environment for current location
             if environments.count > 0 {
                 self.loadEnvironment(environments[0])
@@ -140,7 +144,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             flareManager.getCurrentZone(currentEnvironment!, device: device!) { zone in
                 self.currentZone = zone
             }
-            
         }
     }
     
