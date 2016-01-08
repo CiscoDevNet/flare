@@ -45,8 +45,8 @@
 		C94290E61C1B83A400FFAA84 /* ColorButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorButton.swift; sourceTree = "<group>"; };
 		C95CEBF81C1209B100C3A226 /* CompassView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompassView.swift; sourceTree = "<group>"; };
 		C95CEBFA1C163A1700C3A226 /* DeviceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceController.swift; sourceTree = "<group>"; };
-		C98970741B81E90900DAB978 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = "../../Flare/Output/Release-iphoneuniversal/Flare.framework"; sourceTree = "<group>"; };
-		C98970761B81E91700DAB978 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = "../../SocketIO/Output/Release-iphoneuniversal/SocketIO.framework"; sourceTree = "<group>"; };
+		C98970741B81E90900DAB978 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = "../../Flare/Output/Release-iphoneos/Flare.framework"; sourceTree = "<group>"; };
+		C98970761B81E91700DAB978 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = "../../SocketIO/Output/Release-iphoneos/SocketIO.framework"; sourceTree = "<group>"; };
 		C9C2DF131B98A334009E51AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		C9D1AA3D1AC1F5850003B8A1 /* Trilateral.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Trilateral.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D1AA411AC1F5850003B8A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -344,8 +344,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"../Flare/Output/Release-iphoneuniversal",
-					"../SocketIO/Output/Release-iphoneuniversal",
+					"../Flare/Output/Release-iphoneos",
+					"../SocketIO/Output/Release-iphoneos",
 				);
 				INFOPLIST_FILE = Trilateral/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
@@ -363,8 +363,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"../Flare/Output/Release-iphoneuniversal",
-					"../SocketIO/Output/Release-iphoneuniversal",
+					"../Flare/Output/Release-iphoneos",
+					"../SocketIO/Output/Release-iphoneos",
 				);
 				INFOPLIST_FILE = Trilateral/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
