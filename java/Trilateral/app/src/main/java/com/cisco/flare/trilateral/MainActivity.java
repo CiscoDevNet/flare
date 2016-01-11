@@ -644,6 +644,19 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 				angleTextView.setText("0°");
 			}
 		}
+
+		@Override
+		public void near(Thing thing, Device device, double distance) {
+			Log.d(TAG, "PhoneFragment near: " + mainActivity.nearbyThing);
+			objectsChanged();
+		}
+
+		@Override
+		public void far(Thing thing, Device device) {
+			Log.d(TAG, "PhoneFragment far: " + mainActivity.nearbyThing);
+			objectsChanged();
+		}
+
 	}
 
 	public static class CompassFragment extends FlareFragment {
@@ -799,7 +812,11 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			});
 			invertButton.setOnClickListener(arg0 -> { mainActivity.performAction("invert"); });
 			darkerButton.setOnClickListener(arg0 -> { mainActivity.performAction("darker"); });
-			lighterButton.setOnClickListener(arg0 -> { mainActivity.performAction("lighter"); });
+			lighterButton.setOnClickListener(arg0 -> {
+				mainActivity.performAction("lighter");
+			});
+
+			objectsChanged();
 
 			return view;
 		}
@@ -811,6 +828,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			Thing nearbyThing = mainActivity.nearbyThing;
 
 			nearbyThingTextView.setText(nearbyThing != null ? nearbyThing.getName() : "none");
+
+			dataChanged();
 		}
 
 		@Override
@@ -828,6 +847,16 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			} catch (Exception e) {
 				brightnessTextView.setText("—");
 			}
+		}
+
+		@Override
+		public void near(Thing thing, Device device, double distance) {
+			objectsChanged();
+		}
+
+		@Override
+		public void far(Thing thing, Device device) {
+			objectsChanged();
 		}
 	}
 

@@ -32,9 +32,13 @@ public class GraphicsView extends CommonView {
     private float mDefaultStrokeWidth;
     private Paint mPaint;
     private final int mDefaultColor = 0xffffcd00;
+    private final int mNorthColor = 0xffff0000;
+    private final int mTickColor = 0xffffffff;
 
-    private final double LARGEST_FIN_LENGTH = 80, SMALLEST_FIN_LENGTH = 10;
-    private final double NEAR_DISTANCE = 2, FAR_DISTANCE = 10;
+    // private final double LARGEST_FIN_LENGTH = 80, SMALLEST_FIN_LENGTH = 10;
+    // private final double NEAR_DISTANCE = 2, FAR_DISTANCE = 10;
+    private final double LARGEST_FIN_LENGTH = 40, SMALLEST_FIN_LENGTH = 5;
+    private final double NEAR_DISTANCE = 1, FAR_DISTANCE = 12;
     private final double NEAR_OPACITY = 1, FAR_OPACITY = 0.25;
 
     private final static int FACTOR_TYPE_OPACITY = 0;
@@ -97,6 +101,13 @@ public class GraphicsView extends CommonView {
                 // draw the fin for this Thing
                 canvas.drawArc(mRectF, arcStartAngle - deviceAngle(), arcSweepAngle, false, mPaint);
             }
+        }
+
+        // draw tick marks
+        for (int i = 0; i < 16; i++) {
+            mPaint.setColor(i == 12 ? mNorthColor : mTickColor); // north is red, others are white
+            mPaint.setAlpha(i % 2 == 0 ? 128 : 64); // alternate 50% and 25% opaque
+            canvas.drawArc(mRectF, (float)i * 22.5f, 1, false, mPaint); // every 22.5°
         }
     }
 
