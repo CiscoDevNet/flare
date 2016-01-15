@@ -34,17 +34,6 @@
             android:label="Settings" >
         </activity>
 
-        <service
-            android:name="org.altbeacon.beacon.service.BeaconService"
-            android:enabled="true"
-            android:exported="true"
-            android:isolatedProcess="false"
-            android:label="beacon" >
-        </service>
-        <service
-            android:name="org.altbeacon.beacon.BeaconIntentProcessor"
-            android:enabled="true" >
-        </service>
     </application>
 
 </manifest>

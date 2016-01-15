@@ -128,45 +128,53 @@ public class FlareManager {
             }
 
             for (JSONObject environmentJson : environmentsList) {
-                Environment environment = new Environment(environmentJson);
-                environments.add(environment);
-                addToIndex(environment);
+                if (environmentsList != null) {
+                    Environment environment = new Environment(environmentJson);
+                    environments.add(environment);
+                    addToIndex(environment);
 
-                requests++;
-                listZones(environment.getId(), (zonesList) -> {
-                    for (JSONObject zoneJson : zonesList) {
-                        Zone zone = new Zone(zoneJson);
-                        environment.getZones().add(zone);
-                        addToIndex(zone);
+                    requests++;
+                    listZones(environment.getId(), (zonesList) -> {
+                        if (zonesList != null) {
+                            for (JSONObject zoneJson : zonesList) {
+                                Zone zone = new Zone(zoneJson);
+                                environment.getZones().add(zone);
+                                addToIndex(zone);
 
-                        requests++;
-                        listThings(zone.getId(), environment.getId(), (thingsList) -> {
-                            for (JSONObject thingJson : thingsList) {
-                                Thing thing = new Thing(thingJson);
-                                zone.getThings().add(thing);
-                                addToIndex(thing);
+                                requests++;
+                                listThings(zone.getId(), environment.getId(), (thingsList) -> {
+                                    if (thingsList != null) {
+                                        for (JSONObject thingJson : thingsList) {
+                                            Thing thing = new Thing(thingJson);
+                                            zone.getThings().add(thing);
+                                            addToIndex(thing);
+                                        }
+                                    }
+
+                                    requests--;
+                                    if (requests == 0) handler.gotResponse(environments);
+                                });
                             }
+                        }
 
-                            requests--;
-                            if (requests == 0) handler.gotResponse(environments);
-                        });
-                    }
+                        requests--;
+                        if (requests == 0) handler.gotResponse(environments);
+                    });
 
-                    requests--;
-                    if (requests == 0) handler.gotResponse(environments);
-                });
+                    requests++;
+                    listDevices(environment.getId(), (devicesList) -> {
+                        if (devicesList != null) {
+                            for (JSONObject deviceJson : devicesList) {
+                                Device device = new Device(deviceJson);
+                                environment.getDevices().add(device);
+                                addToIndex(device);
+                            }
+                        }
 
-                requests++;
-                listDevices(environment.getId(), (devicesList) -> {
-                    for (JSONObject deviceJson : devicesList) {
-                        Device device = new Device(deviceJson);
-                        environment.getDevices().add(device);
-                        addToIndex(device);
-                    }
-
-                    requests--;
-                    if (requests == 0) handler.gotResponse(environments);
-                });
+                        requests--;
+                        if (requests == 0) handler.gotResponse(environments);
+                    });
+                }
             }
 
             requests--;

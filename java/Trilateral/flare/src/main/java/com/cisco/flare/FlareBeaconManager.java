@@ -10,10 +10,13 @@ import android.util.Log;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.service.RangedBeacon;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -73,21 +76,48 @@ public class FlareBeaconManager {
                 // Log.d(TAG, "Found " + beacons.size() + " beacons in " + region);
                 if (beacons.size() >= 3 && thisInstance.environment != null) {
                     thisInstance.environment.resetDistances(); // clears the distance for beacons that are no longer visible
+                    ArrayList<Thing> foundThings = ArrayList<Thing>();
                     String uuid = thisInstance.environment.getUuid();
+                    String shortUuid1 = thisInstance.environment.getShortUuid1();
+                    String shortUuid2 = thisInstance.environment.getShortUuid2();
 
                     for (Beacon beacon: beacons) {
-                        if (uuid != null && uuid.equalsIgnoreCase(beacon.getId1().toString())) {
-                            int minor = beacon.getId3().toInt();
+                        String beaconUuid = beacon.getId1().toString();
+                        if (beaconUuid.charAt(1) == 'x') beaconUuid = beaconUuid.substring(2);
+                        boolean isEddystone = beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x00;
+
+                        if ((uuid != null && uuid.equalsIgnoreCase(beaconUuid)) ||
+                            (shortUuid1 != null && shortUuid1.equalsIgnoreCase(beaconUuid)) ||
+                            (shortUuid2 != null && shortUuid2.equalsIgnoreCase(beaconUuid)))
+                        {
+                            int minor = 0;
+                            int major = 0;
                             double distance = beacon.getDistance();
 
-                            Thing thing = thisInstance.environment.getThingWithMinor(minor);
+                            if (isEddystone) {
+                                String identifier = beacon.getId2().toString();
+                                if (identifier.length() > 8) {
+                                    major = Integer.parseInt(identifier.substring(identifier.length() - 8, identifier.length() - 4));
+                                    minor = Integer.parseInt(identifier.substring(identifier.length() - 4));
+                                }
+                            } else {
+                                major = beacon.getId2().toInt();
+                                minor = beacon.getId3().toInt();
+                            }
 
+                            Log.d(TAG, "Found major: " + major + ", minor: " + minor + ", distance: " + distance + ", type: " + (isEddystone ? "Eddystone" : "AltBeacon"));
+
+                            Thing thing = thisInstance.environment.getThingForBeacon(major, minor);
                             if (thing != null) {
-                                thing.setDistance(distance);
-                                // Log.d(TAG, "Beacon " + thing.getName() + ": " + distance);
+                                if (!foundThings.contains(thing)) {
+                                    thing.setDistance(distance);
+                                    // Log.d(TAG, "Beacon " + thing.getName() + ": " + distance);
+                                } else {
+                                    // thing already used, perhaps it has both Eddystone and AltBeacon interfaces?
+                                }
                             }
                         } else {
-                            Log.d(thisInstance.TAG, "Unknown beacon: " + beacon.getId1());
+                            Log.d(thisInstance.TAG, "Unknown beacon: " + beaconUuid + " (" + beaconUuid.length() + ") not in " + uuid + " " + shortUuid);
                         }
                     }
 
@@ -131,6 +161,16 @@ public class FlareBeaconManager {
             thisInstance.beaconManager.unbind(thisInstance.beaconConsumer);
             thisInstance.beaconManager = null;
             thisInstance.beaconRegion = null;
+        }
+    }
+
+    // use Eddystone if your beacons support it, but don't support AltBeacon
+    // call this after calling bind()
+    public static void useEddystone(boolean value) {
+        if (value && thisInstance.beaconManager != null) {
+            thisInstance.beaconManager.getBeaconParsers().add(new BeaconParser().
+                    setBeaconLayout("s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19"));
+            Log.d(TAG, "Using Eddystone: " + thisInstance.beaconManager.getBeaconParsers());
         }
     }
 

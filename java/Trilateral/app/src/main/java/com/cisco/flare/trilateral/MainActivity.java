@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	public Zone currentZone;
 	public Thing nearbyThing;
 
+	private boolean useEddystone = true;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -199,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		});
 		FlareBeaconManager.bind(this);
 		FlareBeaconManager.setEnvironment(environment);
+		FlareBeaconManager.useEddystone(useEddystone);
 		FlareBeaconManager.restartRangingBeacons();
 	}
 

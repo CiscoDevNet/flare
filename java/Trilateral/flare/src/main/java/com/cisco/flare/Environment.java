@@ -21,6 +21,8 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 	private RectF perimeter;
 	private double angle;
 	private String uuid;
+	private String shortUuid1;
+	private String shortUuid2;
 	private ArrayList<Zone> zones;
 	private ArrayList<Device> devices;
 
@@ -29,10 +31,10 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 		this.zones = new ArrayList<Zone>();
 		this.devices = new ArrayList<Device>();
 
-		try { this.uuid = this.data.getString("uuid"); } catch (Exception e) { }
-		try { this.geofence = new Geofence(json.getJSONObject("geofence")); } catch (Exception e) {}
-		try { this.perimeter = getRect(json.getJSONObject("perimeter")); } catch (Exception e) {}
-		try { this.angle = json.getDouble("angle"); } catch (Exception e) {}
+		try { this.setUuid(this.data.getString("uuid")); } catch (Exception e) { }
+		try { this.setGeofence(new Geofence(json.getJSONObject("geofence"))); } catch (Exception e) {}
+		try { this.setPerimeter(getRect(json.getJSONObject("perimeter"))); } catch (Exception e) {}
+		try { this.setAngle(json.getDouble("angle")); } catch (Exception e) {}
 	}
 
 	@Override
@@ -68,8 +70,28 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 		return uuid;
 	}
 
+	public String getShortUuid1() {
+		return shortUuid1;
+	}
+
+	public String getShortUuid2() {
+		return shortUuid2;
+	}
+
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+
+		// shortUuid1 is the first five and last five bytes of the UUID
+		// shortUuid2 is the first four and last six bytes of the UUID
+		// http://developer.radiusnetworks.com/2015/07/14/introducing-eddystone.html
+
+		if (uuid != null) {
+			String id = uuid.replace("-", ""); // remove hyphens
+			if (id.length() >= 20) {
+				this.shortUuid1 = id.substring(0, 10) + id.substring(id.length() - 10);
+				this.shortUuid2 = id.substring(0, 8) + id.substring(id.length() - 12);
+			}
+		}
 	}
 
 	public ArrayList<Zone> getZones() {
@@ -99,11 +121,13 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 		return null;
 	}
 
-	public Thing getThingWithMinor(int minor) {
+	public Thing getThingForBeacon(int major, int minor) {
 		for (Zone zone: zones) {
-			for (Thing thing : zone.getThings()) {
-				if (thing.getMinor() == minor) {
-					return thing;
+			if (zone.getMajor() == major) {
+				for (Thing thing : zone.getThings()) {
+					if (thing.getMinor() == minor) {
+						return thing;
+					}
 				}
 			}
 		}
