@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var idField: NSTextField!
     @IBOutlet weak var nameField: NSTextField!
     @IBOutlet weak var commentField: NSTextField!
+    @IBOutlet weak var optionsField: NSTokenField!
 
     @IBOutlet weak var uuidField: NSTextField!
     @IBOutlet weak var environmentXField: NSTextField!
@@ -222,6 +223,85 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         
     }
     
+    @IBAction func importData(sender: AnyObject) {
+        let panel = NSOpenPanel()
+        panel.beginSheetModalForWindow(window) { result in
+            if result == NSFileHandlingPanelOKButton {
+                if let url = panel.URL {
+                    NSLog("Open: \(url)")
+                    if let data = NSData(contentsOfURL: url) {
+                        if let jsonArray = try? NSJSONSerialization.JSONObjectWithData(data, options: []) as? JSONArray {
+                            NSLog("Objects: \(jsonArray)")
+                            self.importEnvironments(jsonArray!)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @IBAction func exportData(sender: AnyObject) {
+        let panel = NSSavePanel()
+        panel.allowedFileTypes = ["json"]
+        panel.beginSheetModalForWindow(window) { result in
+            if result == NSFileHandlingPanelOKButton {
+                if let url = panel.URL {
+                    NSLog("Save: \(url)")
+                    let jsonArray = self.environments.map({$0.toJSON()})
+                    if let data = try? NSJSONSerialization.dataWithJSONObject(jsonArray, options: []) {
+                        data.writeToURL(url, atomically: true)
+                    }
+                }
+            }
+        }
+    }
+    
+    // merge the imported files
+    func importEnvironments(jsonArray: JSONArray) {
+        var requests = 0
+        
+        for environmentJson in jsonArray {
+            requests++
+            self.flareManager.newOrUpdateEnvironment(environmentJson) { newEnvironment in
+                if let environmentId = newEnvironment["_id"] as? String {
+                    if let zones = environmentJson["zones"] as? JSONArray {
+                        for zoneJson in zones {
+                            requests++
+                            self.flareManager.newOrUpdateZone(zoneJson, environmentId: environmentId) { newZone in
+                                if let zoneId = newZone["_id"] as? String {
+                                    if let things = zoneJson["things"] as? JSONArray {
+                                        for thingJson in things {
+                                            requests++
+                                            self.flareManager.newOrUpdateThing(thingJson, environmentId: environmentId, zoneId: zoneId) { _ in
+                                                requests--
+                                                if requests == 0 { self.refresh(self) }
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                requests--
+                                if requests == 0 { self.refresh(self) }
+                            }
+                        }
+                    }
+                    if let devices = environmentJson["devices"] as? JSONArray {
+                        for deviceJson in devices {
+                            requests++
+                            self.flareManager.newOrUpdateDevice(deviceJson, environmentId: environmentId) { _ in
+                                requests--
+                                if requests == 0 { self.refresh(self) }
+                            }
+                        }
+                    }
+                }
+                
+                requests--
+                if requests == 0 { self.refresh(self) }
+            }
+        }
+    }
+    
     // MARK: Callbacks
     
     func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?) {
@@ -372,6 +452,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             let comment = sender.stringValue
             flare.comment = comment
             flareManager.updateFlare(flare, json: ["description":comment]) {json in }
+        }
+    }
+    
+    @IBAction func changeOptions(sender: NSTokenField) {
+        if let flare = selectedFlare {
+            NSLog("Options: \(sender.objectValue)")
+            
+            if let options = sender.objectValue {
+                flare.data["options"] = options
+                flareManager.setData(flare, key: "options", value: options, sender: nil)
+            }
         }
     }
     
@@ -548,6 +639,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             idField.stringValue = ""
             nameField.stringValue = ""
             commentField.stringValue = ""
+            optionsField.objectValue = []
             uuidField.stringValue = ""
             environmentXField.stringValue = ""
             environmentYField.stringValue = ""
@@ -587,6 +679,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             idField.stringValue = newFlare.id
             nameField.stringValue = newFlare.name
             commentField.stringValue = newFlare.comment
+            optionsField.objectValue = newFlare.data["options"]
 
             if let environment = flareManager.environmentForFlare(newFlare) {
                 self.map.loadEnvironment(environment)

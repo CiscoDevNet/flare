@@ -103,11 +103,12 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     public func locationManager(manager: CLLocationManager, didRangeBeacons clbeacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         var clBeaconIndex = [Int:CLBeacon]()
         
-        // NSLog("Found \(clbeacons.count) beacons.")
         
+        // NSLog("Found \(clbeacons.count) beacons.")
+
         for clbeacon in clbeacons {
             let index = clbeacon.major.integerValue * 10000 + clbeacon.minor.integerValue
-            // NSLog("Saw beacon: \(clbeacon.major.integerValue) - \(clbeacon.minor.integerValue) (\(index))")
+            // NSLog("Saw beacon: \(clbeacon.major.integerValue) - \(clbeacon.minor.integerValue)")
             clBeaconIndex[index] = clbeacon
         }
         

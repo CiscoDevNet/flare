@@ -106,11 +106,13 @@ public class FlareManager: APIManager {
                                 zone.things.append(thing)
                                 self.addToIndex(thing)
                             }
+                            zone.things.sortInPlace() {$1.name > $0.name}
                             
                             requests--
                             if requests == 0 { handler(environments) }
                         }
                     }
+                    environment.zones.sortInPlace() {$1.name > $0.name}
                     
                     requests--
                     if requests == 0 { handler(environments) }
@@ -124,12 +126,14 @@ public class FlareManager: APIManager {
                             environment.devices.append(device)
                             self.addToIndex(device)
                         }
+                        environment.devices.sortInPlace() {$1.name > $0.name}
                         
                         requests--
                         if requests == 0 { handler(environments) }
                     }
                 }
             }
+            environments.sortInPlace() {$1.name > $0.name}
             
             requests--
             if requests == 0 { handler(environments) }
@@ -183,13 +187,13 @@ public class FlareManager: APIManager {
     public func newFlare(flare: Flare?, json: JSONDictionary, handler:(JSONDictionary) -> ()) {
         var template = json
         if flare == nil {
-             template["perimeter"] = ["origin":["x":0, "y":0], "size":["width":10, "height":10]]
-            newEnvironment( template, handler: handler)
+            if template["perimeter"] == nil { template["perimeter"] = ["origin":["x":0, "y":0], "size":["width":10, "height":10]] }
+            newEnvironment(template, handler: handler)
         } else if let environment = flare as? Environment {
-            template["perimeter"] = ["origin":["x":0, "y":0], "size":["width":5, "height":5]]
+            if template["perimeter"] == nil { template["perimeter"] = ["origin":["x":0, "y":0], "size":["width":5, "height":5]] }
             newZone(environment.id, zone:  template, handler: handler)
         } else if let zone = flare as? Zone {
-            template["position"] = ["x":0, "y":0]
+            if template["position"] == nil { template["position"] = ["x":0, "y":0] }
             newThing(zone.environmentId, zoneId: zone.id, thing:  template, handler: handler)
         }
     }
@@ -209,6 +213,8 @@ public class FlareManager: APIManager {
     
     // deletes a Flare object on the server
     public func deleteFlare(flare: Flare, handler:(JSONDictionary) -> ()) {
+        flareIndex.removeValueForKey(flare.id)
+        
         if let environment = flare as? Environment {
             deleteEnvironment(environment.id, handler: handler)
         } else if let zone = flare as? Zone {
@@ -433,6 +439,41 @@ public class FlareManager: APIManager {
     public func deleteDevice(deviceId: String, environmentId: String, handler:(JSONDictionary) -> ()) {
         sendRequest("environments/\(environmentId)/devices/\(deviceId)", params: nil, method: .DELETE, message: nil)
             {json in handler(json as! JSONDictionary)}
+    }
+    
+    // MARK: New or Update helpers
+    // if the object already exists in the index then update it, otherwise create it
+    
+    public func newOrUpdateEnvironment(environment: JSONDictionary, handler:(JSONDictionary) -> ()) {
+        if let id = environment["_id"] as? String, _ = flareIndex[id] as? Environment {
+            updateEnvironment(id, environment: environment, handler: handler)
+        } else {
+            newEnvironment(environment, handler: handler)
+        }
+    }
+    
+    public func newOrUpdateZone(zone: JSONDictionary, environmentId: String, handler:(JSONDictionary) -> ()) {
+        if let id = zone["_id"] as? String, _ = flareIndex[id] as? Zone {
+            updateZone(id, environmentId: environmentId, zone: zone, handler: handler)
+        } else {
+            newZone(environmentId, zone: zone, handler: handler)
+        }
+    }
+    
+    public func newOrUpdateThing(thing: JSONDictionary, environmentId: String, zoneId: String, handler:(JSONDictionary) -> ()) {
+        if let id = thing["_id"] as? String, _ = flareIndex[id] as? Thing {
+            updateThing(id, environmentId: environmentId, zoneId: zoneId, thing: thing, handler: handler)
+        } else {
+            newThing(environmentId, zoneId: zoneId, thing: thing, handler: handler)
+        }
+    }
+    
+    public func newOrUpdateDevice(device: JSONDictionary, environmentId: String, handler:(JSONDictionary) -> ()) {
+        if let id = device["_id"] as? String, _ = flareIndex[id] as? Device {
+            updateDevice(id, environmentId: environmentId, device: device, handler: handler)
+        } else {
+            newDevice(environmentId, device: device, handler: handler)
+        }
     }
     
     // tries to find an existing device object in the current environment
