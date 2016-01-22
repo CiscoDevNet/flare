@@ -19,4 +19,7 @@
    <FileRef
       location = "group:Importer/Importer.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:Lights/Lights.xcodeproj">
+   </FileRef>
 </Workspace>

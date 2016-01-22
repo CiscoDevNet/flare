@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C961FE431C52CE810072B0DD /* LightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C961FE421C52CE810072B0DD /* LightManager.swift */; };
+		C961FE441C52CE810072B0DD /* LightManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C961FE421C52CE810072B0DD /* LightManager.swift */; };
 		C97E31D51B7E18BE00402556 /* Flare.h in Headers */ = {isa = PBXBuildFile; fileRef = C97E31D41B7E18BE00402556 /* Flare.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C97E320C1B7E19DD00402556 /* FlareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97E32091B7E19DD00402556 /* FlareManager.swift */; };
 		C97E320D1B7E19DD00402556 /* FlareManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97E32091B7E19DD00402556 /* FlareManager.swift */; };
@@ -27,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C961FE421C52CE810072B0DD /* LightManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightManager.swift; sourceTree = "<group>"; };
 		C97E31CF1B7E18BE00402556 /* Flare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Flare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97E31D31B7E18BE00402556 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C97E31D41B7E18BE00402556 /* Flare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Flare.h; sourceTree = "<group>"; };
@@ -94,6 +97,7 @@
 				C989707E1B86544700DAB978 /* BeaconManager.swift */,
 				C97E320A1B7E19DD00402556 /* FlareModel.swift */,
 				C97E320B1B7E19DD00402556 /* APIManager.swift */,
+				C961FE421C52CE810072B0DD /* LightManager.swift */,
 				C98970711B81DF5200DAB978 /* Extensions.swift */,
 				C97E31D21B7E18BE00402556 /* Supporting Files */,
 			);
@@ -269,6 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C961FE431C52CE810072B0DD /* LightManager.swift in Sources */,
 				C97E32101B7E19DD00402556 /* APIManager.swift in Sources */,
 				C97E320E1B7E19DD00402556 /* FlareModel.swift in Sources */,
 				C97E320C1B7E19DD00402556 /* FlareManager.swift in Sources */,
@@ -281,6 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C961FE441C52CE810072B0DD /* LightManager.swift in Sources */,
 				C97E32111B7E19DD00402556 /* APIManager.swift in Sources */,
 				C97E320F1B7E19DD00402556 /* FlareModel.swift in Sources */,
 				C97E320D1B7E19DD00402556 /* FlareManager.swift in Sources */,

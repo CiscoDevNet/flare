@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>saturation</key>
+	<integer>255</integer>
+	<key>brightness</key>
+	<string>255</string>
+	<key>on</key>
+	<false/>
+	<key>thingId</key>
+	<string>5645fa4c0f1b508cb3e5397c</string>
+	<key>hub</key>
+	<string>192.168.1.6</string>
+	<key>host</key>
+	<string>localhost</string>
+	<key>port</key>
+	<integer>1234</integer>
+	<key>userId</key>
+	<string>330010cb301d032f17e89d31bdc8b7</string>
+	<key>hue</key>
+	<integer>65535</integer>
+	<key>lightId</key>
+	<integer>4</integer>
+</dict>
+</plist>

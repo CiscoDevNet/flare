@@ -23,6 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     @IBOutlet weak var idField: NSTextField!
     @IBOutlet weak var nameField: NSTextField!
     @IBOutlet weak var commentField: NSTextField!
+    @IBOutlet weak var actionsField: NSTokenField!
     @IBOutlet weak var optionsField: NSTokenField!
 
     @IBOutlet weak var uuidField: NSTextField!
@@ -455,6 +456,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         }
     }
     
+    @IBAction func changeActions(sender: NSTokenField) {
+        if let flare = selectedFlare {
+            if let actions = sender.objectValue as? [String] {
+                flare.actions = actions
+                flareManager.updateFlare(flare, json: ["actions":actions]) {json in }
+            }
+        }
+    }
+
     @IBAction func changeOptions(sender: NSTokenField) {
         if let flare = selectedFlare {
             NSLog("Options: \(sender.objectValue)")
@@ -640,6 +650,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             nameField.stringValue = ""
             commentField.stringValue = ""
             optionsField.objectValue = []
+            actionsField.objectValue = []
             uuidField.stringValue = ""
             environmentXField.stringValue = ""
             environmentYField.stringValue = ""
@@ -679,6 +690,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             idField.stringValue = newFlare.id
             nameField.stringValue = newFlare.name
             commentField.stringValue = newFlare.comment
+            actionsField.objectValue = newFlare.actions
             optionsField.objectValue = newFlare.data["options"]
 
             if let environment = flareManager.environmentForFlare(newFlare) {

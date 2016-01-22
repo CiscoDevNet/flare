@@ -18,6 +18,7 @@ class NearbyThingController: UIViewController, FlareController {
     @IBOutlet weak var colorLabel: UILabel!
     @IBOutlet weak var brightnessLabel: UILabel!
     @IBOutlet weak var slider: UISlider!
+    @IBOutlet weak var powerSwitch: UISwitch!
     
     var colorButtons = [String:ColorButton]()
     @IBOutlet weak var redButton: ColorButton!
@@ -76,6 +77,12 @@ class NearbyThingController: UIViewController, FlareController {
             brightnessLabel.text = ""
             slider.value = 0.5
         }
+        
+        if let on = nearbyThing?.data["on"] {
+            powerSwitch.on = on == 1
+        } else {
+            powerSwitch.on = false
+        }
     }
     
     @IBAction func performAction(sender: UIButton) {
@@ -94,5 +101,9 @@ class NearbyThingController: UIViewController, FlareController {
     @IBAction func setBrightness(sender: UISlider) {
         let brightness = Double(slider.value).roundTo(0.1)
         appDelegate.setNearbyThingData("brightness", value: brightness)
+    }
+    
+    @IBAction func setOn(sender: UISwitch) {
+        appDelegate.setNearbyThingData("on", value: sender.on)
     }
 }

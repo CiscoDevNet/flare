@@ -14,6 +14,7 @@ public class Flare: NSObject {
     public var name: String
     public var comment: String
     public var data: JSONDictionary
+    public var actions: [String]
     public var created: NSDate
     public var modified: NSDate
     public var distance: Double? // the distance from the current position
@@ -23,16 +24,11 @@ public class Flare: NSObject {
         self.name = json.getString("name")
         self.comment = json.getString("description") // description is a property of NSObject
         self.data = json.getDictionary("data")
+        self.actions = json.getStringArray("actions")
         self.created = json.getDate("created")
         self.modified = json.getDate("modified")
     }
     
-    public func merge(json: JSONDictionary) {
-        self.name = json.getString("name")
-        self.comment = json.getString("description")
-        self.data = json.getDictionary("data")
-    }
-
     public var flareClass: String {
         let className = NSStringFromClass(self.dynamicType)
         return className.componentsSeparatedByString(".").last!
@@ -128,16 +124,6 @@ public class Environment: Flare, FlarePerimeter {
         if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
     }
     
-    public override func merge(json: JSONDictionary) {
-        self.geofence = Geofence(json: json.getDictionary("geofence"))
-        self.perimeter = getRect(json.getDictionary("perimeter"))
-        self.angle = json.getDouble("angle")
-
-        super.merge(json)
-        
-        if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
-    }
-    
     public override var description: String {
         return "\(super.description) - \(perimeter)"
     }
@@ -217,15 +203,6 @@ public class Zone: Flare, FlarePerimeter {
         if let major = self.data["major"] as? Int { self.major = major }
     }
     
-    public override func merge(json: JSONDictionary) {
-        self.perimeter = getRect(json.getDictionary("perimeter"))
-        self.center = self.perimeter.center()
-        
-        super.merge(json)
-        
-        if let major = self.data["major"] as? Int { self.major = major }
-    }
-    
     public override var description: String {
         return "\(super.description) - \(perimeter)"
     }
@@ -270,15 +247,6 @@ public class Thing: Flare, FlarePosition {
         
         super.init(json: json)
 
-        if let minor = self.data["minor"] as? Int { self.minor = minor }
-    }
-    
-    public override func merge(json: JSONDictionary) {
-        self.type = json.getString("type")
-        self.position = getPoint(json.getDictionary("position"))
-        
-        super.merge(json)
-        
         if let minor = self.data["minor"] as? Int { self.minor = minor }
     }
     
@@ -346,12 +314,6 @@ public class Device: Flare, FlarePosition {
         super.init(json: json)
     }
 
-    public override func merge(json: JSONDictionary) {
-        self.position = getPoint(json.getDictionary("position"))
-        
-        super.merge(json)
-    }
-    
     public override var description: String {
         return "\(super.description) - \(position)"
     }

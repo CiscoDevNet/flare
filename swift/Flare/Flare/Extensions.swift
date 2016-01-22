@@ -344,6 +344,10 @@ extension Dictionary {
         return getValue(key, type: JSONArray.self)
     }
     
+    func getStringArray(key: String) -> [String] {
+        return getValue(key, type: [String].self)
+    }
+    
     func getDate(key: String) -> NSDate {
         let dateString = getString(key)
         let mongoFormatter = NSDateFormatter()

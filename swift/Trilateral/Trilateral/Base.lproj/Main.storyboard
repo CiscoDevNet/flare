@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="Ol5-hJ-ii9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="Ol5-hJ-ii9">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
@@ -114,6 +114,13 @@
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BRIGHTNESS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="OmL-aj-xUy">
                                 <rect key="frame" x="20" y="304" width="728" height="21"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POWER" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="V0U-pT-m57">
+                                <rect key="frame" x="20" y="428" width="728" height="21"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
@@ -236,6 +243,33 @@
                                     <action selector="performAction:" destination="7L3-NY-tnh" eventType="touchUpInside" id="r07-YB-I9r"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="MNe-ec-YYh">
+                                <rect key="frame" x="18" y="457" width="53" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" identifier="off"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="Off"/>
+                                <connections>
+                                    <action selector="performAction:" destination="7L3-NY-tnh" eventType="touchUpInside" id="d4B-Ei-xCZ"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="eXm-eT-IC3">
+                                <rect key="frame" x="697" y="457" width="56" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" identifier="on"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="On"/>
+                                <connections>
+                                    <action selector="performAction:" destination="7L3-NY-tnh" eventType="touchUpInside" id="lWu-eS-H0w"/>
+                                </connections>
+                            </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="c17-t2-dex">
+                                <rect key="frame" x="166" y="457" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="setOn:" destination="7L3-NY-tnh" eventType="valueChanged" id="rtl-RK-0uW"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -248,6 +282,7 @@
                         <outlet property="nearbyThingComment" destination="kBY-Fl-pZq" id="KZx-RB-Ba9"/>
                         <outlet property="nearbyThingLabel" destination="Qj8-UY-d93" id="Yyy-9C-n4j"/>
                         <outlet property="orangeButton" destination="Dkx-NU-PBp" id="qkv-l7-UHf"/>
+                        <outlet property="powerSwitch" destination="c17-t2-dex" id="T48-z1-8EV"/>
                         <outlet property="purpleButton" destination="fGx-YK-7au" id="iRV-NI-557"/>
                         <outlet property="redButton" destination="Jv5-wh-58R" id="Pps-TG-Ibk"/>
                         <outlet property="slider" destination="Gz5-1F-b0Q" id="Cwp-Vi-o1g"/>
