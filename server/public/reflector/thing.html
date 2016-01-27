@@ -1,0 +1,429 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Reflector</title>
+  </head>
+<link href="styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var environment_id = getParameterByName('environment');
+var zone_id = getParameterByName('zone');
+var thing_id = getParameterByName('thing');
+
+var thing = null;
+var currentPosition = {x:0, y:0};
+var nearbyDevice = null;
+var devicePosition = {x:0, y:0};
+
+var currentIndex = 0;
+var pageWidth = 1920;
+var itemWidth = 450;
+var itemHeight = 300;
+var selectedWidth = 675;
+var selectedHeight = 450;
+var itemMargin = 75;
+var selectedMargin = 0;
+
+var animationDuration = 0.3333333333;
+var framesPerSecond = 60;
+var steps = framesPerSecond * animationDuration;
+
+var options = [];
+
+$(function() {
+	pageWidth = $(window).width();
+
+	getThing(environment_id, zone_id, thing_id, function(info) {
+		thing = info;
+		data = thing.data;
+		document.title = thing.name;
+		$("#name").html(thing.name);
+		$("#description").html(thing.description);
+		
+		if (data !== undefined) {
+			$("#price").html("$" + data.price);
+			$("#sku").html(data.sku);
+			$("#designer").html(data.designer);
+			if (data.dimensions !== undefined) 
+				$("#dimensions").html('' + data.dimensions.width + ' x ' + 
+				data.dimensions.depth + ' x ' + data.dimensions.height);
+			if (data.location !== undefined) 
+				$("#location").html('aisle ' + data.location.aisle + ', section ' + 
+				data.location.section);
+			$("#designer").html(data.designer);
+			$("#website").attr('href', data.url);
+			if (data.quantity !== undefined) 
+				$("#quantity").html(data.quantity[data.color]);
+				
+			var carousel = document.getElementById("carousel");
+			while (carousel.firstChild) {
+			    carousel.removeChild(carousel.firstChild);
+			}
+
+			options = data.options;
+
+			itemWidth = itemHeight / data.size.height * data.size.width;
+			selectedWidth = selectedHeight / data.size.height * data.size.width;
+			carousel.style.width = (options.length - 1) * itemWidth + selectedWidth + 100; // a little extra room
+
+			for (var i = 0; i < options.length; i++) {
+				var color = options[i];
+				var selected = data.color == color ? " selected" : "";
+
+				var display = displayColor(color);
+
+				var item = document.createElement("div");
+				item.classList.add("item");
+				if (color == 0) item.classList.add("selected");
+				var image = document.createElement("img");
+				image.classList.add("image");
+				image.src = "images/" + thing.name.toLowerCase() + "/" + color + ".png";
+				image.style.width = itemWidth;
+				image.style.height = itemHeight;
+				item.appendChild(image);
+				carousel.appendChild(item);
+				var quantity = document.createElement("div");
+				quantity.classList.add("quantity");
+				
+				if (data.quantity[color] == 0) quantity.classList.add("nostock");
+				var quantityDiv = document.createElement("div");
+				var quantityText = document.createTextNode(data.quantity[color]);
+				quantityDiv.appendChild(quantityText);
+				quantity.appendChild(quantityDiv);
+				item.appendChild(quantity);
+
+				$("#colorDots").append($('<td align="center" width="60" onclick="chooseColor(\'' + color + '\')"><div class="dot' + selected + '" id="' + color + '" style="background: ' + display + '" id="color' + i + '">&nbsp;</div>' + color + '</td>'));
+			}
+	
+			selectIndex(options.indexOf(data.color), false, false);
+		}
+		
+		var imageName = 'images/' + thing.name.toLowerCase() + '/' + data.color + '.png';
+		$("#image").attr('src', imageName);
+	});
+
+	subscribe({thing:thing_id});
+	getData({thing:thing_id});
+	getPosition({thing:thing_id});
+	
+});
+
+function displayColor(color) {
+	if (color == 'white') return '#f6f6f6';
+	if (color == 'oak') return 'burlywood';
+	if (color == 'birch') return 'wheat';
+	return color;
+}
+
+function chooseColor(color) {
+	setData({thing:thing_id}, "color", color, thing_id);
+	setColor(color);
+}
+
+function setColor(color) {
+	$(".dot").removeClass("selected");
+	$("#" + color).addClass("selected");
+	
+	selectIndex(options.indexOf(color), true, false);
+	
+	var imageName = 'images/' + thing.name.toLowerCase() + '/' + color + '.png';
+	$("#image").attr('src', imageName);
+	
+	if (thing !== undefined && thing.data !== undefined && thing.data.quantity !== undefined) 
+		$("#quantity").html(thing.data.quantity[color]);
+
+}
+
+function selectIndex(index, animate, notify) {
+	// if (notify) setData({thing:reflektorId}, "index", index);
+	
+	var displayColor = "red"; // style.color;
+
+	var items = document.getElementsByClassName("item");
+
+	// don't animate if the current item is off the end of the new list
+	if (currentIndex < items.length) items[currentIndex].classList.remove("selected");
+	
+	// don't animate if the index is the same
+	if (currentIndex == index) animate = false;
+	
+	// move the carousel side to side
+	var carousel = document.getElementById("carousel");
+	var selectImage = items[index].getElementsByTagName("img")[0];
+	var deselectImage = (currentIndex < items.length) ? items[currentIndex].getElementsByTagName("img")[0] : null;
+	
+	var oldLeft = (pageWidth / 2) - (selectedWidth / 2) - currentIndex * itemWidth;
+	var newLeft = (pageWidth / 2) - (selectedWidth / 2) - index * itemWidth;
+	
+	currentIndex = index;
+
+	if (animate) {
+		var left = incrementer(oldLeft, newLeft, steps);
+		var selectWidth = incrementer(itemWidth, selectedWidth, steps);
+		var selectHeight = incrementer(itemHeight, selectedHeight, steps);
+		var selectMargin = incrementer(itemMargin, selectedMargin, steps);
+		var deselectWidth = incrementer(selectedWidth, itemWidth, steps);
+		var deselectHeight = incrementer(selectedHeight, itemHeight, steps);
+		var deselectMargin = incrementer(selectedMargin, itemMargin, steps);
+		
+		var step = 0; // the current step
+	    var timer = setInterval(function() {
+			step++;
+
+			carousel.style.left = left(step) + "px";
+			selectImage.style.width = selectWidth(step) + "px";
+			selectImage.style.height = selectHeight(step) + "px";
+			selectImage.style.marginTop = selectMargin(step) + "px";
+			if (deselectImage != null && selectImage != deselectImage) {
+				deselectImage.style.width = deselectWidth(step) + "px";
+				deselectImage.style.height = deselectHeight(step) + "px";
+				deselectImage.style.marginTop = deselectMargin(step) + "px";
+			}
+
+			if (step >= steps) {
+				clearInterval(timer);
+				items[index].classList.add("selected");
+			}
+		}, 1000 / framesPerSecond);
+	} else {
+		carousel.style.left = newLeft + "px";
+		selectImage.style.width = selectedWidth + "px";
+		selectImage.style.height = selectedHeight + "px";
+		selectImage.style.marginTop = selectedMargin + "px";
+		if (deselectImage != null && selectImage != deselectImage) {
+			deselectImage.style.width = itemWidth + "px";
+			deselectImage.style.height = itemHeight + "px";
+			deselectImage.style.marginTop = itemMargin + "px";
+		}
+		items[index].classList.add("selected");
+	}
+}
+
+// captures the start and end values and number of steps
+// returns a function that takes the current step and returns the current value
+function incrementer(start, end, steps) {
+	var increment = 1.0 * (end - start) / steps;
+	return function(step) {
+		return start + step * increment;
+	}
+}
+
+// captures the start and end values and number of steps
+// returns a function that takes the current step and returns the current value
+function animLoop(render, element) {
+    var running, lastFrame = +new Date;
+    function loop(now) {
+        // stop the loop if render returned false
+        if ( running !== false ) {
+            requestAnimationFrame( loop, element );
+            running = render( now - lastFrame );
+            lastFrame = now;
+        }
+    }
+    loop(lastFrame);
+}
+
+function gotData(message) {
+	if (message.thing == thing_id) {
+		console.log("data: " + JSON.stringify(message));
+		var data = message.data;
+		
+		for (key in data) {
+			var value = data[key];
+			var input = $("input#" + key);
+			input.val(value);
+		}
+		
+		setColor(data.color);
+	} else if (message.device == nearbyDevice) {
+		console.log("data: " + JSON.stringify(message));
+		var data = message.data;
+		
+		for (key in data) {
+			var value = data[key];
+			var input = $("input#device" + key);
+			input.val(value);
+		}
+		
+	} else {
+		console.log("ignoring: " + JSON.stringify(message));
+	}
+}
+
+function gotPosition(message) {
+	if (message.thing == thing_id) {
+		console.log("position: " + JSON.stringify(message));
+		currentPosition = message.position;
+		$("input#x").val(currentPosition.x);
+		$("input#y").val(currentPosition.y);
+		updateDistance();
+	} else if (message.device == nearbyDevice) {
+		console.log("device position: " + JSON.stringify(message));
+		devicePosition = message.position;
+		updateDistance();
+	} else {
+		console.log("ignoring: " + JSON.stringify(message));
+	}
+}
+
+function updateDistance() {
+	if (nearbyDevice == null) return;
+	var distance = distanceBetween(devicePosition, currentPosition);
+	$("input#distance").val(distance.toFixed(3));
+}
+
+function handleAction(message) {
+	if (message.thing == thing_id) {
+		var action = message.action;
+		
+		if (action == 'rainbow') {
+			// process action client-side
+			console.log('rainbow');
+		}
+	}
+}
+
+function near(message) {
+	nearbyDevice = message.device;
+	console.log('near device ' + nearbyDevice);
+	
+	getDevice(environment_id, nearbyDevice, function(info) {
+		$("div#devicename").html("Hello, " + nameForDevice(info.name) + "!");
+	});
+		
+	// subscribe({device:nearbyDevice});
+	// getData({device:nearbyDevice});
+	// getPosition({device:nearbyDevice});
+}
+
+function nameForDevice(name) {
+	if (name == undefined) return "there";
+		
+	var space = name.indexOf(' ');
+	if (space > 0) name = name.substring(0, space);
+	 
+	var quote = name.indexOf('\'');
+	if (quote > 0) name = name.substring(0, quote);
+		
+	return name; 
+}
+
+function far(message) {
+	console.log('far device ' + message.device);
+
+	$("div#devicename").html("");
+	
+	// if (nearbyDevice) unsubscribe({device:nearbyDevice});
+	nearbyDevice = null;
+}
+
+var thingColor = 'red';
+var thingBrightness = 1.0;
+
+function colorAngle(color) {
+	if (color == 'red') return 0;
+	if (color == 'orange') return 30;
+	if (color == 'yellow') return 60;
+	if (color == 'green') return 120;
+	if (color == 'blue') return 240;
+	if (color == 'purple') return 280;
+	return 0;
+}
+
+function update(input) {
+	var key = input.id;
+	var value = input.value;
+	
+	var data = {};
+	data[key] = value;
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateThing(environment_id, zone_id, thing_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function removeThing() {
+	deleteThing(environment_id, zone_id, thing_id, function(deleted) {
+		// console.log("Result: " + JSON.stringify(deleted));
+		window.close()
+	});
+}
+
+function nearbyDeviceDataChanged(input, key) {
+	if (nearbyDevice != null) {
+		var value = input.value;
+		if (key == 'angle') value = 1.0 * value; // cast as number
+		
+		setData({device:nearbyDevice}, key, value, thing_id);
+		
+		// if (key == 'angle') setAngle({angle: value});
+	}
+}
+
+function thingAction(action) {
+	performAction({thing:thing_id}, action, thing_id);
+}
+
+function nearbyDeviceAction(action) {
+	if (nearbyDevice != null) {
+		performAction({device:nearbyDevice}, action, thing_id);
+	}
+}
+
+</script>
+<body bgcolor="white">
+<center>
+<div id="name">Name</div>
+<div id="description">description</div>
+<div id="devicename"></div>
+<div id="price"></div>
+
+	<div id="reflektor">
+	<div id="carousel" class="debug">
+		<div class="item debug" id="white">
+			<div class="style">white</div>
+			<img class="image" src="images/kallax/white.png"/>
+			<div class="quantity nostock"><div>0</div></div>
+		</div>
+		<div class="item debug" id="oak">
+			<div class="style">oak</div>
+			<img class="image" src="images/kallax/oak.png"/>
+			<div class="quantity"><div>10</div></div>
+		</div>
+		<div class="item debug" id="black">
+			<div class="style">black</div>
+			<img class="image" src="images/kallax/black.png"/>
+			<div class="quantity"><div>8</div></div>
+		</div>
+		<div class="item debug" id="birch">
+			<div class="style">birch</div>
+			<img class="image" src="images/kallax/birch.png"/>
+			<div class="quantity"><div>12</div></div>
+		</div>
+	</div>
+</div>
+
+<table>
+<tr id="colorDots">
+</tr>
+</table>
+
+<table>
+<tr><td align="right">quantity:</td><td><div id="quantity"/></td></tr>
+<tr><td align="right">item:</td><td><div id="sku"/></td></tr>
+<tr><td align="right">designer:</td><td><div id="designer"/></td></tr>
+<tr><td align="right">dimensions:</td><td><div id="dimensions"/></td></tr>
+<tr><td align="right">location:</td><td><div id="location"/></td></tr>
+<tr><td align="right">website:</td><td><a id="website" href="stuff">buy now</a></td></tr>
+</table>
+
+
+
+</center>
+</body>
+</html>

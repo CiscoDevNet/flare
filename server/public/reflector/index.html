@@ -1,0 +1,102 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Reflector</title>
+  </head>
+<link href="styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var outline;
+
+function outlineItem(object, type, params) {
+	var name = object.name;
+	if (name == undefined) name = "Untitled"; 
+	if (type == 'thing') 
+		return $('<li>').append($('<a>').attr('href', type + '.html?' + $.param(params)).append(name));
+	else
+		return $('<li>').append(name);	
+}
+
+$(function() {
+	outline = $('ul#outline');
+	appendEnvironments(outline);
+	
+	function appendEnvironments(environmentsList) {
+		getEnvironments(function(environments) {
+			for (var i = 0; i < environments.length; i++) {
+				var environment = environments[i];
+				var environmentItem = outlineItem(environment, 'environment', {environment:environment._id});
+				environmentsList.append(environmentItem);    
+				var zonesList = $('<ul/>');
+				environmentItem.append(zonesList);
+				
+				appendZones(environment._id, zonesList);
+			}
+		});
+	}
+	
+	function appendZones(environment_id, zonesList) {
+		getZones(environment_id, function(zones) {
+			for (var i = 0; i < zones.length; i++) {
+				var zone = zones[i];
+				var zoneItem = outlineItem(zone, 'zone', {environment:environment_id, zone:zone._id});
+				zonesList.append(zoneItem);    
+				var thingsList = $('<ul/>');
+				zoneItem.append(thingsList);
+				appendThings(environment_id, zone._id, thingsList);
+			}
+		});
+	}
+
+	function appendThings(environment_id, zone_id, thingsList) {
+		getThings(environment_id, zone_id, function(things) {
+			for (var i = 0; i < things.length; i++) {
+				var thing = things[i];
+				var thingItem = outlineItem(thing, 'thing', {environment:environment_id, zone:zone_id, thing:thing._id});
+				thingsList.append(thingItem);    
+			}
+		});
+	}	
+});
+
+function addEnvironment() {
+	var data = {
+		"angle": 0,
+        "description": "Description",
+        "geofence": {
+            "latitude": 0,
+            "longitude": 0,
+            "radius": 300
+        },
+        "name": "Untitled",
+        "data": {},
+        "perimeter": {
+            "origin": {"x": 0, "y": 0},
+            "size": {"height": 10, "width": 10}
+        }
+	}; 
+	
+	newEnvironment(data, function(environment) {
+		var environmentItem = outlineItem(environment, 'environment', environment._id, {environment:environment._id});
+		outline.append(environmentItem);    
+	});
+}
+
+</script>
+
+<body bgcolor="white">
+
+<h2>Reflector</h2>
+
+<p class="description">The refelctor demo shows information about a thing on an interactive display. Choose a thing to get started:</p>
+
+<ul id="outline">
+	
+</ul>
+
+</body>
+</html>

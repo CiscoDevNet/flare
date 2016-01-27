@@ -1,0 +1,153 @@
+body,td,ul,input {font-family: Helvetica; font-size: 13pt; line-height: 1.4; font-weight: lighter;}
+h1,h2,h3,h4,b {font-weight: normal;}
+body {margin: 0px;}
+a {text-decoration: none; color: blue;}
+a:hover {text-decoration: underline;}
+p.description {color: gray; font-size: 11pt; }
+span.gray {color: #ccc;}
+
+#name {
+	font-size: 30pt;
+}
+
+ul {
+    margin-left: 15px;
+    margin-right: 0px;
+    padding-left: 10px;
+    padding-right: 0px;
+}
+
+div.console {
+    /* padding: 0px 20px 0px 20px; */
+}
+
+div.section {
+    border-radius: 20px;
+    border: 2px solid #ddd;
+    padding: 0px 20px 15px 20px; 
+}
+
+div.code,pre {
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    padding: 10px; 
+}
+
+.dot {
+	border-style: solid; 
+	border-color: white; 
+	border-width: 4;
+	background: red; 
+	border-radius: 19; 
+	width: 30px; 
+	height: 30px
+}
+
+.selected {
+	border-color: lightsteelblue; 
+}
+
+div#reflektor {
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-size: 100%;
+	width: 100%;
+	height: 450px;
+	position: relative;
+	overflow: hidden;
+}
+
+div#carousel {
+	font-size: 45px;
+	font-weight: bold;
+	position:absolute;
+	top:0px;
+	left:30px;
+	width: 3000px;
+	height: 450px;
+	white-space: nowrap;
+}
+
+
+div.quantity {
+	color: black;
+	font-size: 19px;
+    background: yellow;
+    width: 37px;
+    height: 37px;
+    border-radius: 50%;
+	text-align: center;
+	position: absolute;
+	right: 82px;
+	bottom: 60px;
+	box-shadow: 0px 5px 8px rgba(0,0,0,0.7);
+}
+
+div.selected div.quantity {
+    width: 84px;
+    height: 84px;
+	font-size: 36px;
+}
+
+div.selected div.quantity:after {
+	font-size: 13px;
+	content: "in stock";
+}
+
+div.nostock {
+	background: red;
+}
+
+div.quantity div {
+	padding: 6px 0px 0px 0px;
+}
+
+div.item {
+	float: left;
+	position: relative;
+}
+
+div.item div.style {
+	padding: 30px 0px 0px 25px;
+	text-transform: capitalize;
+	font-weight: normal;
+	color: #bbbbbb;
+	font-size: 18px;
+	display: none;
+}
+
+div.selected div.style {
+	display: none;
+}
+
+div.item img.image {
+	width: 300px;
+	height: 300px;
+	margin-top: 75px;
+}
+
+div.selected img.image {
+	width: 450px;
+	height: 450px;
+	top: 0px;
+	margin-top: 0px;
+}
+
+div.specs {
+	float: left;
+	position: relative;
+}
+
+div#devicename {
+	font-size: 20px;
+	position:absolute;
+	top:20px;
+	left:20px;
+}
+
+div#price {
+	font-size: 20px;
+	position:absolute;
+	top:20px;
+	right:20px;
+}
