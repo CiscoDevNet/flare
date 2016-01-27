@@ -14,12 +14,18 @@ import Flare
 class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     @IBOutlet weak var window: NSWindow!
+    @IBOutlet weak var environmentsPopup: NSPopUpButton!
+    @IBOutlet weak var zonesPopup: NSPopUpButton!
+    @IBOutlet weak var thingsPopup: NSPopUpButton!
     @IBOutlet weak var colorWell: NSColorWell!
 
     var defaults = NSUserDefaults.standardUserDefaults()
     var flareManager = FlareManager(host: "localhost", port: 1234)
     var lightManager = LightManager(hub: "hub", user: "user", light: 0)
-    var thing: Thing?
+
+    var selectedEnvironment: Environment?
+    var selectedZone: Zone?
+    var selectedThing: Thing?
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         let path = NSBundle.mainBundle().pathForResource("Defaults", ofType: "plist")
@@ -50,12 +56,116 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             
             flareManager.connect()
             
-            flareManager.getThing(thingId!, environmentId: "_", zoneId: "_") {json in
-                self.thing = Thing(json: json)
-                self.flareManager.flareIndex[self.thing!.id] = self.thing!
-                NSLog("Thing: \(self.thing!.name)")
-                self.flareManager.subscribe(self.thing!)
+            flareManager.loadEnvironments() { environments in
+                self.updateEnvironmentsMenu(environments)
             }
+        }
+    }
+    
+    func updateEnvironmentsMenu(environments: [Environment]) {
+        environmentsPopup.removeAllItems()
+
+        var selectedEnvironmentItem: NSMenuItem? = nil
+        for environment in environments {
+            let environmentItem = NSMenuItem(title: environment.name, action: nil, keyEquivalent: "")
+            environmentItem.representedObject = environment
+            if environment.id == defaults.stringForKey("environmentId") {
+                selectedEnvironment = environment
+                selectedEnvironmentItem = environmentItem
+            }
+            environmentsPopup.menu?.addItem(environmentItem)
+        }
+        
+        if selectedEnvironmentItem != nil {
+            environmentsPopup.selectItem(selectedEnvironmentItem!)
+        } else if environments.count > 0 {
+            selectedEnvironment = environments.first
+            defaults.setObject(selectedEnvironment!.id, forKey: "environmentId")
+            environmentsPopup.selectItemAtIndex(0)
+        }
+        
+        if selectedEnvironment != nil {
+            updateZonesMenu(selectedEnvironment!.zones)
+        }
+    }
+    
+    func updateZonesMenu(zones: [Zone]) {
+        zonesPopup.removeAllItems()
+        
+        var selectedZoneItem: NSMenuItem? = nil
+        for zone in selectedEnvironment!.zones {
+            let zoneItem = NSMenuItem(title: zone.name, action: nil, keyEquivalent: "")
+            zoneItem.representedObject = zone
+            if zone.id == defaults.stringForKey("zoneId") {
+                selectedZone = zone
+                selectedZoneItem = zoneItem
+            }
+            zonesPopup.menu?.addItem(zoneItem)
+        }
+        
+        if selectedZoneItem != nil {
+            zonesPopup.selectItem(selectedZoneItem)
+        } else if selectedEnvironment!.zones.count > 0 {
+            selectedZone = selectedEnvironment!.zones.first
+            defaults.setObject(selectedZone!.id, forKey: "zoneId")
+            zonesPopup.selectItemAtIndex(0)
+        }
+        
+        if selectedZone != nil {
+            updateThingsMenu(selectedZone!.things)
+        }
+    }
+    
+    func updateThingsMenu(things: [Thing]) {
+        thingsPopup.removeAllItems()
+        
+        var selectedThingItem: NSMenuItem? = nil
+        for thing in selectedZone!.things {
+            let thingItem = NSMenuItem(title: thing.name, action: nil, keyEquivalent: "")
+            thingItem.representedObject = thing
+            if thing.id == defaults.stringForKey("thingId") {
+                selectedThing = thing
+                selectedThingItem = thingItem
+            }
+            thingsPopup.menu?.addItem(thingItem)
+        }
+        
+        if selectedThingItem != nil {
+            thingsPopup.selectItem(selectedThingItem!)
+        } else if selectedZone!.things.count > 0 {
+            selectedThing = selectedZone!.things.first
+            defaults.setObject(selectedThing!.id, forKey: "thingId")
+            thingsPopup.selectItemAtIndex(0)
+        }
+        
+        if selectedThing != nil {
+            flareManager.subscribe(selectedThing!)
+            flareManager.getData(selectedThing!)
+        }
+    }
+    
+    @IBAction func chooseEnvironment(sender: NSPopUpButton) {
+        if let environment = environmentsPopup.selectedItem?.representedObject as? Environment {
+            selectedEnvironment = environment
+            defaults.setObject(selectedEnvironment!.id, forKey: "environmentId")
+            updateZonesMenu(environment.zones)
+        }
+    }
+    
+    @IBAction func chooseZone(sender: NSPopUpButton) {
+        if let zone = zonesPopup.selectedItem?.representedObject as? Zone {
+            selectedZone = zone
+            defaults.setObject(selectedZone!.id, forKey: "zoneId")
+            updateThingsMenu(zone.things)
+        }
+    }
+    
+    @IBAction func chooseThing(sender: NSPopUpButton) {
+        if let thing = thingsPopup.selectedItem?.representedObject as? Thing {
+            selectedThing = thing
+            flareManager.subscribe(selectedThing!)
+            defaults.setObject(selectedThing!.id, forKey: "thingId")
+            flareManager.getData(selectedThing!)
         }
     }
     
@@ -152,11 +262,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?) {
-        if flare == thing {
-            if let color = data["color"] as? String {
-                if let hue = hueForName(color) {
-                    defaults.setInteger(hue, forKey: "hue")
-                    takeColorComponents(self)
+        if flare == selectedThing {
+            if let colorName = data["color"] as? String {
+                if let hex = LightManager.htmlColorNames[colorName] {
+                    setColor(colorWithHex(hex))
                 }
             }
             
@@ -169,30 +278,39 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                 defaults.setBool(on, forKey: "on")
                 lightManager.setPower(defaults.boolForKey("on")) {jsonArray in }
             }
+        } else {
+            NSLog("Unknown message: \(flare) \(data)")
         }
     }
     
+    func colorWithHex(rgbValue: Int) -> NSColor {
+        return NSColor(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >>  8) / 255.0,
+            blue: CGFloat((rgbValue & 0x0000FF) >>  0) / 255.0,
+            alpha: 1.0)
+    }
+    
     func sendColor() {
-        if thing != nil {
+        if selectedThing != nil {
             let hue = defaults.integerForKey("hue")
             NSLog("Hue: \(hue)")
             if let color = nameForHue(hue) {
-                flareManager.setData(thing!, key: "color", value: color, sender: thing)
+                flareManager.setData(selectedThing!, key: "color", value: color, sender: selectedThing)
             }
         }
     }
     
     func sendBrightness() {
-        if thing != nil {
+        if selectedThing != nil {
             let brightness = defaults.integerForKey("brightness")
-            flareManager.setData(thing!, key: "brightness", value: Float(brightness) / 255, sender: thing)
+            flareManager.setData(selectedThing!, key: "brightness", value: Float(brightness) / 255, sender: selectedThing)
         }
     }
     
     func sendOn() {
-        if thing != nil {
+        if selectedThing != nil {
             let on = defaults.boolForKey("on")
-            flareManager.setData(thing!, key: "on", value: on, sender: thing)
+            flareManager.setData(selectedThing!, key: "on", value: on, sender: selectedThing)
         }
     }
     
