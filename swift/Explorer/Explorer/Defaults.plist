@@ -6,5 +6,9 @@
 	<string>localhost</string>
 	<key>port</key>
 	<integer>1234</integer>
+	<key>logAll</key>
+	<true/>
+	<key>logDetailed</key>
+	<false/>
 </dict>
 </plist>

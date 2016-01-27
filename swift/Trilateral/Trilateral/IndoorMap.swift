@@ -171,10 +171,21 @@ class IndoorMap: UIView, FlareController {
     }
 
     static func getColor(name: String, brightness: Double) -> UIColor {
-        return UIColor(hue: hue(name),
-            saturation: CGFloat(1.0),
-            brightness: CGFloat(brightness * 2.0),
-            alpha: CGFloat(1.0))
+        if name == "clear" { return UIColor.clearColor() }
+        if name == "white" { return UIColor(hue: 0, saturation: 0, brightness: 0.95, alpha: 1.0) }
+        
+        if let hex = LightManager.htmlColorNames[name] {
+            return colorWithHex(hex)
+        }
+        
+        return UIColor.redColor()
+    }
+    
+    static func colorWithHex(rgbValue: Int) -> UIColor {
+        return UIColor(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+                     green: CGFloat((rgbValue & 0x00FF00) >>  8) / 255.0,
+                      blue: CGFloat((rgbValue & 0x0000FF) >>  0) / 255.0,
+                     alpha: 1.0)
     }
     
     static func hue(name: String) -> CGFloat {

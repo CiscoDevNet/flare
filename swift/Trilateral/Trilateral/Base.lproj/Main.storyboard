@@ -275,18 +275,18 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Thing" image="Thing" id="F8I-Yh-Vdh"/>
                     <connections>
-                        <outlet property="blueButton" destination="pjJ-3t-rT4" id="SD6-cP-9QC"/>
                         <outlet property="brightnessLabel" destination="kEg-2l-8dK" id="hYa-Zb-zv4"/>
+                        <outlet property="colorButton1" destination="Jv5-wh-58R" id="mhG-ch-YpX"/>
+                        <outlet property="colorButton2" destination="Dkx-NU-PBp" id="dgn-f2-emz"/>
+                        <outlet property="colorButton3" destination="sww-JH-Kcr" id="3pR-N0-nta"/>
+                        <outlet property="colorButton4" destination="eBE-Fe-BgY" id="FQs-jt-tYQ"/>
+                        <outlet property="colorButton5" destination="pjJ-3t-rT4" id="31k-SH-KO3"/>
+                        <outlet property="colorButton6" destination="fGx-YK-7au" id="4gI-qH-Jqx"/>
                         <outlet property="colorLabel" destination="HKX-oC-lGv" id="4Kv-QR-qUs"/>
-                        <outlet property="greenButton" destination="eBE-Fe-BgY" id="bIn-FN-58C"/>
                         <outlet property="nearbyThingComment" destination="kBY-Fl-pZq" id="KZx-RB-Ba9"/>
                         <outlet property="nearbyThingLabel" destination="Qj8-UY-d93" id="Yyy-9C-n4j"/>
-                        <outlet property="orangeButton" destination="Dkx-NU-PBp" id="qkv-l7-UHf"/>
                         <outlet property="powerSwitch" destination="c17-t2-dex" id="T48-z1-8EV"/>
-                        <outlet property="purpleButton" destination="fGx-YK-7au" id="iRV-NI-557"/>
-                        <outlet property="redButton" destination="Jv5-wh-58R" id="Pps-TG-Ibk"/>
                         <outlet property="slider" destination="Gz5-1F-b0Q" id="Cwp-Vi-o1g"/>
-                        <outlet property="yellowButton" destination="sww-JH-Kcr" id="OqC-xa-AAJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zwz-9S-Ufv" userLabel="First Responder" sceneMemberID="firstResponder"/>

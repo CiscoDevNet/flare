@@ -20,36 +20,56 @@ class NearbyThingController: UIViewController, FlareController {
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var powerSwitch: UISwitch!
     
-    var colorButtons = [String:ColorButton]()
-    @IBOutlet weak var redButton: ColorButton!
-    @IBOutlet weak var orangeButton: ColorButton!
-    @IBOutlet weak var yellowButton: ColorButton!
-    @IBOutlet weak var greenButton: ColorButton!
-    @IBOutlet weak var blueButton: ColorButton!
-    @IBOutlet weak var purpleButton: ColorButton!
+    var colorButtons = [Int:ColorButton]()
+    @IBOutlet weak var colorButton1: ColorButton!
+    @IBOutlet weak var colorButton2: ColorButton!
+    @IBOutlet weak var colorButton3: ColorButton!
+    @IBOutlet weak var colorButton4: ColorButton!
+    @IBOutlet weak var colorButton5: ColorButton!
+    @IBOutlet weak var colorButton6: ColorButton!
     
     var currentEnvironment: Environment?
     var currentZone: Zone?
     var device: Device?
-    var nearbyThing: Thing? { didSet(value) { dataChanged() }}
+    var nearbyThing: Thing? { didSet(value) {
+        updateColors()
+        dataChanged()
+    }}
     
+    var colors = [String]()
+    var defaultColors = ["red", "orange", "yellow", "green", "blue", "purple"]
+
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         appDelegate.flareController = self
         appDelegate.updateFlareController()
 
-        colorButtons["red"] = redButton
-        colorButtons["orange"] = orangeButton
-        colorButtons["yellow"] = yellowButton
-        colorButtons["green"] = greenButton
-        colorButtons["blue"] = blueButton
-        colorButtons["purple"] = purpleButton
-        for (colorName, colorButton) in colorButtons {
-            colorButton.colorName = colorName
-            colorButton.setNeedsDisplay()
+        colorButtons[0] = colorButton1
+        colorButtons[1] = colorButton2
+        colorButtons[2] = colorButton3
+        colorButtons[3] = colorButton4
+        colorButtons[4] = colorButton5
+        colorButtons[5] = colorButton6
+        
+        updateColors()
+        dataChanged()
+    }
+    
+    func updateColors() {
+        if let options = nearbyThing?.data["options"] as? [String] {
+            colors = options.count > 0 ? options : defaultColors;
+        } else {
+            colors = defaultColors;
         }
         
-        self.dataChanged()
+        for (index,colorButton) in colorButtons {
+            if index < colors.count {
+                colorButton.colorName = colors[index]
+            } else {
+                colorButton.colorName = "clear"
+            }
+            colorButton.setNeedsDisplay()
+        }
     }
     
     func dataChanged() {
@@ -59,8 +79,8 @@ class NearbyThingController: UIViewController, FlareController {
         if let color = nearbyThing?.data["color"] as? String {
             colorLabel.text = color
             
-            for (colorName, colorButton) in colorButtons {
-                colorButton.selected = color == colorName
+            for (index, colorButton) in colorButtons {
+                colorButton.selected = index < colors.count && color == colors[index]
             }
         } else {
             colorLabel.text = ""
@@ -79,7 +99,7 @@ class NearbyThingController: UIViewController, FlareController {
         }
         
         if let on = nearbyThing?.data["on"] {
-            powerSwitch.on = on == 1
+            powerSwitch.on = on as! NSObject == 1
         } else {
             powerSwitch.on = false
         }

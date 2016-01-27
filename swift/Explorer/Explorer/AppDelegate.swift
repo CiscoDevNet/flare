@@ -10,15 +10,17 @@ import Cocoa
 import Flare
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTableViewDataSource, NSTableViewDelegate {
     
     @IBOutlet weak var window: NSWindow!
     @IBOutlet weak var mapWindow: NSWindow!
     @IBOutlet weak var compassWindow: NSWindow!
+    @IBOutlet weak var logWindow: NSWindow!
     @IBOutlet weak var outlineView: NSOutlineView!
     @IBOutlet weak var tabView: NSTabView!
     @IBOutlet weak var map: IndoorMap!
     @IBOutlet weak var compass: CompassView!
+    @IBOutlet weak var logTable: NSTableView!
     
     @IBOutlet weak var idField: NSTextField!
     @IBOutlet weak var nameField: NSTextField!
@@ -74,6 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     var flareManager = FlareManager(host: "localhost", port: 1234)
     var environments = [Environment]()
     var selectedFlare, nearbyFlare: Flare?
+    var logEvents = JSONArray()
     var defaults: NSUserDefaults
     
     let animationDelay = 0.5
@@ -94,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
 
         defaultsController.addObserver(self, forKeyPath: "values.host", options: [], context: nil)
         defaultsController.addObserver(self, forKeyPath: "values.port", options: [], context: nil)
-
+        
         load()
     }
     
@@ -136,6 +139,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
                     }
                 }
             }
+            
+            if self.defaults.boolForKey("logAll") { // subscribe to changes to all Flare objects
+                for environment in environments {
+                    self.flareManager.subscribe(environment, all: true)
+                }
+            }
         }
     }
     
@@ -152,6 +161,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         }
     }
 
+    @IBAction func resubscribe(sender: AnyObject) {
+        if defaults.boolForKey("logAll") {
+            if selectedFlare != nil {
+                NSLog("unsubscribe: \(selectedFlare!.name)")
+                flareManager.unsubscribe(selectedFlare!)
+            }
+            
+            for environment in self.environments {
+                NSLog("subscribe: \(environment.name)")
+                flareManager.subscribe(environment, all: true)
+            }
+        } else {
+            for environment in self.environments {
+                NSLog("unsubscribe: \(environment.name)")
+                flareManager.unsubscribe(environment)
+            }
+
+            if selectedFlare != nil {
+                NSLog("subscribe: \(selectedFlare!.name)")
+                flareManager.subscribe(selectedFlare!, all: true)
+            }
+        }
+    }
+    
     func printEnvironments() {
         for environment in environments {
             NSLog("\(environment)")
@@ -307,6 +340,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?) {
         NSLog("\(flare.name) data: \(data)")
+        if data.keys.count == 1 {
+            if let key = data.keys.first, value = data[key] {
+                if key != "angle" || defaults.boolForKey("logDetailed") { // only log angle if logDetailed == true
+                    addLogEvent("data", flare1: flare, flare2: sender, key: key, value: value)
+                }
+            }
+        } else {
+            if let dataString = data.toJSONString() {
+                addLogEvent("data", flare1: flare, flare2: sender, key: "data", value: dataString)
+            }
+        }
         
         if flare == selectedFlare {
             if let color = data["color"] as? String {
@@ -340,6 +384,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?) {
         // NSLog("\(flare.name) position: \(newPosition)")
+        if defaults.boolForKey("logDetailed") {
+            addLogEvent("position", flare1: flare, flare2: sender, key: "position", value: "\(newPosition.x),\(newPosition.y)")
+        }
         
         if flare == selectedFlare {
             if flare is Thing {
@@ -364,23 +411,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     
     func handleAction(flare: Flare, action: String, sender: Flare?) {
         NSLog("\(flare.name) action: \(action)")
+        addLogEvent("action", flare1: flare, flare2: sender, key: "action", value: action)
     }
     
     func enter(zone: Zone, device: Device) {
         NSLog("\(zone.name) enter: \(device.name)")
+        addLogEvent("enter", flare1: device, flare2: zone)
     }
     
     func exit(zone: Zone, device: Device) {
         NSLog("\(zone.name) exit: \(device.name)")
+        addLogEvent("exit", flare1: device, flare2: zone)
     }
     
     func near(thing: Thing, device: Device, distance: Double) {
         NSLog("\(thing.name) near: \(device.name) (\(distance))")
+        addLogEvent("near", flare1: device, flare2: thing, key: "distance", value: distance)
         
         if selectedFlare == thing && nearbyFlare != device {
             nearbyFlare = device
             
-            flareManager.subscribe(device)
+            if !defaults.boolForKey("logAll") { flareManager.subscribe(device) }
             flareManager.getData(device)
             flareManager.getPosition(device)
             
@@ -398,7 +449,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             map.nearbyThing = thing
             compass.nearbyThing = thing
             
-            flareManager.subscribe(thing)
+            if !defaults.boolForKey("logAll") { flareManager.subscribe(thing) }
             flareManager.getData(thing)
             flareManager.getPosition(thing)
 
@@ -418,23 +469,50 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     }
     
     func far(thing: Thing, device: Device) {
-        NSLog("\(device.name) far: \(thing.name)")
+        // NSLog("\(device.name) far: \(thing.name)")
+        addLogEvent("far", flare1: device, flare2: thing)
         
         if selectedFlare == thing && nearbyFlare == device {
             nearbyDeviceView.hidden = true
             
-            flareManager.unsubscribe(device)
+            if !defaults.boolForKey("logAll") { flareManager.unsubscribe(device) }
             
             nearbyFlare = nil
         } else if selectedFlare == device && nearbyFlare == thing {
             nearbyThingView.hidden = true
             
-            flareManager.unsubscribe(thing)
+            if !defaults.boolForKey("logAll") { flareManager.unsubscribe(thing) }
             
             nearbyFlare = nil
             map.nearbyThing = nil
             compass.nearbyThing = nil
         }
+    }
+    
+    func addLogEvent(name: String, flare1: Flare, flare2: Flare?) {
+        addLogEvent(name, flare1: flare1, flare2: flare2, key: nil, value: nil)
+    }
+    
+    func addLogEvent(name: String, flare1: Flare, flare2: Flare?, key: String?, value: AnyObject?) {
+        var event: JSONDictionary = ["time": NSDate()]
+        
+        event["event"] = name
+        event["type"] = flare1.flareClass
+        event["id"] = flare1.id
+        event["name"] = flare1.name
+        
+        if flare2 != nil {
+            event["type2"] = flare2!.flareClass
+            event["id2"] = flare2!.id
+            event["name2"] = flare2!.name
+        }
+        
+        if key != nil { event["key"] = key! }
+        if value != nil { event["value"] = value! }
+        
+        logEvents.append(event)
+        logTable.reloadData()
+        logTable.scrollToEndOfDocument(self)
     }
     
     // MARK: Actions
@@ -497,6 +575,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         if let flare = nearby ? nearbyFlare : selectedFlare {
             flare.data[key] = value!
             flareManager.setData(flare, key: key, value: value!, sender: nil)
+            addLogEvent("data", flare1: flare, flare2: nil, key: key, value: value!)
             
             map.dataChanged()
             compass.dataChanged()
@@ -508,10 +587,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
             let newPosition = CGPoint(x: thingXField.doubleValue, y: thingYField.doubleValue)
             animateFlare(thing, oldPosition: thing.position, newPosition: newPosition)
             flareManager.setPosition(thing, position: newPosition, sender: nil)
+            addLogEvent("position", flare1: thing, flare2: nil, key: "position", value: "\(newPosition.x),\(newPosition.y)")
         } else if let device = selectedFlare as? Device {
             let newPosition = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
             animateFlare(device, oldPosition: device.position, newPosition: newPosition)
             flareManager.setPosition(device, position: newPosition, sender: nil)
+            addLogEvent("position", flare1: device, flare2: nil, key: "position", value: "\(newPosition.x),\(newPosition.y)")
         }
     }
 
@@ -575,6 +656,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         
         if let flare = nearby ? nearbyFlare : selectedFlare {
             flareManager.performAction(flare, action: action, sender: nil)
+            addLogEvent("action", flare1: flare, flare2: nil, key: "action", value: action)
         }
     }
     
@@ -644,7 +726,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         // should use willset, didset
         
         if let oldFlare = selectedFlare {
-            flareManager.unsubscribe(oldFlare)
+            if !defaults.boolForKey("logAll") { flareManager.unsubscribe(oldFlare) }
             
             idField.stringValue = ""
             nameField.stringValue = ""
@@ -684,7 +766,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         if let newFlare = selectedFlare {
             defaults.setObject(newFlare.id, forKey: "selectedId")
             
-            flareManager.subscribe(newFlare, all: true)
+            if !defaults.boolForKey("logAll") { flareManager.subscribe(newFlare, all: true) }
             flareManager.getData(newFlare)
             
             idField.stringValue = newFlare.id
@@ -772,5 +854,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
         }
         
         map.dataChanged()
+    }
+    
+    func numberOfRowsInTableView(tableView: NSTableView) -> Int {
+        if tableView == logTable {
+            return logEvents.count
+        }
+        
+        return 0
+    }
+    
+    func tableView(tableView: NSTableView, objectValueForTableColumn tableColumn: NSTableColumn?, row: Int) -> AnyObject? {
+        if tableView == logTable {
+            return logEvents[row][tableColumn!.identifier]
+        }
+        
+        return nil
     }
 }

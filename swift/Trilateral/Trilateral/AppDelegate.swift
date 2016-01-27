@@ -227,7 +227,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
     
     func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?) {
-        NSLog("\(flare.name) data: \(data)")
         dataChanged()
     }
     

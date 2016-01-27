@@ -277,6 +277,14 @@ public extension Dictionary {
         }
         return data
     }
+    
+    public func toJSONString() -> String? {
+        if let data = self.toData() {
+            return NSString(data: data, encoding: NSUTF8StringEncoding) as String?
+        } else {
+            return nil
+        }
+    }
 }
 
 // objects that can be initialized with no arguments
