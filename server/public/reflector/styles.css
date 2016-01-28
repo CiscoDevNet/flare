@@ -138,16 +138,29 @@ div.specs {
 	position: relative;
 }
 
-div#devicename {
-	font-size: 20px;
+div#topleft {
+	font-size: 24px;
 	position:absolute;
 	top:20px;
 	left:20px;
 }
 
-div#price {
-	font-size: 20px;
+div#topright {
+	font-size: 24px;
 	position:absolute;
 	top:20px;
+	right:20px;
+}
+
+div#bottomleft {
+	font-size: 20px;
+	position:absolute;
+	bottom:20px;
+	left:20px;
+}
+
+div#bottomright {
+	position:absolute;
+	bottom:20px;
 	right:20px;
 }

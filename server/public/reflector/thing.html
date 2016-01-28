@@ -380,8 +380,24 @@ function nearbyDeviceAction(action) {
 <center>
 <div id="name">Name</div>
 <div id="description">description</div>
-<div id="devicename"></div>
-<div id="price"></div>
+<div id="topleft">
+	<div id="devicename"></div>
+</div>
+<div id="topright">
+	<div id="price"></div>
+</div>
+<div id="bottomleft">
+	<table>
+	<tr><td align="left">item: <span id="sku"/></td></tr>
+	<tr><td align="left">designer: <span id="designer"/></td></tr>
+</table>
+</div>
+<div id="bottomright">
+	<table>
+	<tr><td align="right">dimensions: <span id="dimensions"/></td></tr>
+	<tr><td align="right">location: <span id="location"/></td></tr>
+</table>
+</div>
 
 	<div id="reflektor">
 	<div id="carousel" class="debug">
@@ -414,12 +430,8 @@ function nearbyDeviceAction(action) {
 </table>
 
 <table>
-<tr><td align="right">quantity:</td><td><div id="quantity"/></td></tr>
-<tr><td align="right">item:</td><td><div id="sku"/></td></tr>
-<tr><td align="right">designer:</td><td><div id="designer"/></td></tr>
-<tr><td align="right">dimensions:</td><td><div id="dimensions"/></td></tr>
-<tr><td align="right">location:</td><td><div id="location"/></td></tr>
-<tr><td align="right">website:</td><td><a id="website" href="stuff">buy now</a></td></tr>
+<tr><td align="center">quantity: <span id="quantity"/></td></tr>
+<tr><td align="center"><a id="website" href="stuff">buy now</a></td></tr>
 </table>
 
 
