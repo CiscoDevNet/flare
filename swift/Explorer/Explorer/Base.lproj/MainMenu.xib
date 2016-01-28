@@ -21,6 +21,8 @@
                 <outlet property="compass" destination="3XB-GB-NCn" id="fWf-rX-SGl"/>
                 <outlet property="compassDirectionButtons" destination="jnw-TS-1Fd" id="seR-q1-K9i"/>
                 <outlet property="compassWindow" destination="VbT-AE-Yye" id="u3d-rQ-yIh"/>
+                <outlet property="dataPanel" destination="yfK-Kd-hEZ" id="8FC-j1-UEx"/>
+                <outlet property="dataScroll" destination="D2p-Aj-Qc5" id="bqj-UK-CE5"/>
                 <outlet property="deviceXField" destination="6rd-uT-a28" id="VS3-2G-Kbz"/>
                 <outlet property="deviceYField" destination="sdY-f4-Khl" id="xn3-3A-oTY"/>
                 <outlet property="environmentAngleField" destination="GYB-Sb-nxY" id="pgF-fC-KN3"/>
@@ -31,6 +33,7 @@
                 <outlet property="idField" destination="QsS-jj-YNt" id="srr-aj-XxD"/>
                 <outlet property="latitudeField" destination="ewo-Ic-V61" id="N3X-04-Yi0"/>
                 <outlet property="logTable" destination="SeK-Xm-tqT" id="ko4-gh-qV7"/>
+                <outlet property="logWindow" destination="7lo-Gg-jzH" id="bm8-Kp-3Xq"/>
                 <outlet property="longitudeField" destination="wiT-yQ-EFt" id="GmG-w0-CH9"/>
                 <outlet property="majorField" destination="WrS-Zt-fW5" id="Wax-1M-VfB"/>
                 <outlet property="map" destination="dqH-xO-e6J" id="fOz-jN-Vlj"/>
@@ -1996,6 +1999,22 @@
                             <action selector="makeKeyAndOrderFront:" target="VbT-AE-Yye" id="PcJ-aW-WcR"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="DA20D0E4-7211-41CA-99C2-DCD3777D2939" label="Data" paletteLabel="Data" id="CTD-39-QXG">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="40" height="25"/>
+                        <size key="maxSize" width="60" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="xI6-Sc-G77">
+                            <rect key="frame" x="0.0" y="14" width="60" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="roundTextured" title="Data" bezelStyle="texturedRounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TP7-GU-MBc">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                        <connections>
+                            <action selector="showData:" target="Voe-Tx-rLC" id="HKH-LT-4Y0"/>
+                        </connections>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="CDDEC572-4145-4AAC-BB3C-27E58FA8F89C" label="Log" paletteLabel="Log" id="dNv-iP-ve2">
                         <nil key="toolTip"/>
                         <size key="minSize" width="40" height="25"/>
@@ -2019,6 +2038,7 @@
                     <toolbarItem reference="rRa-bA-B8n"/>
                     <toolbarItem reference="inc-FP-ydZ"/>
                     <toolbarItem reference="Ql9-rK-4F7"/>
+                    <toolbarItem reference="CTD-39-QXG"/>
                     <toolbarItem reference="dNv-iP-ve2"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -2466,6 +2486,84 @@
                 </defaultToolbarItems>
             </toolbar>
             <point key="canvasLocation" x="1263" y="-500.5"/>
+        </window>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="yfK-Kd-hEZ" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="139" y="81" width="559" height="355"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="igq-AV-9jw">
+                <rect key="frame" x="0.0" y="0.0" width="559" height="355"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" id="EiZ-QZ-FBr">
+                        <rect key="frame" x="446" y="13" width="99" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nJp-8N-Skz">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="dataOK:" target="Voe-Tx-rLC" id="yyH-5U-9Hb"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" id="YXM-bq-gCC">
+                        <rect key="frame" x="347" y="13" width="99" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="IbO-nn-tfr">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="dataCancel:" target="Voe-Tx-rLC" id="wdy-Id-rRn"/>
+                        </connections>
+                    </button>
+                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="D2p-Aj-Qc5">
+                        <rect key="frame" x="20" y="61" width="519" height="274"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <clipView key="contentView" id="40L-6K-YcL">
+                            <rect key="frame" x="1" y="1" width="517" height="272"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView importsGraphics="NO" richText="NO" findStyle="panel" allowsUndo="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" id="gAB-2i-oRj">
+                                    <rect key="frame" x="0.0" y="0.0" width="517" height="272"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <size key="minSize" width="517" height="272"/>
+                                    <size key="maxSize" width="523" height="10000000"/>
+                                    <attributedString key="textStorage">
+                                        <fragment content="{&quot;foo&quot;:&quot;bar&quot;}">
+                                            <attributes>
+                                                <font key="NSFont" size="13" name="Menlo-Regular"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                    <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="minSize" width="517" height="272"/>
+                                    <size key="maxSize" width="523" height="10000000"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </clipView>
+                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="V1x-Od-9NO">
+                            <rect key="frame" x="-100" y="-100" width="87" height="18"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="2ll-Jx-EqI">
+                            <rect key="frame" x="502" y="1" width="16" height="272"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="1461.5" y="-136.5"/>
         </window>
     </objects>
     <resources>

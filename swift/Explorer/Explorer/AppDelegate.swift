@@ -72,6 +72,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     @IBOutlet weak var mapDirectionButtons: NSView!
     @IBOutlet weak var compassDirectionButtons: NSView!
 
+    @IBOutlet weak var dataPanel: NSPanel!
+    @IBOutlet weak var dataScroll: NSScrollView!
+    var dataText: NSTextView { get { return dataScroll.contentView.documentView as! NSTextView }}
+
     
     var flareManager = FlareManager(host: "localhost", port: 1234)
     var environments = [Environment]()
@@ -97,6 +101,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
 
         defaultsController.addObserver(self, forKeyPath: "values.host", options: [], context: nil)
         defaultsController.addObserver(self, forKeyPath: "values.port", options: [], context: nil)
+        
+        dataText.automaticQuoteSubstitutionEnabled = false
+        dataText.automaticDashSubstitutionEnabled = false
+        dataText.automaticTextReplacementEnabled = false
         
         load()
     }
@@ -723,8 +731,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     }
     
     func outlineViewSelectionDidChange(notification: NSNotification!) {
-        // should use willset, didset
-        
+        updateSelectedFlare()
+    }
+    
+    func updateSelectedFlare() {
         if let oldFlare = selectedFlare {
             if !defaults.boolForKey("logAll") { flareManager.unsubscribe(oldFlare) }
             
@@ -855,6 +865,51 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
         
         map.dataChanged()
     }
+    
+    // MARK: Data
+    
+    @IBAction func showData(sender: AnyObject) {
+        if selectedFlare != nil {
+            flareManager.getFlare(selectedFlare!) { json in
+                if let currentData = json["data"] as? JSONDictionary, dataString = currentData.toJSONString() {
+                    self.selectedFlare!.data = currentData // save the current value
+                    self.dataText.textStorage!.mutableString.setString(dataString)
+                    self.window.beginSheet(self.dataPanel) { returnCode in
+                        if returnCode == NSAlertFirstButtonReturn {
+                            let newString = self.dataText.textStorage!.mutableString
+                            if let newData = newString.dataUsingEncoding(NSUTF8StringEncoding)?.toJSONDictionary() {
+                                if newData == self.selectedFlare!.data {
+                                    NSLog("Data is the same")
+                                } else {
+                                    self.selectedFlare!.data = newData
+                                    self.flareManager.updateFlare(self.selectedFlare!, json: ["data":newData]) { newJson in
+                                        NSLog("Updated data: \(newJson)")
+                                        self.updateSelectedFlare()
+                                    }
+                                }
+                            } else {
+                                let alert = NSAlert()
+                                alert.messageText = "Sorry, but this JSON is invalid:"
+                                alert.addButtonWithTitle("OK")
+                                alert.informativeText = newString as String
+                                alert.beginSheetModalForWindow(self.window) {response in }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @IBAction func dataOK(sender: AnyObject) {
+        window.endSheet(dataPanel, returnCode: NSAlertFirstButtonReturn)
+    }
+    
+    @IBAction func dataCancel(sender: AnyObject) {
+        window.endSheet(dataPanel, returnCode: NSAlertSecondButtonReturn)
+    }
+    
+    // MARK: Tables
     
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
         if tableView == logTable {

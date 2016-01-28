@@ -12,6 +12,11 @@ import CoreGraphics
 public typealias JSONDictionary = [String:AnyObject]
 public typealias JSONArray = [JSONDictionary]
 
+// compare JSONDictionary objects
+public func ==(lhs: JSONDictionary, rhs: JSONDictionary) -> Bool {
+    return NSDictionary(dictionary: lhs).isEqualToDictionary(rhs)
+}
+
 // a point translated by the given size
 public func +(point: CGPoint, size: CGSize) -> CGPoint {
     let x = point.x + size.width

@@ -92,6 +92,12 @@ public class Environment: Flare, FlarePerimeter {
     public var angle: Double
     public var uuid: String?
 
+    override public var data: JSONDictionary {
+        didSet(data) {
+            if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
+        }
+    }
+    
     public var zones = [Zone]()
     public var devices = [Device]()
     
@@ -120,8 +126,6 @@ public class Environment: Flare, FlarePerimeter {
         }
 
         super.init(json: json)
-        
-        if let uuid = self.data["uuid"] as? String { self.uuid = uuid }
     }
     
     public override var description: String {
@@ -185,6 +189,12 @@ public class Zone: Flare, FlarePerimeter {
     public var center: CGPoint
     public var major: Int?
     
+    override public var data: JSONDictionary {
+        didSet(data) {
+            if let major = self.data["major"] as? Int { self.major = major }
+        }
+    }
+    
     public var things = [Thing]()
     
     public override init(json: JSONDictionary) {
@@ -199,8 +209,6 @@ public class Zone: Flare, FlarePerimeter {
         }
         
         super.init(json: json)
-
-        if let major = self.data["major"] as? Int { self.major = major }
     }
     
     public override var description: String {
@@ -235,6 +243,12 @@ public class Thing: Flare, FlarePosition {
     public var position: CGPoint
     public var minor: Int?
     
+    override public var data: JSONDictionary {
+        didSet(data) {
+            if let minor = self.data["minor"] as? Int { self.minor = minor }
+        }
+    }
+    
     public var distances = [Double]()
     public var inverseDistance = 0.0
     
@@ -246,8 +260,6 @@ public class Thing: Flare, FlarePosition {
         self.position = getPoint(json.getDictionary("position"))
         
         super.init(json: json)
-
-        if let minor = self.data["minor"] as? Int { self.minor = minor }
     }
     
     public override var description: String {
@@ -305,6 +317,12 @@ public class Device: Flare, FlarePosition {
     public var environmentId: String
 
     public var position: CGPoint
+    
+    override public var data: JSONDictionary {
+        didSet(data) {
+            // init any cached data values here
+        }
+    }
     
     public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
