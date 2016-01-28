@@ -19,7 +19,8 @@ public protocol BeaconManagerDelegate {
 public class BeaconManager: NSObject, CLLocationManagerDelegate {
     
     let squareDistance = false
-
+    let beaconDebug = false
+    
     public var delegate: BeaconManagerDelegate?
     public var locationManager = CLLocationManager()
     public var region: CLBeaconRegion?
@@ -45,7 +46,9 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
                 let uuid = NSUUID(UUIDString: uuidString)
                 region = CLBeaconRegion(proximityUUID: uuid!, identifier: environment!.name)
                 beacons = environment!.beacons()
-                // NSLog("Looking for \(beacons.count) beacons.")
+                if beaconDebug { NSLog("Looking for \(beacons.count) beacons.") }
+            } else {
+                NSLog("Environment has no uuid.")
             }
         }
     }
@@ -103,21 +106,20 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     public func locationManager(manager: CLLocationManager, didRangeBeacons clbeacons: [CLBeacon], inRegion region: CLBeaconRegion) {
         var clBeaconIndex = [Int:CLBeacon]()
         
-        
-        // NSLog("Found \(clbeacons.count) beacons.")
+        if beaconDebug { NSLog("Found \(clbeacons.count) beacons.") }
 
         for clbeacon in clbeacons {
             let index = clbeacon.major.integerValue * 10000 + clbeacon.minor.integerValue
-            // NSLog("Saw beacon: \(clbeacon.major.integerValue) - \(clbeacon.minor.integerValue)")
+            if beaconDebug { NSLog("Saw beacon: \(clbeacon.major.integerValue) - \(clbeacon.minor.integerValue)") }
             clBeaconIndex[index] = clbeacon
         }
         
         for (index, beacon) in beacons {
             if let clbeacon = clBeaconIndex[index] {
-                // NSLog("Found beacon: \(beacon.name)")
+                if beaconDebug { NSLog("Found beacon: \(beacon.name)") }
                 beacon.addDistance(clbeacon.accuracy)
             } else {
-                // NSLog("Couldn't find beacon: \(beacon.name) (\(index))")
+                if beaconDebug { NSLog("Couldn't find beacon: \(beacon.name) (\(index))") }
                 beacon.addDistance(-1.0) // the beacon was not seen this time
             }
         }
@@ -179,67 +181,3 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         return result
     }
 }
-
-/*
-
-func userPosition(dA: CGFloat, dB: CGFloat, dC: CGFloat) -> CGPoint {
-    // var beacon1 = CGPoint(x: 2.5, y: -0.5)
-    // var beacon2 = CGPoint(x: 11, y: 11.5)
-    // var beacon3 = CGPoint(x: 3, y: 11.5)
-    
-    var a = CGPoint(x: 0, y: 0)
-    var b = CGPoint(x: 10, y: 10)
-    var c = CGPoint(x: 0, y: 10)
-    
-    /*
-    var xa = beacon1.x
-    var ya = beacon1.y
-    var xb = beacon2.x
-    var yb = beacon2.y
-    var xc = beacon3.x
-    var yc = beacon3.y
-    
-    var ra = distance1
-    var rb = distance2
-    var rc = distance3
-    
-    var S2 = xc.sq() - xb.sq() + yc.sq() - yb.sq() + rb.sq() - rc.sq()
-    var S = S2 / 2.0
-    var T2 = xa.sq() - xb.sq() + ya.sq() - yb.sq() + rb.sq() - ra.sq()
-    var T = T2 / 2.0
-    var ytop = (T * (xb - xc)) - (S * (xb - xa))
-    var ybottom = ((ya - yb) * (xb - xc)) - ((yc - yb) * (xb - xa))
-    var y = ytop / ybottom
-    var x = ((y * (ya - yb)) - T) / (xb - xa)
-    */
-    
-    /*
-    var W = dA*dA - dB*dB - a.x*a.x - a.y*a.y + b.x*b.x + b.y*b.y
-    var Z = dB*dB - dC*dC - b.x*b.x - b.y*b.y + c.x*c.x + c.y*c.y
-    
-    var xtop = W*(c.y-b.y) - Z*(b.y-a.y)
-    var xbottom = ((b.x-a.x)*(c.y-b.y) - (c.x-b.x)*(b.y-a.y))
-    var x = xtop / (2 * xbottom)
-    var y = (W - 2*x*(b.x-a.x)) / (2*(b.y-a.y))
-    var y2 = (Z - 2*x*(c.x-b.x)) / (2*(c.y-b.y))
-    
-    // y = (y + y2) / 2;
-    */
-
-    return CGPoint(x: x, y: y)
-}
-
-
-extension Double {
-    func sq() -> Double {
-        return self * self
-    }
-}
-
-extension CGFloat {
-    func sq() -> CGFloat {
-        return self * self
-    }
-}
-
-*/

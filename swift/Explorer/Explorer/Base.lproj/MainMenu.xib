@@ -1137,10 +1137,10 @@
                                                                     <action selector="changePosition:" target="Voe-Tx-rLC" id="Dmn-0s-dm5"/>
                                                                 </connections>
                                                             </textField>
-                                                            <button identifier="invert" verticalHuggingPriority="750" id="kN8-nV-FV5">
+                                                            <button identifier="nextColor" verticalHuggingPriority="750" id="kN8-nV-FV5">
                                                                 <rect key="frame" x="286.5" y="218" width="77" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                <buttonCell key="cell" type="push" title="Invert" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a3E-NC-5xL">
+                                                                <buttonCell key="cell" type="push" title="Next" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a3E-NC-5xL">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>
@@ -1232,10 +1232,10 @@
                                                                     <action selector="performAction:" target="Voe-Tx-rLC" id="zhJ-co-d4E"/>
                                                                 </connections>
                                                             </button>
-                                                            <button identifier="rainbow" verticalHuggingPriority="750" id="3lY-Lz-Wsq">
+                                                            <button identifier="previousColor" verticalHuggingPriority="750" id="3lY-Lz-Wsq">
                                                                 <rect key="frame" x="192.5" y="218" width="96" height="33"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                <buttonCell key="cell" type="push" title="Rainbow" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4df-gy-bLK">
+                                                                <buttonCell key="cell" type="push" title="Previous" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4df-gy-bLK">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="system"/>
                                                                 </buttonCell>

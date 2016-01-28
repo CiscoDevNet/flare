@@ -174,9 +174,9 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="2ST-TG-nUN">
                                 <rect key="frame" x="690" y="193" width="48" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <accessibility key="accessibilityConfiguration" identifier="invert"/>
+                                <accessibility key="accessibilityConfiguration" identifier="nextColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="Invert"/>
+                                <state key="normal" title="Next"/>
                                 <connections>
                                     <action selector="performAction:" destination="7L3-NY-tnh" eventType="touchUpInside" id="rFT-iN-PLs"/>
                                 </connections>
@@ -184,9 +184,9 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="QXM-9X-OEj">
                                 <rect key="frame" x="30" y="193" width="66" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <accessibility key="accessibilityConfiguration" identifier="rainbow"/>
+                                <accessibility key="accessibilityConfiguration" identifier="previousColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="Rainbow"/>
+                                <state key="normal" title="Previous"/>
                                 <connections>
                                     <action selector="performAction:" destination="7L3-NY-tnh" eventType="touchUpInside" id="hR8-5W-ArE"/>
                                 </connections>

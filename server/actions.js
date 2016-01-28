@@ -21,24 +21,29 @@ exports.handlers['west'] = function(socket, message, object) {
 	exports.notifications.notifyPosition(socket, message, object);
 };
 
-var colors = ['red','orange','yellow','green','blue','purple'];
+var defaultColors = ['red','orange','yellow','green','blue','purple'];
 
-exports.handlers['rainbow'] = function(socket, message, object) {
+exports.handlers['previousColor'] = function(socket, message, object) {
+	var colors = object.data.options
+	if (colors == undefined) colors = defaultColors
 	var index = colors.indexOf(object.data.color);
 	if (index != -1) {
-		index++;
+		index--;
+		if (index < 0) index += colors.length
 		index = index % colors.length;
 		object.set('data.color', colors[index]); // must use this syntax to trigger change!
 		exports.notifications.notifyData(socket, message, object, 'color');
 	}
 };
 
-exports.handlers['invert'] = function(socket, message, object) {
+exports.handlers['nextColor'] = function(socket, message, object) {
+	var colors = object.data.options
+	if (colors == undefined) colors = defaultColors
 	var index = colors.indexOf(object.data.color);
 	if (index != -1) {
-		index += colors.length / 2; // must be an even number of colors
+		index++;
 		index = index % colors.length;
-		object.set('data.color', colors[index]);
+		object.set('data.color', colors[index]); // must use this syntax to trigger change!
 		exports.notifications.notifyData(socket, message, object, 'color');
 	}
 };
