@@ -13,10 +13,11 @@ class NearbyThingController: UIViewController, FlareController {
     
     var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     
+    @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var nearbyThingLabel: UILabel!
     @IBOutlet weak var nearbyThingComment: UILabel!
-    @IBOutlet weak var colorLabel: UILabel!
-    @IBOutlet weak var brightnessLabel: UILabel!
+    // @IBOutlet weak var colorLabel: UILabel!
+    // @IBOutlet weak var brightnessLabel: UILabel!
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var powerSwitch: UISwitch!
     
@@ -77,24 +78,28 @@ class NearbyThingController: UIViewController, FlareController {
         nearbyThingComment.text = nearbyThing?.comment ?? ""
 
         if let color = nearbyThing?.data["color"] as? String {
-            colorLabel.text = color
+            // colorLabel.text = color
             
             for (index, colorButton) in colorButtons {
                 colorButton.selected = index < colors.count && color == colors[index]
             }
+            
+            imageView.image = UIImage(named: "\(nearbyThing!.name.lowercaseString)-\(color)")
         } else {
-            colorLabel.text = ""
+            // colorLabel.text = ""
             
             for (_, colorButton) in colorButtons {
                 colorButton.selected = false
             }
+            
+            imageView.image = nil
         }
         
         if let brightness = nearbyThing?.data["brightness"] as? Double {
-            brightnessLabel.text = "\(brightness)"
+            // brightnessLabel.text = "\(brightness)"
             slider.value = Float(brightness)
         } else {
-            brightnessLabel.text = ""
+            // brightnessLabel.text = ""
             slider.value = 0.5
         }
         
