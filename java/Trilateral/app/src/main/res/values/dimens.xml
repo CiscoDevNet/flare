@@ -14,4 +14,5 @@
     <dimen name="map_view_width">300dp</dimen>
     <dimen name="map_view_height">250dp</dimen>
 
+    <dimen name="color_button_size">40dp</dimen>
 </resources>

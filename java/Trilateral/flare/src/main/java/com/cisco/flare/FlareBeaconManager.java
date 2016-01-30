@@ -30,6 +30,8 @@ public class FlareBeaconManager {
     public final static String KEY_PREF_BEACON_DEVICE_MOBILE = "MOBILE";
     public final static String KEY_PREF_BEACON_DEVICE_WATCH = "WATCH";
 
+    public static boolean beaconDebug = false;
+
     private static FlareBeaconManager thisInstance = new FlareBeaconManager();
 
     public interface Callback {
@@ -76,7 +78,7 @@ public class FlareBeaconManager {
                 // Log.d(TAG, "Found " + beacons.size() + " beacons in " + region);
                 if (beacons.size() >= 3 && thisInstance.environment != null) {
                     thisInstance.environment.resetDistances(); // clears the distance for beacons that are no longer visible
-                    ArrayList<Thing> foundThings = ArrayList<Thing>();
+                    ArrayList<Thing> foundThings = new ArrayList<Thing>();
                     String uuid = thisInstance.environment.getUuid();
                     String shortUuid1 = thisInstance.environment.getShortUuid1();
                     String shortUuid2 = thisInstance.environment.getShortUuid2();
@@ -105,7 +107,7 @@ public class FlareBeaconManager {
                                 minor = beacon.getId3().toInt();
                             }
 
-                            Log.d(TAG, "Found major: " + major + ", minor: " + minor + ", distance: " + distance + ", type: " + (isEddystone ? "Eddystone" : "AltBeacon"));
+                            if (beaconDebug) Log.d(TAG, "Found major: " + major + ", minor: " + minor + ", distance: " + distance + ", type: " + (isEddystone ? "Eddystone" : "AltBeacon"));
 
                             Thing thing = thisInstance.environment.getThingForBeacon(major, minor);
                             if (thing != null) {
@@ -117,7 +119,7 @@ public class FlareBeaconManager {
                                 }
                             }
                         } else {
-                            Log.d(thisInstance.TAG, "Unknown beacon: " + beaconUuid + " (" + beaconUuid.length() + ") not in " + uuid + " " + shortUuid);
+                            if (beaconDebug) Log.d(thisInstance.TAG, "Unknown beacon: " + beaconUuid + " (" + beaconUuid.length() + ") not in " + uuid + " " + shortUuid1);
                         }
                     }
 

@@ -3,8 +3,12 @@ package com.cisco.flare.trilateral;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,7 +38,9 @@ import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cisco.flare.CompassManager;
@@ -47,9 +53,11 @@ import com.cisco.flare.Thing;
 import com.cisco.flare.Zone;
 
 import org.altbeacon.beacon.BeaconConsumer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FlareManager.Delegate, CompassManager.Delegate, BeaconConsumer {
@@ -359,7 +367,11 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	}
 
 	public void performAction(String action) {
-		flareManager.performAction(nearbyThing, action, device);
+		try {
+			flareManager.performAction(nearbyThing, action, device);
+		} catch (Exception e) {
+			Log.e(TAG, "performAction", e);
+		}
 	}
 
 	public void didReceiveData(Flare flare, JSONObject data, Flare sender) {
@@ -783,14 +795,22 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			Log.d(TAG, "ThingFragment");
 		}
 
+		public ImageView imageView;
 		public TextView nearbyThingTextView;
-		public TextView colorTextView;
-		public TextView brightnessTextView;
+		public TextView nearbyThingDescription;
+		// public TextView colorTextView;
+		// public TextView brightnessTextView;
 
-		public Button rainbowButton;
-		public Button invertButton;
+		public Button previousButton;
+		public Button nextButton;
 		public Button darkerButton;
 		public Button lighterButton;
+		public SeekBar brightnessBar;
+
+		public ArrayList<Button> colorButtons = new ArrayList();
+		public JSONArray defaultColorOptions;
+		public JSONArray colorOptions;
+		public String selectedColor = null;
 
 		public static ThingFragment newInstance() {
 			ThingFragment fragment = new ThingFragment();
@@ -801,27 +821,113 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View view = inflater.inflate(R.layout.fragment_thing, container, false);
 
-			nearbyThingTextView = (TextView) view.findViewById(R.id.nearbyThingTextView2);
-			colorTextView = (TextView) view.findViewById(R.id.colorTextView);
-			brightnessTextView = (TextView) view.findViewById(R.id.brightnessTextView);
+			imageView = (ImageView) view.findViewById(R.id.imageView);
 
-			rainbowButton = (Button) view.findViewById(R.id.rainbowButton);
-			invertButton = (Button) view.findViewById(R.id.invertButton);
+			while (!colorButtons.isEmpty()) { colorButtons.remove(0); }
+			colorButtons.add((Button) view.findViewById(R.id.color_button_1));
+			colorButtons.add((Button) view.findViewById(R.id.color_button_2));
+			colorButtons.add((Button) view.findViewById(R.id.color_button_3));
+			colorButtons.add((Button) view.findViewById(R.id.color_button_4));
+			colorButtons.add((Button) view.findViewById(R.id.color_button_5));
+			colorButtons.add((Button) view.findViewById(R.id.color_button_6));
+
+			try {
+				defaultColorOptions = new JSONArray("[\"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\"]");
+			} catch (Exception e) {}
+			colorOptions = defaultColorOptions;
+
+			nearbyThingTextView = (TextView) view.findViewById(R.id.nearbyThingTextView2);
+			nearbyThingDescription = (TextView) view.findViewById(R.id.nearbyThingDescription);
+			// colorTextView = (TextView) view.findViewById(R.id.colorTextView);
+			// brightnessTextView = (TextView) view.findViewById(R.id.brightnessTextView);
+
+			previousButton = (Button) view.findViewById(R.id.previousButton);
+			nextButton = (Button) view.findViewById(R.id.nextButton);
 			darkerButton = (Button) view.findViewById(R.id.darkerButton);
 			lighterButton = (Button) view.findViewById(R.id.lighterButton);
 
-			rainbowButton.setOnClickListener(arg0 -> {
-				mainActivity.performAction("rainbow");
+			previousButton.setOnClickListener(arg0 -> {
+				mainActivity.performAction("previousColor");
 			});
-			invertButton.setOnClickListener(arg0 -> { mainActivity.performAction("invert"); });
+			nextButton.setOnClickListener(arg0 -> { mainActivity.performAction("nextColor"); });
 			darkerButton.setOnClickListener(arg0 -> { mainActivity.performAction("darker"); });
 			lighterButton.setOnClickListener(arg0 -> {
 				mainActivity.performAction("lighter");
 			});
 
+			brightnessBar = (SeekBar) view.findViewById(R.id.brightnessBar);
+			brightnessBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+				int progress = 0;
+
+				@Override
+				public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
+					progress = progressValue;
+				}
+
+				@Override
+				public void onStartTrackingTouch(SeekBar seekBar) {
+
+				}
+
+				@Override
+				public void onStopTrackingTouch(SeekBar seekBar) {
+					mainActivity.changeBrightness((double)progress / 100.0);
+					dataChanged();
+				}
+			});
+
 			objectsChanged();
 
 			return view;
+		}
+
+		public void updateColorButtons() {
+			for (int i = 0; i < colorButtons.size(); i++) {
+				Button colorButton = colorButtons.get(i);
+				if (i < colorOptions.length()) {
+					String name = "red";
+					try {
+						name = colorOptions.getString(i);
+					} catch (Exception e) {}
+					final String colorName = name;
+
+					colorButton.setVisibility(View.VISIBLE);
+					Drawable background = colorButton.getBackground();
+					int color = CommonView.getHtmlColor(colorName);
+
+					if (background instanceof ShapeDrawable) {
+						((ShapeDrawable)background).getPaint().setColor(color);
+					} else if (background instanceof GradientDrawable) {
+						((GradientDrawable)background).setColor(color);
+					}
+
+					colorButton.setOnClickListener(arg0 -> {
+						mainActivity.changeColor(colorName);
+						dataChanged();
+					});
+				} else {
+					colorButton.setVisibility(View.INVISIBLE);
+				}
+			}
+		}
+
+		public void updateSelectedColor() {
+			for (int i = 0; i < colorButtons.size(); i++) {
+				Button colorButton = colorButtons.get(i);
+				if (i < colorOptions.length()) {
+					String colorName = null;
+					try {
+						colorName = colorOptions.getString(i);
+					} catch (Exception e) {}
+
+					boolean selected = colorName.equals(selectedColor);
+
+					Drawable background = colorButton.getBackground();
+					if (background instanceof GradientDrawable) {
+						((GradientDrawable)background).setStroke(10, selected ? 0xFF3D47C0 : 0xFFFFFFFF);
+					}
+				}
+			}
 		}
 
 		@Override
@@ -831,6 +937,23 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			Thing nearbyThing = mainActivity.nearbyThing;
 
 			nearbyThingTextView.setText(nearbyThing != null ? nearbyThing.getName() : "none");
+			nearbyThingDescription.setText(nearbyThing != null ? nearbyThing.getDescription() : "");
+
+			try {
+				selectedColor = nearbyThing.getData().getString("color");
+			} catch (Exception e) {
+				selectedColor = null;
+			}
+
+			try {
+				JSONArray options = nearbyThing.getData().getJSONArray("options");
+				colorOptions = (options.length() > 0) ? options : defaultColorOptions;
+			} catch (Exception e) {
+				colorOptions = defaultColorOptions;
+			}
+			updateColorButtons();
+
+			imageView.setImageResource(android.R.color.transparent);
 
 			dataChanged();
 		}
@@ -840,15 +963,30 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			Thing nearbyThing = mainActivity.nearbyThing;
 
 			try {
-				colorTextView.setText(nearbyThing.getData().getString("color"));
+				selectedColor = nearbyThing.getData().getString("color");
+				// colorTextView.setText(selectedColor);
+
+				try {
+					String name = nearbyThing.getName().toLowerCase();
+					String imageName = name + "_" + selectedColor;
+					Log.d(TAG, "imageName: " + imageName);
+					imageView.setImageDrawable(mainActivity.getImageNamed(imageName));
+				} catch (Exception e) {
+					imageView.setImageResource(android.R.color.transparent);
+				}
 			} catch (Exception e) {
-				colorTextView.setText("—");
+				selectedColor = null;
+				// colorTextView.setText("—");
 			}
 
+			updateSelectedColor();
+
 			try {
-				brightnessTextView.setText(String.format("%.1f", nearbyThing.getData().getDouble("brightness")));
+				double brightness = nearbyThing.getData().getDouble("brightness");
+				// brightnessTextView.setText(String.format("%.1f", brightness));
+				brightnessBar.setProgress((int)(brightness * 100));
 			} catch (Exception e) {
-				brightnessTextView.setText("—");
+				// brightnessTextView.setText("—");
 			}
 		}
 
@@ -924,6 +1062,12 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	public Drawable getImageNamed(String name) {
+		Resources resources = getResources();
+		final int resourceId = resources.getIdentifier(name, "drawable", getPackageName());
+		return resources.getDrawable(resourceId, getTheme());
 	}
 
 }

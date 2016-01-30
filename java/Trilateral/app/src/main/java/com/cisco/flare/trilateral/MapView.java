@@ -104,7 +104,7 @@ public class MapView extends CommonView {
         // draw the background (clear the screen)
         canvas.drawColor(mMapBgColor, PorterDuff.Mode.SRC);
 
-        Log.e(TAG, "doDraw");
+        // Log.e(TAG, "doDraw");
 
         // draw perimeter
         if (mSelectedZone != null) {

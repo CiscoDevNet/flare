@@ -10,8 +10,8 @@
     <string name="position">Position</string>
     <string name="angle">Angle</string>
     <string name="nearby_thing">Nearby Thing</string>
-    <string name="color">Color</string>
-    <string name="brightness">Brightness</string>
+    <string name="color">COLOR</string>
+    <string name="brightness">BRIGHTNESS</string>
 
     <string name="time">00:00</string>
     <string name="am_pm">am</string>
