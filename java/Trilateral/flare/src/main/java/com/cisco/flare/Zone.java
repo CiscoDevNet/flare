@@ -31,14 +31,30 @@ public class Zone extends Flare implements Flare.PerimeterObject {
             if (actions == null) {
                 actions = new JSONArray();
             }
+
+			try {
+				JSONArray thingArray = json.getJSONArray("things");
+				for (int i = 0; i < thingArray.length(); i++) {
+					JSONObject thingJson = thingArray.getJSONObject(i);
+					this.things.add(new Thing(thingJson));
+				}
+			} catch (Exception e) {}
+
 		} catch (Exception e) {
-			Log.e("Flare", "Parse error: ", e);
+			Log.d("Zone", "Error parsing zone.");
 		}
 	}
 
 	@Override
 	public String toString() {
 		return super.toString() + " - " + perimeter;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = super.toJSON();
+		try { json.put("perimeter", Flare.rectToJSON(this.perimeter)); } catch (Exception e) {}
+		try { json.put("things", Flare.arrayToJSON(this.things)); } catch (Exception e) {}
+		return json;
 	}
 
 	public RectF getPerimeter() {

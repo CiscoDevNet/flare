@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together">
+    <!--
+    <objectAnimator
+        android:duration="1000"
+        android:propertyName="ring"
+        android:valueFrom="140px"
+        android:valueTo="153px"
+        android:valueType="intType"
+        android:repeatCount="20"
+        android:interpolator="@android:anim/linear_interpolator" />-->
+    <objectAnimator
+        android:duration="1000"
+        android:propertyName="ringColor"
+        android:valueFrom="#ff0000"
+        android:valueTo="#eeff00"
+        android:repeatCount="20" />
+</set>

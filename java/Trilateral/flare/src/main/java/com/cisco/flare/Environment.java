@@ -35,11 +35,29 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 		try { this.setGeofence(new Geofence(json.getJSONObject("geofence"))); } catch (Exception e) {}
 		try { this.setPerimeter(getRect(json.getJSONObject("perimeter"))); } catch (Exception e) {}
 		try { this.setAngle(json.getDouble("angle")); } catch (Exception e) {}
+
+		try {
+			JSONArray zoneArray = json.getJSONArray("zones");
+			for (int i = 0; i < zoneArray.length(); i++) {
+				JSONObject zoneJson = zoneArray.getJSONObject(i);
+				this.zones.add(new Zone(zoneJson));
+			}
+		} catch (Exception e) {}
 	}
 
 	@Override
 	public String toString() {
 		return super.toString() + " - " + perimeter;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = super.toJSON();
+		try { json.put("geofence", this.geofence.toJSON()); } catch (Exception e) {}
+		try { json.put("perimeter", Flare.rectToJSON(this.perimeter)); } catch (Exception e) {}
+		try { json.put("angle", this.angle); } catch (Exception e) {}
+		try { json.put("zones", Flare.arrayToJSON(this.zones)); } catch (Exception e) {}
+		// does not include devices
+		return json;
 	}
 
 	public Geofence getGeofence() {
@@ -110,6 +128,15 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 		}
 	}
 
+	public Zone getZoneWithId(String id) {
+		for (Zone zone: zones) {
+			if (zone.getId().equals(id)) {
+				return zone;
+			}
+		}
+		return null;
+	}
+
 	public Thing getThingWithId(String id) {
 		for (Zone zone: zones) {
 			for (Thing thing: zone.getThings()) {
@@ -134,14 +161,14 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 		return null;
 	}
 
-	public PointF userLocation() {
+	public PointF userLocation(boolean useSquare) {
 		float total = 0.0f;
 		float x = 0.0f;
 		float y = 0.0f;
 
 		for (Zone zone: zones) {
 			for (Thing thing : zone.getThings()) {
-				double weight = thing.getInverseDistance();
+				double weight = useSquare ? thing.getInverseSquareDistance() : thing.getInverseDistance();
 				if (weight > 0) {
 					x += thing.getPosition().x * weight;
 					y += thing.getPosition().y * weight;

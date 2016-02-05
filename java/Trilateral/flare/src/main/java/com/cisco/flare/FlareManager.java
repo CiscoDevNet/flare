@@ -184,12 +184,12 @@ public class FlareManager {
 
     // tries to find an existing device object in the current environment
     // if one is not found, creates a new device object
-    public void getCurrentDevice(String environmentId, JSONObject template, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
-        savedDevice(environmentId, prefs, (savedDevice) -> {
+    public void getCurrentDevice(String environmentId, JSONObject template, String deviceType, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
+        savedDevice(environmentId, deviceType, prefs, (savedDevice) -> {
             if (savedDevice != null) {
                 handler.gotResponse(savedDevice);
             } else {
-                newDeviceObject(environmentId, template, prefs, (newDevice) -> {
+                newDeviceObject(environmentId, template, deviceType, prefs, (newDevice) -> {
                     if (newDevice != null) {
                         handler.gotResponse(newDevice);
                     }
@@ -199,8 +199,8 @@ public class FlareManager {
     }
 
     // looks for an existing device object in the current environment, and if found calls the handler with it
-    public void savedDevice(String environmentId, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
-        String deviceId = prefs.getString("deviceId", null);
+    public void savedDevice(String environmentId, String deviceType, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
+        String deviceId = prefs.getString("deviceId" + deviceType, null);
         if (deviceId != null) {
             getDevice(deviceId, environmentId, (json) -> {
                 try {
@@ -239,6 +239,8 @@ public class FlareManager {
                 } catch (Exception e) {
                     handler.gotResponse(null);
                 }
+            } else {
+                handler.gotResponse(null);
             }
         });
     }
@@ -256,13 +258,13 @@ public class FlareManager {
     }
 
     // creates a new device object using the template
-    public void newDeviceObject(String environmentId, JSONObject template, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
+    public void newDeviceObject(String environmentId, JSONObject template, String deviceType, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
         newDevice(environmentId, template, (json) -> {
             Device device = new Device(json);
             addToIndex(device);
 
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("deviceId", device.getId());
+            editor.putString("deviceId" + deviceType, device.getId());
             editor.commit();
 
             Log.d(TAG, "Created new device: " + device.getName());

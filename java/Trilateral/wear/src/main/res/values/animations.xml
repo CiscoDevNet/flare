@@ -1,0 +1,8 @@
+<resources>
+    <string name="ring_animation">300</string>
+    <string name="ring_width_default">20</string>
+    <string name="ring_width_thin">6</string>
+    <string name="ring_width_nearest">34</string>
+    <string name="ring_path_default">M160,160 m -150,0 a 150,150 0 1,0 300,0 a 150,150 0 1,0 -300,0</string>
+    <string name="ring_path_thin">M160,160 m -157,0 a 157,157 0 1,0 314,0 a 157,157 0 1,0 -314,0</string>
+</resources>

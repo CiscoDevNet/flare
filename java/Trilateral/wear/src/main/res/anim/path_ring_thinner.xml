@@ -1,0 +1,8 @@
+<!-- load drawable/path_ring with "valueFrom" from path_ring_make_default's object animators.
+     When animating, the values will change to "valueTo" from path_ring_make_default's object animators -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/path_ring">
+    <target
+        android:name="v"
+        android:animation="@anim/path_ring_make_default" />
+</animated-vector>

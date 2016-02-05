@@ -2,7 +2,7 @@
     <string name="app_name">Trilateral</string>
     <string name="action_settings">Settings</string>
     <string name="action_reload">Reload</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="update_watch">Update Watch</string>
 
     <string name="environment">Environment</string>
     <string name="zone">Zone</string>

@@ -1,7 +1,9 @@
 package com.cisco.flare.trilateral;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -16,6 +18,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.design.widget.TabLayout;
@@ -51,6 +54,8 @@ import com.cisco.flare.FlareBeaconManager;
 import com.cisco.flare.FlareManager;
 import com.cisco.flare.Thing;
 import com.cisco.flare.Zone;
+import com.cisco.flare.trilateral.common.Constants;
+import com.cisco.flare.trilateral.common.HTMLColors;
 
 import org.altbeacon.beacon.BeaconConsumer;
 import org.json.JSONArray;
@@ -76,9 +81,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public FlareManager flareManager;
 	public Environment environment;
-	public Device device;
-	public Zone currentZone;
-	public Thing nearbyThing;
+	public Device mobileDevice;
+	public Device watchDevice;
 
 	private boolean useEddystone = true;
 
@@ -107,13 +111,17 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			Log.d(TAG, "Location permission not available.");
 		}
 
+		registerReceiver(messageReceiver, new IntentFilter(Constants.RECEIVE_MESSAGE_INTENT));
+		startService(new Intent(this, NotificationListener.class));
+
+		setupBeaconManager();
+
 		compassManager = new CompassManager((SensorManager)getSystemService(SENSOR_SERVICE));
 		compassManager.setDelegate(this);
 
 		setEnvironment(null);
-		setCurrentZone(null);
-		setDevice(null);
-		setNearbyThing(null);
+		setMobileDevice(null);
+		setWatchDevice(null);
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -124,14 +132,13 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		});
 
 		load();
-
 	}
 
 	public void load() {
 		String host = prefs.getString("pref_flare_host", "");
 		int port = 1234;
 		try {
-			Integer.parseInt(prefs.getString("pref_flare_port", "1234"));
+			port = Integer.parseInt(prefs.getString("pref_flare_port", "1234"));
 		} catch (Exception e) {
 			Log.e(TAG, "Port could not be converted to int.", e);
 		}
@@ -173,44 +180,87 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	}
 
 	// called by setEnvironment()
-	public void loadDevice() {
-		flareManager.getCurrentDevice(environment.getId(), deviceTemplate(), prefs, (newDevice) -> {
-			if (newDevice != null) {
-				setDevice(newDevice);
-				flareManager.subscribe(device);
+	public void loadDevices() {
+		flareManager.getCurrentDevice(environment.getId(), mobileDeviceTemplate(), "mobile", prefs, (newMobileDevice) -> {
+			if (newMobileDevice != null) {
+				setMobileDevice(newMobileDevice);
+				flareManager.subscribe(mobileDevice);
 
-				flareManager.getCurrentZone(environment.getId(), device.getPosition(), (newZone) -> {
-					setCurrentZone(newZone);
+				flareManager.getCurrentZone(environment.getId(), mobileDevice.getPosition(), (newZone) -> {
+					mobileDevice.setCurrentZone(newZone);
+					objectsChanged();
 				});
 
-				flareManager.getNearbyThing(environment.getId(), device.getId(), (newNearbyThing) -> {
-					setNearbyThing(newNearbyThing);
+				flareManager.getNearbyThing(environment.getId(), mobileDevice.getId(), (newNearbyThing) -> {
+					mobileDevice.setNearbyThing(newNearbyThing);
+					objectsChanged();
 				});
 			} else {
-				Log.d(TAG, "Could not load device.");
+				Log.d(TAG, "Could not load mobile device.");
+			}
+		});
+
+		flareManager.getCurrentDevice(environment.getId(), watchDeviceTemplate(), "watch", prefs, (newWatchDevice) -> {
+			if (newWatchDevice != null) {
+				setWatchDevice(newWatchDevice);
+				flareManager.subscribe(watchDevice);
+
+				flareManager.getCurrentZone(environment.getId(), mobileDevice.getPosition(), (newZone) -> {
+					watchDevice.setCurrentZone(newZone);
+
+					flareManager.getNearbyThing(environment.getId(), mobileDevice.getId(), (newNearbyThing) -> {
+						watchDevice.setNearbyThing(newNearbyThing);
+
+						sendEnvironmentToWearable();
+					});
+				});
+			} else {
+				Log.d(TAG, "Could not load watch device.");
 			}
 		});
 	}
 
-	// called by setEnvironment()
-	public void setupBeacons() {
-		FlareBeaconManager.setDeviceTypeAndConsumer(FlareBeaconManager.KEY_PREF_BEACON_DEVICE_MOBILE, this);
+	public void setupBeaconManager() {
+		FlareBeaconManager.setConsumer(this);
 		FlareBeaconManager.setCallback((PointF position) -> {
 			runOnUiThread(() -> {
-				Log.d(TAG, "Position: " + position);
-				if (this.device != null) {
-					flareManager.setPosition(this.device, position, null);
-					device.setPosition(position);
-					for (FlareFragment fragment : flareFragments) {
-						fragment.positionChanged();
-					}
-				}
+				gotPosition(position, mobileDevice);
 			});
 		});
 		FlareBeaconManager.bind(this);
-		FlareBeaconManager.setEnvironment(environment);
 		FlareBeaconManager.useEddystone(useEddystone);
+		FlareBeaconManager.useSquare(true);
 		FlareBeaconManager.restartRangingBeacons();
+	}
+
+	public void gotPosition(PointF position, Device device) {
+		// Log.d(TAG, "" + device.getN + " position: " + position);
+		if (device != null) {
+			flareManager.setPosition(device, position, null);
+			device.setPosition(position);
+			for (FlareFragment fragment : flareFragments) {
+				fragment.positionChanged();
+			}
+		}
+	}
+
+	public void deviceAngleChanged(float angle) {
+		gotAngle(angle, mobileDevice);
+	}
+
+	public void gotAngle(float angle, Device device) {
+		// Log.d(TAG, "Angle: " + angle);
+		if (flareManager != null && device != null) {
+			try {
+				device.getData().put("angle", angle);
+			} catch (Exception exception) {
+				Log.d(TAG, "Couldn't save angle.");
+			}
+			flareManager.setData(device, "angle", angle, device);
+			for (FlareFragment fragment : flareFragments) {
+				fragment.angleChanged();
+			}
+		}
 	}
 
 	public Environment getEnvironment() {
@@ -221,44 +271,37 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		this.environment = value;
 
 		if (value != null) {
-			loadDevice();
-			setupBeacons();
+			loadDevices();
+
+			FlareBeaconManager.setEnvironment(environment);
+
 			printEnvironment(value);
 		}
 
-		for (FlareFragment fragment : flareFragments) {
-			fragment.objectsChanged();
-		}
-	}
-
-	public Zone getCurrentZone() {
-		return currentZone;
-	}
-
-	public void setCurrentZone(Zone value) {
-		this.currentZone = value;
-		for (FlareFragment fragment : flareFragments) {
-			fragment.objectsChanged();
-		}
+		objectsChanged();
 	}
 
 	public Device getDevice() {
-		return device;
+		// TODO should actually return the mobile or watch depending upon setting
+		return getMobileDevice();
 	}
 
-	public void setDevice(Device value) {
-		this.device = value;
-		for (FlareFragment fragment : flareFragments) {
-			fragment.objectsChanged();
-		}
+	public Device getMobileDevice() {
+		return mobileDevice;
 	}
 
-	public Thing getNearbyThing() {
-		return nearbyThing;
+	public void setMobileDevice(Device value) {
+		this.mobileDevice = value;
+		objectsChanged();
 	}
 
-	public void setNearbyThing(Thing value) {
-		this.nearbyThing = value;
+	public Device getWatchDevice() {
+		return watchDevice;
+	}
+
+	public void setWatchDevice(Device value) {
+		this.watchDevice = value;
+		// objectsChanged();
 	}
 
 	public void printEnvironment(Environment environment) {
@@ -280,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	}
 
 	// returns a JSON object with default values for a new device
-	public JSONObject deviceTemplate() {
+	public JSONObject mobileDeviceTemplate() {
 		String userName = fullName();
 		if (userName != null) userName = userName.replaceAll(" .*", "");
 		String deviceName = userName != null ? userName + "'s " + Build.MODEL : Build.MODEL;
@@ -295,7 +338,20 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		try { template.put("name", deviceName ); } catch (Exception e) {}
 		try { template.put("description", description); } catch (Exception e) {}
 		try { template.put("data", data); } catch (Exception e) {}
-		try { template.put("position", Flare.zeroPoint()); } catch (Exception e) {}
+		try { template.put("position", new PointF(-1, -1)); } catch (Exception e) {}
+
+		return template;
+	}
+
+	public JSONObject watchDeviceTemplate() {
+		JSONObject template = mobileDeviceTemplate();
+
+		String userName = fullName();
+		if (userName != null) userName = userName.replaceAll(" .*", "");
+		String deviceName = userName != null ? userName + "'s Watch" : "Android Watch";
+		String description = "Moto 360, Android 5.0"; // could try to get from actual watch
+		try { template.put("name", deviceName ); } catch (Exception e) {}
+		try { template.put("description", description); } catch (Exception e) {}
 
 		return template;
 	}
@@ -303,19 +359,24 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	// returns the user's full name
 	public String fullName() {
 		String fullName = null;
-		Cursor c = getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-		int count = c.getCount();
-		String[] columnNames = c.getColumnNames();
-		boolean b = c.moveToFirst();
-		int pos = c.getPosition();
-		if (count == 1 && pos == 0) {
-			for (int j = 0; j < columnNames.length; j++) {
-				String columnName = columnNames[j];
-				String columnValue = c.getString(c.getColumnIndex(columnName));
-				if (columnName.equals("display_name")) fullName = columnValue;
+
+		try {
+			Cursor c = getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+			int count = c.getCount();
+			String[] columnNames = c.getColumnNames();
+			boolean b = c.moveToFirst();
+			int pos = c.getPosition();
+			if (count == 1 && pos == 0) {
+				for (int j = 0; j < columnNames.length; j++) {
+					String columnName = columnNames[j];
+					String columnValue = c.getString(c.getColumnIndex(columnName));
+					if (columnName.equals("display_name")) fullName = columnValue;
+				}
 			}
+			c.close();
+		} catch (SecurityException e) {
+			Log.d(TAG, "App does not have contacts permissions.");
 		}
-		c.close();
 		return fullName;
 	}
 
@@ -333,8 +394,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public void changePosition(PointF position) {
 		try {
-			device.setPosition(position);
-			flareManager.setPosition(device, position, device);
+			mobileDevice.setPosition(position);
+			flareManager.setPosition(mobileDevice, position, mobileDevice);
 			for (FlareFragment fragment : flareFragments) {
 				fragment.positionChanged();
 			}
@@ -343,22 +404,31 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public void changeColor(String color) {
 		try {
+			Thing nearbyThing = mobileDevice.getNearbyThing();
 			nearbyThing.getData().put("color", color);
-			flareManager.setData(nearbyThing, "color", color, device);
+			flareManager.setData(nearbyThing, "color", color, mobileDevice);
+
+			// hack to forward the message to the watch, because data notifications aren't echoed to the sender
+			if (nearbyThing == watchDevice.getNearbyThing()) {
+				JSONObject data = new JSONObject();
+				try { data.put("color", color); } catch (Exception e) {}
+				sendMessageToWearable(data, Constants.TYPE_DATA);
+			}
 		} catch (Exception e) {}
 	}
 
 	public void changeBrightness(double brightness) {
 		try {
+			Thing nearbyThing = mobileDevice.getNearbyThing();
 			nearbyThing.getData().put("brightness", brightness);
-			flareManager.setData(nearbyThing, "brightness", brightness, device);
+			flareManager.setData(nearbyThing, "brightness", brightness, mobileDevice);
 		} catch (Exception e) {}
 	}
 
 	public void changeAngle(double angle) {
 		try {
-			device.getData().put("angle", angle);
-			flareManager.setData(device, "angle", angle, device);
+			mobileDevice.getData().put("angle", angle);
+			flareManager.setData(mobileDevice, "angle", angle, mobileDevice);
 			for (FlareFragment fragment : flareFragments) {
 				fragment.angleChanged();
 			}
@@ -368,7 +438,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public void performAction(String action) {
 		try {
-			flareManager.performAction(nearbyThing, action, device);
+			Thing nearbyThing = mobileDevice.getNearbyThing();
+			flareManager.performAction(nearbyThing, action, mobileDevice);
 		} catch (Exception e) {
 			Log.e(TAG, "performAction", e);
 		}
@@ -378,13 +449,27 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		Log.d(TAG, flare.getName() + " data: " + data.toString());
 		try {
 			String key = (String) data.names().get(0);
-			if ((flare == device && "angle".equals(key))) {
-				for (FlareFragment fragment : flareFragments) {
-					fragment.angleChanged();
+			if (key != null) {
+				if ((flare == mobileDevice && key.equals("angle"))) {
+					for (FlareFragment fragment : flareFragments) {
+						fragment.angleChanged();
+					}
 				}
-			} else if ((flare == nearbyThing && ("color".equals(key) || "brightness".equals(key)))) {
-				for (FlareFragment fragment : flareFragments) {
-					fragment.dataChanged();
+
+				if ((flare == mobileDevice.getNearbyThing() && (key.equals("color") || key.equals("brightness")))) {
+					for (FlareFragment fragment : flareFragments) {
+						fragment.dataChanged();
+					}
+				}
+
+				// send all color updates to watch
+				if (key.equals("color")) {
+					try {
+						JSONObject message = new JSONObject();
+						message.put("thing", flare.getId());
+						message.put("data", data);
+						sendMessageToWearable(message, Constants.TYPE_DATA);
+					} catch (Exception e) {}
 				}
 			}
 		} catch (Exception e) {
@@ -407,22 +492,24 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public void enter(Zone zone, Device device) {
 		Log.d(TAG, device.getName() + " entered " + zone.getName());
-		setCurrentZone(zone);
+		device.setCurrentZone(zone);
+		objectsChanged();
 		didEnter = true;
 		new java.util.Timer().schedule(
-				new java.util.TimerTask() {
-					@Override
-					public void run() {
-						didEnter = false;
-					}
-				}, 500
+			new java.util.TimerTask() {
+				@Override
+				public void run() {
+					didEnter = false;
+				}
+			}, 500
 		);
 	}
 
 	public void exit(Zone zone, Device device) {
 		if (!didEnter) {
 			Log.d(TAG, device.getName() + " exited " + zone.getName());
-			setCurrentZone(null);
+			device.setCurrentZone(null);
+			objectsChanged();
 		} else {
 			Log.d(TAG, "Ignoring exit message just after enter message");
 		}
@@ -430,11 +517,19 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public void near(Thing thing, Device device, double distance) {
 		Log.d(TAG, device.getName() + " is near to " + thing.getName());
-		if (device == this.device && thing != nearbyThing) {
-			setNearbyThing(thing);
+
+		if ((device == mobileDevice || device == watchDevice) && thing != device.getNearbyThing()) {
+			device.setNearbyThing(thing);
+			objectsChanged();
 			flareManager.subscribe(thing);
 			flareManager.getData(thing);
 			flareManager.getPosition(thing);
+
+			if (device == watchDevice) {
+				JSONObject message = new JSONObject();
+				try { message.put("thing", thing.getId()); } catch (Exception e) {}
+				sendMessageToWearable(message, Constants.TYPE_NEAR_THING);
+			}
 		}
 
 		for (FlareFragment fragment : flareFragments) {
@@ -444,9 +539,17 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	public void far(Thing thing, Device device) {
 		Log.d(TAG, device.getName() + " is far from " + thing.getName());
-		if (device == this.device && thing == nearbyThing) {
+
+		if ((device == mobileDevice || device == watchDevice) && thing == device.getNearbyThing()) {
 			flareManager.unsubscribe(thing);
-			setNearbyThing(null);
+			device.setNearbyThing(null);
+			objectsChanged();
+
+			if (device == watchDevice) {
+				JSONObject message = new JSONObject();
+				try { message.put("thing", thing.getId()); } catch (Exception e) {}
+				sendMessageToWearable(message, Constants.TYPE_FAR_THING);
+			}
 		}
 
 		for (FlareFragment fragment : flareFragments) {
@@ -461,7 +564,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			Location location = null;
 			try {
 				location = locationManager.getLastKnownLocation(provider);
-			} catch (SecurityException exception) {}
+			} catch (SecurityException exception) {
+				Log.d(TAG, "App does not have location permissions.");
+			}
 			if (location == null) {
 				continue;
 			}
@@ -496,6 +601,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 	@Override
 	protected void onDestroy() {
+		unregisterReceiver(messageReceiver);
+		stopService(new Intent(this, NotificationListener.class));
 		FlareBeaconManager.unbind();
 		super.onDestroy();
 	}
@@ -522,23 +629,6 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		super.onResume();
 		if (prefs.getBoolean("use_beacons", true)) FlareBeaconManager.resume();
 		if (prefs.getBoolean("use_compass", true)) compassManager.resume();
-	}
-
-	public void deviceAngleChanged(float azimuth) {
-
-		// tell the graphics view that the device angle has changed
-		// mGraphicsView.setGlobalAngle(azimuth);
-		// mMapView.setGlobalAngle(azimuth);
-		// tell the server that the device angle has changed
-		// Log.d(TAG, "Angle: " + azimuth);
-
-		if (flareManager != null && device != null) {
-			try { device.getData().put("angle", azimuth); } catch (Exception exception) { }
-			flareManager.setData(device, "angle", azimuth, device);
-			for (FlareFragment fragment : flareFragments) {
-				fragment.angleChanged();
-			}
-		}
 	}
 
 	// FRAGMENTS
@@ -597,9 +687,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		}
 
 		public static PhoneFragment newInstance() {
-			PhoneFragment fragment = new PhoneFragment();
-
-			return fragment;
+			return new PhoneFragment();
 		}
 
 		@Override
@@ -628,9 +716,12 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			super.objectsChanged();
 
 			Environment environment = mainActivity.environment;
-			Zone currentZone = mainActivity.currentZone;
-			Device device = mainActivity.device;
-			Thing nearbyThing = mainActivity.nearbyThing;
+			Device device = mainActivity.getDevice();
+			Zone currentZone = device != null ? device.getCurrentZone() : null;
+			Thing nearbyThing = device != null ? device.getNearbyThing() : null;
+
+			Log.d(TAG, "Device: " + device);
+			Log.d(TAG, "Current zone: " + currentZone);
 
 			environmentTextView.setText(environment != null ? environment.getName() : "none");
 			zoneTextView.setText(currentZone != null ? currentZone.getName() : "none");
@@ -640,7 +731,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 		@Override
 		public void positionChanged() {
-			Device device = mainActivity.device;
+			Device device = mainActivity.getDevice();
 
 			if (device != null) {
 				positionTextView.setText(String.format("%.1f, %.1f", device.getPosition().x, device.getPosition().y));
@@ -651,7 +742,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 		@Override
 		public void angleChanged() {
-			Device device = mainActivity.device;
+			Device device = mainActivity.getDevice();
 
 			try {
 				angleTextView.setText(String.format("%.0f°", device.getData().getDouble("angle")));
@@ -662,16 +753,13 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 		@Override
 		public void near(Thing thing, Device device, double distance) {
-			Log.d(TAG, "PhoneFragment near: " + mainActivity.nearbyThing);
 			objectsChanged();
 		}
 
 		@Override
 		public void far(Thing thing, Device device) {
-			Log.d(TAG, "PhoneFragment far: " + mainActivity.nearbyThing);
 			objectsChanged();
 		}
-
 	}
 
 	public static class CompassFragment extends FlareFragment {
@@ -686,9 +774,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		}
 
 		public static CompassFragment newInstance() {
-			CompassFragment fragment = new CompassFragment();
-
-			return fragment;
+			return new CompassFragment();
 		}
 
 		@Override
@@ -707,7 +793,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		@Override
 		public void objectsChanged() {
 			super.objectsChanged();
-			mGraphicsView.updateFlareView(mainActivity.flareManager, mainActivity.environment, mainActivity.currentZone, mainActivity.device);
+			Device device = mainActivity.getDevice();
+			Zone currentZone = device != null ? device.getCurrentZone() : null;
+ 			mGraphicsView.updateFlareView(mainActivity.flareManager, mainActivity.environment, currentZone, device);
 		}
 
 		@Override
@@ -745,8 +833,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		}
 
 		public static MapFragment newInstance() {
-			MapFragment fragment = new MapFragment();
-			return fragment;
+			return new MapFragment();
 		}
 
 		@Override
@@ -761,7 +848,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		@Override
 		public void objectsChanged() {
 			super.objectsChanged();
-			mMapView.updateFlareView(mainActivity.flareManager, mainActivity.environment, mainActivity.currentZone, mainActivity.device);
+			Device device = mainActivity.getDevice();
+			Zone currentZone = device != null ? device.getCurrentZone() : null;
+			mMapView.updateFlareView(mainActivity.flareManager, mainActivity.environment, currentZone, device);
 		}
 
 		@Override
@@ -813,8 +902,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		public String selectedColor = null;
 
 		public static ThingFragment newInstance() {
-			ThingFragment fragment = new ThingFragment();
-			return fragment;
+			return new ThingFragment();
 		}
 
 		@Override
@@ -833,7 +921,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 			try {
 				defaultColorOptions = new JSONArray("[\"red\", \"orange\", \"yellow\", \"green\", \"blue\", \"purple\"]");
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				Log.d(TAG, "Couldn't parse default color options.");
+			}
 			colorOptions = defaultColorOptions;
 
 			nearbyThingTextView = (TextView) view.findViewById(R.id.nearbyThingTextView2);
@@ -888,12 +978,14 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 					String name = "red";
 					try {
 						name = colorOptions.getString(i);
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						Log.d(TAG, "Couldn't get color from options.");
+					}
 					final String colorName = name;
 
 					colorButton.setVisibility(View.VISIBLE);
 					Drawable background = colorButton.getBackground();
-					int color = CommonView.getHtmlColor(colorName);
+					int color = HTMLColors.getHtmlColor(colorName);
 
 					if (background instanceof ShapeDrawable) {
 						((ShapeDrawable)background).getPaint().setColor(color);
@@ -915,12 +1007,15 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			for (int i = 0; i < colorButtons.size(); i++) {
 				Button colorButton = colorButtons.get(i);
 				if (i < colorOptions.length()) {
-					String colorName = null;
+					String colorName;
+					boolean selected = false;
+
 					try {
 						colorName = colorOptions.getString(i);
-					} catch (Exception e) {}
-
-					boolean selected = colorName.equals(selectedColor);
+						selected = colorName.equals(selectedColor);
+					} catch (Exception e) {
+						Log.d(TAG, "Couldn't get color from options.");
+					}
 
 					Drawable background = colorButton.getBackground();
 					if (background instanceof GradientDrawable) {
@@ -934,13 +1029,14 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		public void objectsChanged() {
 			super.objectsChanged();
 
-			Thing nearbyThing = mainActivity.nearbyThing;
+			Device device = mainActivity.getDevice();
+			Thing nearbyThing = device != null ? device.getNearbyThing() : null;
 
 			nearbyThingTextView.setText(nearbyThing != null ? nearbyThing.getName() : "none");
 			nearbyThingDescription.setText(nearbyThing != null ? nearbyThing.getDescription() : "");
 
 			try {
-				selectedColor = nearbyThing.getData().getString("color");
+				selectedColor = nearbyThing.getColor();
 			} catch (Exception e) {
 				selectedColor = null;
 			}
@@ -953,26 +1049,27 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			}
 			updateColorButtons();
 
-			imageView.setImageResource(android.R.color.transparent);
+			if (imageView != null) imageView.setImageResource(android.R.color.transparent);
 
 			dataChanged();
 		}
 
 		@Override
 		public void dataChanged() {
-			Thing nearbyThing = mainActivity.nearbyThing;
+			Device device = mainActivity.getDevice();
+			Thing nearbyThing = device != null ? device.getNearbyThing() : null;
 
 			try {
-				selectedColor = nearbyThing.getData().getString("color");
+				selectedColor = nearbyThing.getColor();
 				// colorTextView.setText(selectedColor);
 
 				try {
 					String name = nearbyThing.getName().toLowerCase();
 					String imageName = name + "_" + selectedColor;
 					Log.d(TAG, "imageName: " + imageName);
-					imageView.setImageDrawable(mainActivity.getImageNamed(imageName));
+					if (imageView != null) imageView.setImageDrawable(mainActivity.getImageNamed(imageName));
 				} catch (Exception e) {
-					imageView.setImageResource(android.R.color.transparent);
+					if (imageView != null) imageView.setImageResource(android.R.color.transparent);
 				}
 			} catch (Exception e) {
 				selectedColor = null;
@@ -1059,6 +1156,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		} else if (id == R.id.action_reload) {
 			load();
 			return true;
+		} else if (id == R.id.action_update_watch) {
+			sendEnvironmentToWearable();
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -1069,5 +1169,90 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		final int resourceId = resources.getIdentifier(name, "drawable", getPackageName());
 		return resources.getDrawable(resourceId, getTheme());
 	}
+
+	// WEARABLE
+
+	private void sendMessageToWearable(JSONObject json, String type) {
+		sendMessageToWearable(json.toString(), type);
+	}
+
+	private void sendMessageToWearable(String message, String type) {
+		Log.d(TAG, "Sending " + type + " to wearable: " + message);
+		Intent intent = new Intent(Constants.SEND_MESSAGE_INTENT);
+		intent.putExtra(Constants.MESSAGE_VALUE_KEY, message);
+		intent.putExtra(Constants.MESSAGE_TYPE_KEY, type);
+		sendBroadcast(intent);
+	}
+
+	private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String type = intent.getExtras().getString(Constants.MESSAGE_TYPE_KEY);
+			String message = intent.getExtras().getString(Constants.MESSAGE_VALUE_KEY);
+
+			if (message != null && message.length() > 200) {
+				Log.d(TAG, "Received " + type + ": " + message.length() + " bytes");
+			} else {
+				Log.d(TAG, "Received " + type + ": " + message);
+			}
+
+			if (type.equals(Constants.TYPE_HELLO)) {
+				Log.d(TAG, "Got hello.");
+				sendEnvironmentToWearable();
+			} else if (type.equals(Constants.TYPE_POSITION_ANGLE)) {
+				receivePositionAngle(message);
+			} else if (type.equals(Constants.TYPE_ACTION)) {
+				receiveAction(message);
+			} else {
+				Log.w(TAG, "Message type unknown: " + type);
+			}
+		}
+	};
+
+	private void sendEnvironmentToWearable() {
+		JSONObject message = new JSONObject();
+		try { if (environment != null) message.put("environment", environment.toJSON()); } catch (Exception e) {}
+		if (watchDevice != null) {
+			try { message.put("device", watchDevice.toJSON()); } catch (Exception e) {}
+		}
+		sendMessageToWearable(message, Constants.TYPE_ENVIRONMENT);
+	}
+
+	private void sendPositionToWearable(PointF position) {
+		sendMessageToWearable(Flare.pointToJSON(position), Constants.TYPE_POSITION);
+	}
+
+	private void receivePositionAngle(String jsonString) {
+		try {
+			JSONObject messageJson = new JSONObject(jsonString);
+			JSONObject positionJson = messageJson.getJSONObject("position");
+			PointF position = Flare.getPoint(positionJson);
+			float angle = (float)messageJson.getDouble("angle");
+
+			gotPosition(position, watchDevice);
+			gotAngle(angle, watchDevice);
+		} catch (Exception e) {
+			Log.e(TAG, "Couldn't parse position: " + jsonString, e);
+			e.printStackTrace();
+		}
+	};
+
+	private void receiveAction(String jsonString) {
+		try {
+			JSONObject json = new JSONObject(jsonString);
+			String thingId = json.getString("thing");
+			String action = json.getString("action");
+
+			if (watchDevice != null && environment != null && thingId != null) {
+				Thing thing = environment.getThingWithId(thingId);
+				if (thing != null) {
+					flareManager.performAction(thing, action, watchDevice);
+				}
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "Couldn't parse action: " + jsonString, e);
+			e.printStackTrace();
+		}
+	};
 
 }

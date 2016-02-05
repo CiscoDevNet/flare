@@ -25,11 +25,6 @@ import java.util.Collection;
 public class FlareBeaconManager {
     private static final String TAG="FlareBeaconManager";
 
-    public final static String KEY_PREF_BEACON_DEVICE = "pref_beacon_device";
-    public final static String KEY_PREF_BEACON_DEVICE_NONE = "NONE";
-    public final static String KEY_PREF_BEACON_DEVICE_MOBILE = "MOBILE";
-    public final static String KEY_PREF_BEACON_DEVICE_WATCH = "WATCH";
-
     public static boolean beaconDebug = false;
 
     private static FlareBeaconManager thisInstance = new FlareBeaconManager();
@@ -41,12 +36,9 @@ public class FlareBeaconManager {
     private BeaconManager beaconManager;
     private Region beaconRegion;
     private boolean isEmulator = Build.HARDWARE.contains("goldfish");
-    private String thisBeaconDevice = KEY_PREF_BEACON_DEVICE_WATCH;
-
     private Environment environment = null;
 
-    // preferences - used to determine if we should start detecting beacons
-    private String pref_beaconDevice;
+    private static boolean useSquare = true;
     private float pref_beaconSmoothing;
 
     private Callback callback;
@@ -54,12 +46,10 @@ public class FlareBeaconManager {
     private BeaconConsumer beaconConsumer;
 
     public FlareBeaconManager() {
-        pref_beaconDevice = KEY_PREF_BEACON_DEVICE_MOBILE;
         pref_beaconSmoothing = 2.0f;
     }
 
-    public static void setDeviceTypeAndConsumer(final String device, BeaconConsumer consumer) {
-        thisInstance.thisBeaconDevice = device;
+    public static void setConsumer(BeaconConsumer consumer) {
         thisInstance.beaconConsumer = consumer;
     }
 
@@ -123,7 +113,7 @@ public class FlareBeaconManager {
                         }
                     }
 
-                    final PointF location = thisInstance.environment.userLocation();
+                    final PointF location = thisInstance.environment.userLocation(useSquare);
                     if (location != null && thisInstance.callback != null) {
                         thisInstance.callback.onPositionUpdate(location);
                     }
@@ -166,13 +156,21 @@ public class FlareBeaconManager {
         }
     }
 
+    public static void useSquare(boolean value) {
+        useSquare = value;
+    }
+
     // use Eddystone if your beacons support it, but don't support AltBeacon
     // call this after calling bind()
     public static void useEddystone(boolean value) {
         if (value && thisInstance.beaconManager != null) {
-            thisInstance.beaconManager.getBeaconParsers().add(new BeaconParser().
-                    setBeaconLayout("s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19"));
-            Log.d(TAG, "Using Eddystone: " + thisInstance.beaconManager.getBeaconParsers());
+            try {
+                thisInstance.beaconManager.getBeaconParsers().add(new BeaconParser().
+                        setBeaconLayout("s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19"));
+                Log.d(TAG, "Using Eddystone: " + thisInstance.beaconManager.getBeaconParsers());
+            } catch (Exception e) {
+                Log.e(TAG, "Error using Eddystone", e);
+            }
         }
     }
 
@@ -192,15 +190,14 @@ public class FlareBeaconManager {
             thisInstance.beaconManager.setBackgroundMode(false);
     }
 
-    public static void updateBeaconPrefs(String beaconDevice, float beaconSmoothing) {
-        thisInstance.pref_beaconDevice = beaconDevice;
+    public static void updateBeaconPrefs(float beaconSmoothing) {
         thisInstance.pref_beaconSmoothing = beaconSmoothing;
     }
 
     private void startRangingBeacons() {
         // if ranging beacons on the mobile, and not running in the emulator
-        Log.d(TAG, "startRangingBeacons - thisBeaconDevice="+thisBeaconDevice+" ; pref_beaconDevice="+pref_beaconDevice+" ; isEmulator="+isEmulator);
-        if (thisBeaconDevice.equals(pref_beaconDevice) && !isEmulator) {
+        Log.d(TAG, "startRangingBeacons");
+        if (!isEmulator) {
             try {
                 if (beaconManager != null && beaconRegion != null) {
                     if (!beaconManager.isBound(beaconConsumer)) {
@@ -219,7 +216,7 @@ public class FlareBeaconManager {
                 e.printStackTrace();
             }
         } else {
-            Log.d(TAG, "Not ranging: " + thisBeaconDevice + " != " + pref_beaconDevice);
+            Log.d(TAG, "Not ranging (running on emulator)");
         }
     }
 

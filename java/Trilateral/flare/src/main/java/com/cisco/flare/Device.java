@@ -14,6 +14,9 @@ public class Device extends Flare implements Flare.PositionObject {
 
     protected PointF position;
 
+    protected Zone currentZone;
+    protected Thing nearbyThing;
+
     public Device(JSONObject json) {
         super(json);
 
@@ -34,6 +37,14 @@ public class Device extends Flare implements Flare.PositionObject {
     @Override
     public String toString() {
         return super.toString() + " - " + position;
+    }
+
+    public JSONObject toJSON() {
+        JSONObject json = super.toJSON();
+        try { json.put("position", Flare.pointToJSON(this.position)); } catch (Exception e) {}
+        try { if (currentZone != null) json.put("zoneId", currentZone.getId()); } catch (Exception e) {}
+        try { if (nearbyThing != null) json.put("nearbyThingId", nearbyThing.getId()); } catch (Exception e) {}
+        return json;
     }
 
     public PointF getPosition() {
@@ -58,4 +69,19 @@ public class Device extends Flare implements Flare.PositionObject {
         return angle;
     }
 
+    public Zone getCurrentZone() {
+        return currentZone;
+    }
+
+    public void setCurrentZone(Zone value) {
+        this.currentZone = value;
+    }
+
+    public Thing getNearbyThing() {
+        return nearbyThing;
+    }
+
+    public void setNearbyThing(Thing value) {
+        this.nearbyThing = value;
+    }
 }

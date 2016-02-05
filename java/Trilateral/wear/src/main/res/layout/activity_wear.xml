@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                android:layout_height="match_parent" tools:context=".WatchMainActivity"
+                tools:deviceIds="wear_round"
+                android:id="@+id/round_layout"
+                android:background="@color/background_color">
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/rim_fins">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selectedZone"
+            android:paddingTop="60dp"
+            android:textColor="@color/fin_arc_ikea"
+            android:ellipsize="marquee"
+            android:autoText="false"
+            android:singleLine="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_centerInParent="true" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/time_layout"
+            android:layout_centerInParent="true">
+
+            <!-- <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/am_pm"
+                android:id="@+id/text_amPm"
+                android:layout_alignTop="@+id/text_time"
+                android:layout_toEndOf="@+id/text_time"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="false"
+                android:layout_marginTop="13px"
+                android:fontFamily="sans-serif-light"
+                android:textSize="26px" />
+
+            <TextView android:id="@+id/text_time" android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="@string/time"
+                      android:textSize="78px"
+                      android:layout_centerVertical="true"
+                      android:layout_centerHorizontal="true"
+                      android:fontFamily="sans-serif-light"
+                      android:letterSpacing="-0.04" /> -->
+            <LinearLayout
+                android:id="@+id/environmentLayout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:baselineAligned="false">
+
+                <TextView
+                    android:layout_marginTop="25dp"
+                    android:id="@+id/environment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Environment"
+                    android:textSize="24dp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/zone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Zone"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/subtitle"/>
+
+                <TextView
+                    android:id="@+id/position"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0,0"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/debug_info"/>
+
+                <TextView
+                    android:id="@+id/angle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0°"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/debug_info"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/thingLayout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:baselineAligned="false"
+                android:visibility="invisible" >
+
+                <Button
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:text="x"
+                    android:gravity="center"
+                    android:id="@+id/thingCloseButton"
+                    android:clickable="true"
+                    android:background="@null" />
+
+                <TextView
+                    android:id="@+id/nearbyThing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24dp"
+                    android:text="none"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/thingDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="none"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/subtitle"/>
+
+                <TextView
+                    android:id="@+id/thingColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="none"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/debug_info"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center|center_horizontal"
+                            android:baselineAligned="false">
+
+                            <Button
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_marginRight="10dp"
+                                android:text="&lt;"
+                                android:id="@+id/previousButton"
+                                android:background="@drawable/color_button"
+                                android:clickable="true"/>
+
+                            <Button
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_marginLeft="10dp"
+                                android:text="&gt;"
+                                android:id="@+id/nextButton"
+                                android:background="@drawable/color_button"
+                                android:clickable="true"/>
+                        </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+    </RelativeLayout>
+    <view
+        android:layout_width="320dp"
+        android:layout_height="89dp"
+        class="android.support.v4.view.ViewPager"
+        android:id="@+id/quickStatus_carousel"
+        android:overScrollMode="never"
+        android:layout_marginTop="69dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_ring"
+        android:layout_gravity="center"
+        android:id="@+id/ring" />
+
+    <view
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="com.cisco.flare.trilateral.CompassView"
+        android:id="@+id/fullscreen_view"
+        android:background="@android:color/transparent" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/buttons"
+        android:visibility="invisible">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="anim"
+            android:id="@+id/anim_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentBottom="true" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Me"
+            android:id="@+id/reflector_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rim_hover_info"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:translationZ="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Object Name"
+            android:id="@+id/hover_objectName"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="false"
+            android:layout_centerHorizontal="true"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="description"
+            android:id="@+id/hover_description"
+            android:layout_below="@+id/hover_objectName"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/quick_statuses"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/quickStatus_nameAndDesc"
+            android:layout_marginTop="25dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Object Name"
+                android:id="@+id/quickStatus_objectName"
+                android:singleLine="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:ellipsize="end" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="description"
+                android:id="@+id/quickStatus_description"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/quickStatus_objectName" />
+
+        </RelativeLayout>
+        <!--
+                <view
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    class="android.support.v4.view.ViewPager"
+                    android:id="@+id/quickStatus_carousel"
+                    android:layout_below="@+id/quickStatus_nameAndDesc"
+                    android:layout_above="@+id/quickStatus_closeButton"
+                    android:overScrollMode="never" />-->
+        <!--
+                <view
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    class="android.support.v4.view.ViewPager"
+                    android:id="@+id/quickStatus_carousel_old"
+                    android:layout_below="@+id/quickStatus_nameAndDesc"
+                    android:layout_above="@+id/quickStatus_closeButton"
+                    android:overScrollMode="never"
+                    android:visibility="invisible" />
+        -->
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/quickStatus_closeButton"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="25dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/close_button"
+            android:background="@null" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/quick_actions"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/quickActions_nameAndDesc"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="35dp"
+            android:visibility="invisible"
+            android:transitionGroup="false">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Object Name"
+                android:id="@+id/quickActions_objectName"
+                android:singleLine="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:ellipsize="end" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="description"
+                android:id="@+id/quickActions_description"
+                android:layout_marginLeft="18dp"
+                android:layout_marginRight="18dp"
+                android:ellipsize="end"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/quickActions_objectName" />
+
+        </RelativeLayout>
+        <!--
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/quickActions_actions">
+                </RelativeLayout>-->
+<!--
+        <com.cisco.ctao.ioe.ux.flare.common.CircularLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/quickActions_actions">
+
+        </com.cisco.ctao.ioe.ux.flare.common.CircularLayout>
+-->
+
+    </RelativeLayout>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/debug"
+        android:layout_marginStart="40dp"
+        android:visibility="invisible">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="API Status:"
+                android:id="@+id/apiStatusStatic"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentTop="false"
+                android:textSize="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="unknown"
+                android:id="@+id/apiStatus"
+                android:layout_toEndOf="@+id/apiStatusStatic"
+                android:layout_alignBottom="@+id/apiStatusStatic"
+                android:layout_marginLeft="5dp"
+                android:textSize="8dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="angle"
+                android:id="@+id/text_angle"
+                android:textAlignment="textStart"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentLeft="false"
+                android:layout_above="@+id/time_layout"
+                android:textSize="8dp"
+                android:layout_span="2"
+                android:singleLine="true" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="position"
+                android:id="@+id/text_pos"
+                android:layout_span="2"
+                android:textSize="8dp"
+                android:singleLine="true" />
+        </TableRow>
+
+    </TableLayout>
+
+    <android.support.wearable.view.DismissOverlayView
+        android:id="@+id/dismiss_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

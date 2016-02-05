@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Trilateral</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="time">00:00</string>
+    <string name="am_pm">am</string>
+
+</resources>

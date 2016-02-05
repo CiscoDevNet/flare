@@ -1,0 +1,14 @@
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:duration="@string/ring_animation"
+        android:propertyName="pathData"
+        android:valueFrom="@string/ring_path_thin"
+        android:valueTo="@string/ring_path_default"
+        android:valueType="pathType"/>
+    <objectAnimator
+        android:duration="@string/ring_animation"
+        android:propertyName="strokeWidth"
+        android:valueFrom="@string/ring_width_thin"
+        android:valueTo="@string/ring_width_default"
+        android:valueType="floatType"/>
+</set>

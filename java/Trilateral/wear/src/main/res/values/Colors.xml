@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_color">#ff494949</color>
+    <color name="ring_colour">#ff2f2f2f</color>
+    <color name="ring_shadow_outer_colour">#ff131313</color>
+    <color name="ring_shadow_center_transparent">#00494949</color>
+    <color name="fin_arc_ikea">#ffffcd00</color>
+    <color name="fin_arc_behind">#ff6b6b6b</color>
+    <color name="subtitle">#ffbbbbbb</color>
+    <color name="debug_info">#ff888888</color>
+</resources>

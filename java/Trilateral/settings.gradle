@@ -1,1 +1,1 @@
-include ':app', ':flare'
+include ':app', ':flare', ':wear', ':common'

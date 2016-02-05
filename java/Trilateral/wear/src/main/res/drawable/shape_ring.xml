@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- "inner shadow" -->
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="oval"
+            android:useLevel="false">
+
+            <size
+                android:height="320px"
+                android:width="320px" />
+
+            <!-- with gradientRadius > 50% we make the gradient larger than the display area
+            to have more control with the colours -->
+            <!-- 320px * 0.4375 = 140px -->
+            <gradient
+                android:name="shadowGradient"
+                android:type="radial"
+                android:gradientRadius="43.75%"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:centerColor="@color/ring_shadow_center_transparent"
+                android:endColor="@color/ring_shadow_outer_colour"
+                android:useLevel="false" />
+        </shape>
+    </item>
+    <!-- "outer ring" -->
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="ring"
+            android:innerRadius="140px"
+            android:thickness="20px"
+            android:useLevel="false"
+            android:name="ringShape">
+
+            <solid android:color="@color/ring_colour" android:name="ringColor"/>
+<!--
+            <stroke
+                android:width="2dp"
+                android:color="#44000000" />
+-->
+            <size
+                android:height="320px"
+                android:width="320px" />
+        </shape>
+    </item>
+</layer-list>

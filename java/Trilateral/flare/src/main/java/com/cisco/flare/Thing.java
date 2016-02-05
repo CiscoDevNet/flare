@@ -15,7 +15,6 @@ public class Thing extends Flare implements Flare.PositionObject {
     private final int defaultColor = 0xffffcd00;
     private static final String THING_TYPE_DEFAULT = "default";
     private static final String THING_TYPE_BEACON = "beacon";
-    private static final String THING_TYPE_LIGHT = "light";
 
 	private String type;
 	protected PointF position;
@@ -25,6 +24,7 @@ public class Thing extends Flare implements Flare.PositionObject {
 
 	private double distance = 1000.0;
 	private double inverseDistance = 0.0;
+	private double inverseSquareDistance = 0.0;
 
     private Zone zone;
 
@@ -39,10 +39,8 @@ public class Thing extends Flare implements Flare.PositionObject {
                 this.type = THING_TYPE_DEFAULT;
             }
 			try { this.position = getPoint(json.getJSONObject("position")); } catch (Exception e) { }
-            try { this.angle = json.getInt("angle"); } catch (Exception e) { }
+            try { this.angle = this.data.getInt("angle"); } catch (Exception e) { }
 			try { this.minor = this.data.getInt("minor"); } catch (Exception e) { }
-
-            // Log.d("Thing", "name: "+this.name+" - color: "+getColorString());
 		} catch (Exception e) {
 			Log.e("Flare", "Parse error: ", e);
 		}
@@ -60,6 +58,13 @@ public class Thing extends Flare implements Flare.PositionObject {
 	@Override
 	public String toString() {
 		return super.toString() + " - " + position;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = super.toJSON();
+		try { json.put("position", Flare.pointToJSON(this.position)); } catch (Exception e) {}
+		try { json.put("type", this.type); } catch (Exception e) {}
+		return json;
 	}
 
 	public String getType() {
@@ -98,6 +103,22 @@ public class Thing extends Flare implements Flare.PositionObject {
 		this.minor = minor;
 	}
 
+	public String getColor() {
+		try {
+			 return getData().getString("color");
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public void setColor(String color) {
+		try {
+			getData().put("color", color);
+		} catch (Exception e) {
+
+		}
+	}
+
 	public double getDistance() {
 		return distance;
 	}
@@ -105,7 +126,10 @@ public class Thing extends Flare implements Flare.PositionObject {
 	public void setDistance(double distance) {
 		this.distance = distance;
 		if (distance == -1 || distance == 0.0) this.inverseDistance = -1.0;
-		else this.inverseDistance = 1.0 / distance;
+		else {
+			this.inverseDistance = 1.0 / distance;
+			this.inverseSquareDistance = 1.0 / (distance * distance);
+		}
 	}
 
 	public double getInverseDistance() {
@@ -114,5 +138,13 @@ public class Thing extends Flare implements Flare.PositionObject {
 
 	public void setInverseDistance(double inverseDistance) {
 		this.inverseDistance = inverseDistance;
+	}
+
+	public double getInverseSquareDistance() {
+		return inverseSquareDistance ;
+	}
+
+	public void setInverseSquareDistance(double inverseSquareDistance ) {
+		this.inverseSquareDistance = inverseSquareDistance ;
 	}
 }

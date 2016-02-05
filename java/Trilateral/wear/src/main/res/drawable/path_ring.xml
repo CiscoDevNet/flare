@@ -1,0 +1,14 @@
+<!-- path_ring is used by anim/path_ring_*.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="320px"
+    android:width="320px"
+    android:viewportHeight="320"
+    android:viewportWidth="320">
+    <group>
+        <path
+            android:name="v"
+            android:strokeColor="@color/ring_colour"
+            android:strokeWidth="@string/ring_width_default"
+            android:pathData="@string/ring_path_default" />
+    </group>
+</vector>

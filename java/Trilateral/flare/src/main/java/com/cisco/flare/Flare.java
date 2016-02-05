@@ -4,7 +4,10 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by azamlerc on 3/23/15.
@@ -51,6 +54,15 @@ public abstract class Flare {
 
 	public String toString() {
 		return this.getClass().getSimpleName() + " " + this.id + " - " + this.name;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		try { json.put("_id", this.id); } catch (Exception e) {}
+		try { json.put("name", this.name); } catch (Exception e) {}
+		try { json.put("description", this.description); } catch (Exception e) {}
+		try { json.put("data", this.data); } catch (Exception e) {}
+		return json;
 	}
 
 	public String getId() {
@@ -111,6 +123,14 @@ public abstract class Flare {
 
 		public String toString() {
 			return this.latitude + "° - " + this.longitude + "° - " + this.radius + "m";
+		}
+
+		public JSONObject toJSON() {
+			JSONObject json = new JSONObject();
+			try { json.put("latitude", this.latitude); } catch (Exception e) {}
+			try { json.put("longitude", this.longitude); } catch (Exception e) {}
+			try { json.put("radius", this.radius); } catch (Exception e) {}
+			return json;
 		}
 
 		public double getLatitude() {
@@ -177,11 +197,43 @@ public abstract class Flare {
 		return json;
 	}
 
+	public static JSONObject rectToJSON(RectF rect) {
+		float x = rect.top;
+		float y = rect.left;
+		float width = rect.right - y;
+		float height = rect.bottom - x;
+
+		JSONObject origin = new JSONObject();
+		JSONObject size = new JSONObject();
+		JSONObject json = new JSONObject();
+
+		try {
+			origin.put("x", x);
+			origin.put("y", y);
+			size.put("width", width);
+			size.put("height", height);
+			json.put("origin", origin);
+			json.put("size", size);
+		} catch (Exception e) {}
+
+		return json;
+	}
+
 	public static JSONObject zeroPoint() {
 		JSONObject json = new JSONObject();
 		try { json.put("x", 0.0); } catch (Exception e) {}
 		try { json.put("y", 0.0); } catch (Exception e) {}
 		return json;
+	}
+
+	public static JSONArray arrayToJSON(ArrayList list) {
+		JSONArray jsonArray = new JSONArray();
+		for (Object flare : list) {
+			try {
+				jsonArray.put(((Flare)flare).toJSON());
+			} catch (Exception e) {}
+		}
+		return jsonArray;
 	}
 
 	public static double round(double value) {
