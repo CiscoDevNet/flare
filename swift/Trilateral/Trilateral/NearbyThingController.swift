@@ -84,7 +84,9 @@ class NearbyThingController: UIViewController, FlareController {
                 colorButton.selected = index < colors.count && color == colors[index]
             }
             
-            imageView.image = UIImage(named: "\(nearbyThing!.name.lowercaseString)-\(color)")
+            if let imageName = nearbyThing?.imageName() {
+                imageView.image = UIImage(named: imageName)
+            }
         } else {
             // colorLabel.text = ""
             
@@ -108,6 +110,10 @@ class NearbyThingController: UIViewController, FlareController {
         } else {
             powerSwitch.on = false
         }
+    }
+    
+    func animate() {
+        
     }
     
     @IBAction func performAction(sender: UIButton) {

@@ -20,6 +20,7 @@ protocol FlareController {
     var nearbyThing: Thing? { get set }
     
     func dataChanged()
+    func animate()
 }
 
 @UIApplicationMain
@@ -36,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     var defaults = NSUserDefaults.standardUserDefaults()
     var flareManager = FlareManager(host: "localhost", port: 1234)
     var beaconManager = BeaconManager()
-    var currentLatlong: CLLocation?
+    var currentLocation: CLLocation?
     
     // when these are changed, the equivalent variables in the current flareController will be updated
     var currentEnvironment: Environment? { didSet(value) {
@@ -79,12 +80,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     // called at startup, and when the GPS location changes significantly
     func deviceLocationDidChange(location: CLLocation) {
         NSLog("Location: \(location.coordinate.latitude),\(location.coordinate.longitude)")
-        let params = ["latitude":location.coordinate.latitude, "longitude":location.coordinate.longitude]
+        currentLocation = location
         
-        loadEnvironments(params)
+        loadEnvironments()
     }
     
-    func loadEnvironments(params: JSONDictionary?) {
+    func loadEnvironments() {
+        var params: JSONDictionary? = nil
+        if currentLocation != nil {
+            params = ["latitude":currentLocation!.coordinate.latitude, "longitude":currentLocation!.coordinate.longitude]
+        }
+        
         self.flareManager.loadEnvironments(params, loadDevices: false) { (environments) -> () in // load environment for current location
             if environments.count > 0 {
                 self.loadEnvironment(environments[0])
@@ -114,13 +120,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     func loadEnvironment(environment: Environment) {
         self.currentEnvironment = environment
-        NSLog("Current environment: \(self.currentEnvironment!.name)")
+        self.flareManager.subscribe(environment, all: true)
+        NSLog("Current environment: \(environment.name)")
         
-        self.flareManager.getCurrentDevice(self.currentEnvironment!.id, template: self.deviceTemplate()) { (device) -> () in
+        self.flareManager.getCurrentDevice(environment.id, template: self.deviceTemplate()) { (device) -> () in
             self.loadDevice(device)
         }
         
-        self.beaconManager.loadEnvironment(self.currentEnvironment!)
+        self.beaconManager.loadEnvironment(environment)
         if defaults.boolForKey("useBeacons") { self.beaconManager.start() }
         if defaults.boolForKey("useGPS") { self.beaconManager.startMonitoringLocation() }
         if defaults.boolForKey("useCompass") { self.beaconManager.startUpdatingHeading() }
@@ -132,7 +139,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func loadDevice(value: Device?) {
         if let device = value {
             self.device = device
-            self.flareManager.subscribe(device)
+            // already subscribing to all objects
+            // self.flareManager.subscribe(device)
             
             loadCurrentZone()
             loadNearbyThing()
@@ -170,6 +178,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
     }
     
+    func animate() {
+        if flareController != nil {
+            flareController!.animate()
+        }
+    }
+    
     // returns a template used for creating new device objects:
     // name: Andrew's iPhone
     // description: iPhone, iOS 9.2
@@ -198,6 +212,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
+        // if the environments have not been loaded, try again
+        // the server address may have changed
+        if currentLocation != nil && currentEnvironment == nil {
+            loadEnvironments()
+        }
+        
         if defaults.boolForKey("useBeacons") { beaconManager.start() }
         if defaults.boolForKey("useGPS") { beaconManager.startMonitoringLocation() }
         if defaults.boolForKey("useCompass") { beaconManager.startUpdatingHeading() }
@@ -259,7 +279,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         if device == self.device && thing != self.nearbyThing {
             nearbyThing = thing
             
-            flareManager.subscribe(thing)
+            // already subscribing to all objects
+            // flareManager.subscribe(thing)
             flareManager.getData(thing)
             flareManager.getPosition(thing)
             
@@ -268,12 +289,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     func far(thing: Thing, device: Device) {
         NSLog("far: \(thing.name)")
-        
+
         if device == self.device && thing == self.nearbyThing {
             
-            flareManager.unsubscribe(thing)
+            // already subscribing to all objects
+            // flareManager.unsubscribe(thing)
             
-            nearbyThing = nil
+            // stay paired even when moving away
+            // nearbyThing = nil
         }
     }
 
@@ -286,8 +309,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         flare.position = oldPosition
         delayLoop(animationDelay, steps: animationSteps) { i in
             flare.position = CGPoint(x: oldPosition.x + CGFloat(i) * dx,
-                y: oldPosition.y + CGFloat(i) * dy)
-            self.dataChanged()
+                                     y: oldPosition.y + CGFloat(i) * dy)
+            self.animate()
+            if i == self.animationSteps - 1 { self.dataChanged() }
         }
     }
     
@@ -306,7 +330,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         flare.data["angle"] = oldAngle
         delayLoop(animationDelay, steps: animationSteps) { i in
             flare.data["angle"] = oldAngle + Double(i) * delta
-            self.dataChanged()
+            self.animate()
+            if i == self.animationSteps - 1 { self.dataChanged() }
         }
     }
     
@@ -344,6 +369,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
         defaults.registerDefaults(defaultsToRegister)
         defaults.synchronize()
+    }
+}
+
+extension Thing {
+    func imageName() -> String? {
+        if let color = data["color"] as? String {
+            return "\(name.lowercaseString)-\(color)"
+        }
+        return nil
     }
 }
 

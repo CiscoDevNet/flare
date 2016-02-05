@@ -13,7 +13,7 @@ import CoreLocation
 class CompassViewController: UIViewController {
     
     @IBOutlet weak var compass: CompassView!
-    
+
     var appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
     
     override func viewDidAppear(animated: Bool) {

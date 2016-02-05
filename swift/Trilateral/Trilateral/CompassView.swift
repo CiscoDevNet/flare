@@ -39,6 +39,7 @@ class CompassView: UIView, FlareController {
         }
     }
 
+    @IBOutlet weak var nearbyThingImage: UIImageView!
     @IBOutlet weak var nearbyThingLabel: UILabel!
     @IBOutlet weak var nearbyThingComment: UILabel!
     
@@ -64,14 +65,24 @@ class CompassView: UIView, FlareController {
     }
     
     func dataChanged() {
+        if let imageName = nearbyThing?.imageName() {
+            nearbyThingImage.image = UIImage(named: imageName)
+        }
+
         setNeedsDisplay()
+    }
+    
+    func animate() {
+        self.setNeedsDisplay()
     }
     
     func updateLayout() {
         if nearbyThingLabel != nil && nearbyThingComment != nil {
-            let y = (self.frame.size.height - nearbyThingLabel.frame.size.height) / 2.0
-            nearbyThingLabel.frame.origin.y = y
-            nearbyThingComment.frame.origin.y = y + 27.0
+            let y = (self.frame.size.height - nearbyThingImage.frame.size.height) / 2.0
+            nearbyThingImage.frame.origin.y = y
+            nearbyThingLabel.frame.origin.y = y + nearbyThingImage.frame.size.height - 5
+            nearbyThingComment.frame.origin.y = y + nearbyThingImage.frame.size.height + 22
+            nearbyThingImage.setNeedsDisplay()
             nearbyThingLabel.setNeedsDisplay()
             nearbyThingComment.setNeedsDisplay()
         }
@@ -81,6 +92,10 @@ class CompassView: UIView, FlareController {
         if nearbyThingLabel != nil && nearbyThingComment != nil {
             nearbyThingLabel.text = nearbyThing?.name ?? ""
             nearbyThingComment.text = nearbyThing?.comment ?? ""
+            
+            if let imageName = nearbyThing?.imageName() {
+                nearbyThingImage.image = UIImage(named: imageName)
+            }
         }
     }
     
@@ -176,4 +191,59 @@ class CompassView: UIView, FlareController {
         
         if device != nil { appDelegate.flareManager.performAction(device!, action: action, sender: nil) }
     }
+    
+    var touchedThing: Thing?
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if let touch = touches.first {
+            let point = touch.locationInView(self)
+            let angle = atan2(point.y - self.center.y, point.x - self.center.x)
+            var degrees = 0 - angle * CGFloat(180.0 / M_PI)
+            if degrees < 0 { degrees += 360 }
+            // NSLog("angle: \(degrees)")
+            
+            if let thing = thingAtAngle(degrees) {
+                touchedThing = thing
+            }
+        }
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if touchedThing != nil {
+            appDelegate.nearbyThing = touchedThing
+        }
+    }
+    
+    func thingAtAngle(angle: CGFloat) -> Thing? {
+        if currentEnvironment != nil && device != nil {
+            offset = CGFloat(currentEnvironment!.angle)
+            heading = CGFloat(device!.angle())
+            
+            for zone in currentEnvironment!.zones {
+                if zone.perimeter.contains(device!.position) {
+                    let things = zone.things.sort({device!.distanceTo($0) > device!.distanceTo($1)})
+                    for thing in things {
+                        let distance = CGFloat(device!.distanceTo(thing))
+                        if distance > 0 {
+                            let direction = CGFloat(device!.angleTo(thing))
+                            let sweep = sweepForDistance(distance)
+                            var minAngle = convertAngle(direction - sweep / 2.0)
+                            var maxAngle = convertAngle(direction + sweep / 2.0)
+                            if minAngle < 0 { minAngle += 360 }
+                            if maxAngle < 0 { maxAngle += 360 }
+                            if minAngle > maxAngle { maxAngle += 360 }
+                            // NSLog("\(thing.name) \(minAngle) \(maxAngle)")
+                            if minAngle < angle && angle < maxAngle {
+                                // NSLog("Found thing: \(thing.name)")
+                                return thing
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return nil
+    }
+
 }

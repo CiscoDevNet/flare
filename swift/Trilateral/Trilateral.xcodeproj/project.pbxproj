@@ -47,6 +47,8 @@
 		C95E8F9C1C5C115F00C30E8E /* knopparp-green.png in Resources */ = {isa = PBXBuildFile; fileRef = C95E8F771C5C115F00C30E8E /* knopparp-green.png */; };
 		C95E8F9D1C5C115F00C30E8E /* knopparp-pink.png in Resources */ = {isa = PBXBuildFile; fileRef = C95E8F781C5C115F00C30E8E /* knopparp-pink.png */; };
 		C95E8F9E1C5C115F00C30E8E /* knopparp-yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = C95E8F791C5C115F00C30E8E /* knopparp-yellow.png */; };
+		C95E8FA01C6125AE00C30E8E /* CatalogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E8F9F1C6125AE00C30E8E /* CatalogController.swift */; };
+		C95E8FA21C6129CB00C30E8E /* ThingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E8FA11C6129CB00C30E8E /* ThingCell.swift */; };
 		C98970751B81E90900DAB978 /* Flare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C98970741B81E90900DAB978 /* Flare.framework */; };
 		C98970771B81E91700DAB978 /* SocketIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C98970761B81E91700DAB978 /* SocketIO.framework */; };
 		C98970791B81E93100DAB978 /* SocketIO.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C98970761B81E91700DAB978 /* SocketIO.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -119,6 +121,8 @@
 		C95E8F771C5C115F00C30E8E /* knopparp-green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "knopparp-green.png"; sourceTree = "<group>"; };
 		C95E8F781C5C115F00C30E8E /* knopparp-pink.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "knopparp-pink.png"; sourceTree = "<group>"; };
 		C95E8F791C5C115F00C30E8E /* knopparp-yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "knopparp-yellow.png"; sourceTree = "<group>"; };
+		C95E8F9F1C6125AE00C30E8E /* CatalogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CatalogController.swift; sourceTree = "<group>"; };
+		C95E8FA11C6129CB00C30E8E /* ThingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThingCell.swift; sourceTree = "<group>"; };
 		C98970741B81E90900DAB978 /* Flare.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flare.framework; path = "../../Flare/Output/Release-iphoneos/Flare.framework"; sourceTree = "<group>"; };
 		C98970761B81E91700DAB978 /* SocketIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SocketIO.framework; path = "../../SocketIO/Output/Release-iphoneos/SocketIO.framework"; sourceTree = "<group>"; };
 		C9C2DF131B98A334009E51AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -203,6 +207,7 @@
 				C9D1AA441AC1F5850003B8A1 /* MapViewController.swift */,
 				C9D397681C18CEB8006E6343 /* CompassViewController.swift */,
 				C9D3976A1C18D424006E6343 /* NearbyThingController.swift */,
+				C95E8F9F1C6125AE00C30E8E /* CatalogController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -213,6 +218,7 @@
 				C9D1AA791AC4575D0003B8A1 /* IndoorMap.swift */,
 				C95CEBF81C1209B100C3A226 /* CompassView.swift */,
 				C94290E61C1B83A400FFAA84 /* ColorButton.swift */,
+				C95E8FA11C6129CB00C30E8E /* ThingCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -387,6 +393,8 @@
 				C9D397691C18CEB8006E6343 /* CompassViewController.swift in Sources */,
 				C9D1AA451AC1F5850003B8A1 /* MapViewController.swift in Sources */,
 				C9D1AA431AC1F5850003B8A1 /* AppDelegate.swift in Sources */,
+				C95E8FA21C6129CB00C30E8E /* ThingCell.swift in Sources */,
+				C95E8FA01C6125AE00C30E8E /* CatalogController.swift in Sources */,
 				C9D3976B1C18D424006E6343 /* NearbyThingController.swift in Sources */,
 				C94290E71C1B83A400FFAA84 /* ColorButton.swift in Sources */,
 			);

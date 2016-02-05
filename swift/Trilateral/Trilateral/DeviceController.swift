@@ -34,6 +34,7 @@ class DeviceController: UIViewController, FlareController {
         appDelegate.flareController = self
         appDelegate.updateFlareController()
         self.dataChanged()
+        self.animate()
     }
 
     func dataChanged() {
@@ -45,12 +46,13 @@ class DeviceController: UIViewController, FlareController {
         deviceComment.text = device?.comment ?? ""
         nearbyThingLabel.text = nearbyThing?.name ?? "none"
         nearbyThingComment.text = nearbyThing?.comment ?? ""
+        
         if let position = device?.position {
             positionLabel.text = String(format: "%.2f, %.2f", position.x.roundTo(0.05), position.y.roundTo(0.05))
         } else {
             positionLabel.text = "0.00, 0.00"
         }
-        
+
         if let angle = device?.data["angle"] as? Double {
             angleLabel.text = "\(Int(angle))°"
         } else {
@@ -58,4 +60,7 @@ class DeviceController: UIViewController, FlareController {
         }
     }
     
+    func animate() {
+
+    }
 }

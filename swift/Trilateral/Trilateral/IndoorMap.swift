@@ -64,6 +64,10 @@ class IndoorMap: UIView, FlareController {
         self.setNeedsDisplay()
     }
     
+    func animate() {
+        self.setNeedsDisplay()
+    }
+    
     // sender.identifier can contain several words
     // the first word is the action
     @IBAction func performAction(sender: UIButton) {
@@ -155,6 +159,25 @@ class IndoorMap: UIView, FlareController {
         }
     }
     
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        if let touch = touches.first {
+            let viewPoint = touch.locationInView(self)
+            let gridPoint = undoConvertPoint(flipPoint(viewPoint))
+            if let thing = thingNearPoint(gridPoint) {
+                appDelegate.nearbyThing = thing
+            }
+        }
+    }
+    
+    func thingNearPoint(point: CGPoint) -> Thing? {
+        for thing in things {
+            if thing.position - point < 1.0 {
+                return thing
+            }
+        }
+        return nil
+    }
+    
     static func colorForThing(thing: Thing) -> UIColor {
         var colorName = "red"
         var brightness = 0.5
@@ -218,7 +241,7 @@ class IndoorMap: UIView, FlareController {
     
     func convertPoint(gridPoint: CGPoint) -> CGPoint {
         return CGPoint(x: round(insetCenter.x - (gridCenter.x - gridPoint.x) * scale),
-            y: round(insetCenter.y - (gridCenter.y - gridPoint.y) * scale))
+                       y: round(insetCenter.y - (gridCenter.y - gridPoint.y) * scale))
     }
     
     func convertSize(gridSize: CGSize) -> CGSize {
@@ -227,5 +250,10 @@ class IndoorMap: UIView, FlareController {
     
     func convertRect(gridRect: CGRect) -> CGRect {
         return CGRect(origin: convertPoint(gridRect.origin), size: convertSize(gridRect.size))
+    }
+    
+    func undoConvertPoint(viewPoint: CGPoint) -> CGPoint {
+        return CGPoint(x: gridCenter.x - (insetCenter.x - viewPoint.x) / scale,
+            y: gridCenter.y - (insetCenter.y - viewPoint.y) / scale)
     }
 }
