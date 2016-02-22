@@ -238,6 +238,15 @@ public class Thing: Flare, FlarePosition {
     public var distances = [Double]()
     public var inverseDistance = 0.0
     
+    public class func loadJson(json: JSONDictionary) -> [Thing] {
+        var results = [Thing]()
+        for child in json.getArray("things") {
+            let thing = Thing(json: child)
+            results.append(thing)
+        }
+        return results
+    }
+    
     public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
         self.zoneId = json.getString("zone")
@@ -392,10 +401,28 @@ public func getRect(json: JSONDictionary) -> CGRect {
     return CGRect(origin: getPoint(json.getDictionary("origin")), size: getSize(json.getDictionary("size")))
 }
 
+public func getCube3D(json: JSONDictionary) -> Cube3D {
+    return Cube3D(origin: getPoint3D(json.getDictionary("origin")), size: getSize3D(json.getDictionary("size")))
+}
+
 public func getPoint(json: JSONDictionary) -> CGPoint {
     return CGPoint(x: json.getDouble("x"), y: json.getDouble("y"))
 }
 
+public func getPoint3D(json: JSONDictionary) -> Point3D {
+    // TODO: check for undefined z
+    return Point3D(x: CGFloat(json.getDouble("x")),
+        y: CGFloat(json.getDouble("y")),
+        z: CGFloat(json.getDouble("z")))
+}
+
 public func getSize(json: JSONDictionary) -> CGSize {
     return CGSize(width: json.getDouble("width"), height: json.getDouble("height"))
+}
+
+public func getSize3D(json: JSONDictionary) -> Size3D {
+    // TODO: check for undefined depth
+    return Size3D(width: CGFloat(json.getDouble("width")),
+        height: CGFloat(json.getDouble("height")),
+        depth: CGFloat(json.getDouble("depth")))
 }
