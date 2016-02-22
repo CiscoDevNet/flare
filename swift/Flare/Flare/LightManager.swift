@@ -26,14 +26,20 @@ public class LightManager: APIManager {
     }
     
     public func setPower(on: Bool, handler:(JSONArray) -> ()) {
-        sendRequest("state", params: nil, method: .PUT, message: ["on":on])
-            {json in handler(json as! JSONArray)}
+        sendRequest("state", params: nil, method: .PUT, message: ["on":on]) {json in
+            if let jsonArray = json as? JSONArray {
+                handler(jsonArray)
+            }
+        }
     }
 
     public func setColor(hue: Int, saturation: Int, brightness: Int, handler:(JSONArray) -> ()) {
         let message = ["hue":hue, "sat":saturation, "bri":brightness]
-        sendRequest("state", params: nil, method: .PUT, message: message)
-            {json in handler(json as! JSONArray)}
+        sendRequest("state", params: nil, method: .PUT, message: message) {json in
+            if let jsonArray = json as? JSONArray {
+                handler(jsonArray)
+            }
+        }
     }
     
     // from http://www.w3schools.com/colors/colors_names.asp
