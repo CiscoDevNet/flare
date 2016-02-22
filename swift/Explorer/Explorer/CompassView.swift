@@ -20,6 +20,8 @@ let maxSweep: CGFloat = 40
 let backgroundColor = NSColor.grayColor()
 let ringColor = NSColor(calibratedWhite: 0.2, alpha: 1.0)
 let northColor = NSColor.redColor()
+
+let showTicks = false
 let tickColor = NSColor(calibratedWhite: 1.0, alpha: 0.3)
 let tick2Color = NSColor(calibratedWhite: 1.0, alpha: 0.1)
 let circleColor = NSColor.blackColor()
@@ -79,11 +81,14 @@ class CompassView: NSView {
         }
         
         drawArc(tick2Color, center: center, radius: radius, direction: 0, sweep: 360, thickness: 0.05)
-        for i in 0...7 {
-            let angle = 45 * CGFloat(i)
-            let color = angle == 90.0 ? northColor : tickColor
-            drawArc(color, center: center, radius: radius, direction: angle, sweep: 1, thickness: 0.1)
-            drawArc(tick2Color, center: center, radius: radius, direction: 22.5 + angle, sweep: 1, thickness: 0.1)
+        
+        if showTicks {
+            for i in 0...7 {
+                let angle = 45 * CGFloat(i)
+                let color = angle == 90.0 ? northColor : tickColor
+                drawArc(color, center: center, radius: radius, direction: angle, sweep: 1, thickness: 0.1)
+                drawArc(tick2Color, center: center, radius: radius, direction: 22.5 + angle, sweep: 1, thickness: 0.1)
+            }
         }
     }
 
