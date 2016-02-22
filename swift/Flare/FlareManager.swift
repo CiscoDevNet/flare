@@ -45,6 +45,14 @@ public class FlareManager: APIManager {
         self.socket.disconnect()
     }
     
+    public func getMacAddress(host: String, port: Int, handler:(String) -> ()) {
+        sendRequest("http://\(host):\(port)/mac/mac.php") { json in
+            if let mac = json["result"] as? String {
+                handler(mac)
+            }
+        }
+    }
+    
     // Asynchronously loads all zones and things for one environment, and then calls the handler.
     public func loadEnvironment(environment: Environment, handler:() -> ()) {
         var requests = 0
@@ -494,7 +502,7 @@ public class FlareManager: APIManager {
     
     // looks for an existing device object in the current environment, and if found calls the handler with it
     public func savedDevice(environmentId: String, handler: (Device?) -> ()) {
-        if let deviceId = NSUserDefaults.standardUserDefaults().stringForKey("deviceId") {
+        if let deviceId = NSUserDefaults.standardUserDefaults().stringForKey("\(environmentId)-deviceId") {
             self.getDevice(deviceId, environmentId: environmentId) { (json) -> () in
                 if let _ = json["_id"] as? String {
                     if let deviceEnvironment = json["environment"] as? String {
@@ -529,7 +537,7 @@ public class FlareManager: APIManager {
             let device = Device(json: json)
             self.addToIndex(device)
             
-            NSUserDefaults.standardUserDefaults().setObject(device.id, forKey: "deviceId")
+            NSUserDefaults.standardUserDefaults().setObject(device.id, forKey: "\(environmentId)-deviceId")
             NSLog("Created new device: \(device.name)")
             handler(device)
         }
