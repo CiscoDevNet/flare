@@ -52,8 +52,8 @@ public class APIManager: NSObject {
                     if let json: AnyObject = try? NSJSONSerialization.JSONObjectWithData(data!, options: [])  {
                         handler(json, request, response, duration)
                     } else {
-                        NSLog("Not json: \(NSString(data: data!, encoding: NSUTF8StringEncoding)))")
-                        handler([:], request, response, duration)
+                        let result = NSString(data: data!, encoding: NSUTF8StringEncoding)!
+                        handler(["result":result], request, response, duration)
                     }
                 } else {
                     NSLog("Error: \(error!.localizedDescription)")
@@ -101,7 +101,7 @@ public class APIManager: NSObject {
     
     // returns a fully-qualified URL with the given uri and parameters
     public func urlWithParams(uri: String, params: JSONDictionary?) -> NSURL {
-        var urlString = server + "/" + uri
+        var urlString = uri.containsString("://") ? uri : server + "/" + uri
         if params != nil && params!.count > 0 {
             urlString += "?" + paramString(params!)
         }
