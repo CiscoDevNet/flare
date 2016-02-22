@@ -63,4 +63,8 @@ class DeviceController: UIViewController, FlareController {
     func animate() {
 
     }
+    
+    @IBAction func toggleEnvironment(sender: AnyObject?) {
+        appDelegate.toggleEnvironment()
+    }
 }

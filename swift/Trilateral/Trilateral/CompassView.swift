@@ -20,6 +20,8 @@ let maxSweep: CGFloat = 40
 let backgroundColor = UIColor.grayColor()
 let ringColor = UIColor(white: 0.2, alpha: 1.0)
 let northColor = UIColor.redColor()
+
+let showTicks = false
 let tickColor = UIColor(white: 1.0, alpha: 0.3)
 let tick2Color = UIColor(white: 1.0, alpha: 0.1)
 let circleColor = UIColor.blackColor()
@@ -139,11 +141,14 @@ class CompassView: UIView, FlareController {
         }
 
         drawArc(tick2Color, center: center, radius: radius, direction: convertAngle(0.0), sweep: 360, thickness: 0.05)
-        for i in 0...7 {
-            let angle = 45 * CGFloat(i)
-            let color = angle == 90.0 ? northColor : tickColor
-            drawArc(color, center: center, radius: radius, direction: convertAngle(angle), sweep: 1, thickness: 0.1)
-            drawArc(tick2Color, center: center, radius: radius, direction: convertAngle(22.5 + angle), sweep: 1, thickness: 0.1)
+        
+        if showTicks {
+            for i in 0...7 {
+                let angle = 45 * CGFloat(i)
+                let color = angle == 90.0 ? northColor : tickColor
+                drawArc(color, center: center, radius: radius, direction: convertAngle(angle), sweep: 1, thickness: 0.1)
+                drawArc(tick2Color, center: center, radius: radius, direction: convertAngle(22.5 + angle), sweep: 1, thickness: 0.1)
+            }
         }
     }
     

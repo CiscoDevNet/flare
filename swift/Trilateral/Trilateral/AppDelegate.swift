@@ -9,6 +9,7 @@
 import UIKit
 import Flare
 import CoreLocation
+import WatchConnectivity
 
 // Each of the UIView(Controller)s that control the various tabs conforms to this protocol.
 // When the current objects change these variables will be set, and when the objects' data
@@ -24,7 +25,7 @@ protocol FlareController {
 }
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate, FlareManagerDelegate, BeaconManagerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate, FlareManagerDelegate, BeaconManagerDelegate, WCSessionDelegate {
 
     var window: UIWindow?
 
@@ -39,6 +40,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     var beaconManager = BeaconManager()
     var currentLocation: CLLocation?
     
+    var allEnvironments = [Environment]()
+    
     // when these are changed, the equivalent variables in the current flareController will be updated
     var currentEnvironment: Environment? { didSet(value) {
         if flareController != nil { flareController!.currentEnvironment = self.currentEnvironment }}}
@@ -51,6 +54,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     // when the tab is changed, the new flareController should call updateFlareController()
     var flareController: FlareController? = nil
+    
+    var session: WCSession?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         registerDefaultsFromSettingsBundle()
@@ -71,8 +76,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         beaconManager.delegate = self
         
         flareManager.connect()
-
+        
         if !defaults.boolForKey("useGPS") { loadDefaultEnvironment() }
+
+        if WCSession.isSupported() {
+            session = WCSession.defaultSession()
+            session!.delegate = self
+            session!.activateSession()
+        }
         
         return true
     }
@@ -93,11 +104,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         self.flareManager.loadEnvironments(params, loadDevices: false) { (environments) -> () in // load environment for current location
             if environments.count > 0 {
+                self.allEnvironments = environments
                 self.loadEnvironment(environments[0])
             } else {
                 self.flareManager.loadEnvironments(nil, loadDevices: false) { (environments) -> () in // load all environments
                     if environments.count > 0 {
                         NSLog("No environments found nearby, using first one.")
+                        self.allEnvironments = environments
                         self.loadEnvironment(environments[0])
                     } else {
                         NSLog("No environments found.")
@@ -136,6 +149,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
     }
     
+    func toggleEnvironment() {
+        if allEnvironments.count > 0 && currentEnvironment != nil {
+            let index = allEnvironments.indexOf(currentEnvironment!)
+            let next = (index! + 1) % allEnvironments.count
+            let nextEnvironment = allEnvironments[next]
+            loadEnvironment(nextEnvironment)
+        }
+    }
+    
     func loadDevice(value: Device?) {
         if let device = value {
             self.device = device
@@ -144,6 +166,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             
             loadCurrentZone()
             loadNearbyThing()
+            // loadMacAddress() // this is done server-side
         }
     }
     
@@ -163,7 +186,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
     }
     
-   func updateFlareController() {
+    func loadMacAddress() {
+        if device != nil {
+            if let mac = device!.data["mac"] as? String {
+                if mac == "02:00:00:00:00:00" { // bogus
+                    getMacAddress()
+                }
+            } else {
+                getMacAddress()
+            }
+        }
+    }
+    
+    func getMacAddress() {
+        flareManager.getMacAddress(host, port: 80) { mac in
+            NSLog("mac: \(mac)")
+            self.flareManager.setData(self.device!, key: "mac", value: mac, sender: self.device!)
+        }
+    }
+    
+    func updateFlareController() {
         if flareController != nil {
             flareController!.currentEnvironment = self.currentEnvironment
             flareController!.currentZone = self.currentZone
@@ -232,6 +274,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         if device != nil {
             animateFlare(device!, oldPosition: device!.position, newPosition: position)
             flareManager.setPosition(device!, position: position, sender: nil)
+            sendMessage(["position": position.toJSON()])
+            
+            if nearbyThing != nil {
+                let distance = device!.distanceTo(nearbyThing!)
+                let brightness = 1.0 - (distance)
+                if brightness > 0 {
+                    nearbyThing!.data["brightness"] = brightness
+                    flareManager.setData(nearbyThing!, key: "brightness", value: brightness, sender: device!)
+                    dataChanged()
+                }
+            }
         }
     }
     
@@ -370,6 +423,61 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         defaults.registerDefaults(defaultsToRegister)
         defaults.synchronize()
     }
+    
+    func sendMessage(message: JSONDictionary?) {
+        if (session != nil && message != nil) {
+            NSLog("Sending: \(message!)")
+            session!.sendMessage(message!, replyHandler: nil, errorHandler: nil)
+        }
+    }
+    
+    func session(session: WCSession, didReceiveMessage incomingMessage: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Void) {
+        NSLog("Received message: \(incomingMessage)")
+
+        var message: JSONDictionary? = nil
+        if let get = incomingMessage["get"] as? String {
+            
+            NSLog("Received: \(incomingMessage)")
+            
+            if (get == "position") {
+                message = positionMessage()
+            } else if (get == "things") {
+                message = thingsMessage()
+            }
+            
+            if message != nil {
+                NSLog("Replying: \(message!)")
+                replyHandler(message!)
+            }
+        } else if let data = incomingMessage["data"] as? JSONDictionary,
+            thingId = data["thing"] as? String,
+            thing = flareManager.flareIndex[thingId] as? Thing,
+            key = data["key"] as? String,
+            value = data["value"] as? String
+        {
+            NSLog("Setting \(thing.name) \(key) \(value)")
+            flareManager.setData(thing, key: key, value: value, sender: device)
+        }
+    }
+    
+    func thingsMessage() -> JSONDictionary? {
+        if let zone = currentZone {
+            return ["things": zone.things.map({$0.toJSON()})]
+        } else {
+            return nil
+        }
+    }
+    
+    func positionMessage() -> JSONDictionary? {
+        if let position = device?.position {
+            return ["position": position.toJSON()]
+        } else {
+            return nil
+        }
+    }
+    
+
+
 }
 
 extension Thing {
