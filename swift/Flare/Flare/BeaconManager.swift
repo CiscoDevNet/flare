@@ -29,7 +29,8 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     
     public var environment: Environment?
     public var beacons = [Int:Thing]()
-
+    public var linearBeacons = [Thing]()
+    
     public override init() {
         super.init()
         
@@ -46,6 +47,8 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
                 let uuid = NSUUID(UUIDString: uuidString)
                 region = CLBeaconRegion(proximityUUID: uuid!, identifier: environment!.name)
                 beacons = environment!.beacons()
+                linearBeacons = [Thing](beacons.values)
+                linearBeacons.sortInPlace({ $0.minor > $1.minor })
                 if beaconDebug { NSLog("Looking for \(beacons.count) beacons.") }
             } else {
                 NSLog("Environment has no uuid.")
@@ -163,13 +166,36 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         }
 
         var sortedBeacons = [Thing](beacons.values)
-        sortedBeacons.sortInPlace { (one: Thing, two: Thing) -> Bool in
-            return one.inverseDistance > two.inverseDistance
-        }
+        sortedBeacons.sortInPlace { $0.inverseDistance > $1.inverseDistance }
+        
+        // let trainDemo = true
+        // var nearest: Thing?
+        // var secondNearest: Thing?
         
         for (_,beacon) in sortedBeacons.enumerate() {
             if beacon.inverseDistance != -1 {
-                let weight = beacon.inverseDistance /* * (index < 2 ? 2 : 1) */
+
+                // for tracking position on a linear circuit,
+                // only use the nearest beacon and the one before or after it
+                /* if trainDemo {
+                    if nearest == nil {
+                        nearest = beacon
+                        NSLog("Nearest: \(nearest!.name)")
+                    } else if secondNearest == nil {
+                        if beacon.minor == nearest!.minor! + 1 || beacon.minor! == nearest!.minor! - 1 {
+                            secondNearest = beacon
+                            NSLog("Second nearest: \(secondNearest!.name)")
+                        } else {
+                            // other nearby beacon is not consecutive with the nearest one, so ignore it
+                            continue
+                        }
+                    } else {
+                        // we have already found two beacons, ignore the rest
+                        continue
+                    }
+                } */
+                
+                let weight = beacon.inverseDistance
                 x += Double(beacon.position.x) * weight
                 y += Double(beacon.position.y) * weight
                 total += weight
@@ -180,4 +206,6 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         // NSLog("Result: \(result)")
         return result
     }
+    
+    
 }
