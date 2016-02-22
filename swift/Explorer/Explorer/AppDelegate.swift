@@ -50,6 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     @IBOutlet weak var thingXField: NSTextField!
     @IBOutlet weak var thingYField: NSTextField!
 
+    @IBOutlet weak var macField: NSTextField!
     @IBOutlet weak var angleField: NSTextField!
     @IBOutlet weak var deviceXField: NSTextField!
     @IBOutlet weak var deviceYField: NSTextField!
@@ -372,6 +373,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
             if let angle = data["angle"] as? Double {
                 angleField.doubleValue = angle
             }
+
+            if let mac = data["mac"] as? String {
+                macField.stringValue = mac
+            }
+            
         } else if flare == nearbyFlare {
             if let angle = data["angle"] as? Double {
                 nearbyDeviceAngleField.doubleValue = angle
@@ -762,6 +768,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
             brightnessField.stringValue = ""
             thingXField.stringValue = ""
             thingYField.stringValue = ""
+            macField.stringValue = ""
             angleField.stringValue = ""
             deviceXField.stringValue = ""
             deviceYField.stringValue = ""
@@ -852,6 +859,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 compassDirectionButtons.hidden = false
 
                 if let angle = device.data["angle"] as? String { angleField.stringValue = angle }
+                if let mac = device.data["mac"] as? String { macField.stringValue = mac }
                 deviceXField.doubleValue = Double(device.position.x)
                 deviceYField.doubleValue = Double(device.position.y)
                 
