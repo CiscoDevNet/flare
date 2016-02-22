@@ -20,8 +20,8 @@ var EnvironmentSchema = new mongoose.Schema({
 		radius: Number
 	},
 	perimeter: {
-		origin: {x: Number, y: Number},
-		size: {width: Number, height: Number}
+		origin: {x: Number, y: Number, z: Number},
+		size: {width: Number, height: Number, depth: Number}
 	}
 });
 
@@ -34,8 +34,8 @@ var ZoneSchema = new mongoose.Schema({
 	modified: {type: Date, default: Date.now},
 	actions: [String],
 	perimeter: {
-		origin: {x: Number, y: Number},
-		size: {width: Number, height: Number}
+		origin: {x: Number, y: Number, z: Number},
+		size: {width: Number, height: Number, depth: Number}
 	}
 });
 
@@ -48,7 +48,7 @@ var ThingSchema = new mongoose.Schema({
 	created: {type: Date, default: Date.now},
 	modified: {type: Date, default: Date.now},
 	actions: [String],
-	position: {x: Number, y: Number}
+	position: {x: Number, y: Number, z: Number}
 });
 
 var DeviceSchema = new mongoose.Schema({
@@ -59,7 +59,7 @@ var DeviceSchema = new mongoose.Schema({
 	created: {type: Date, default: Date.now},
 	modified: {type: Date, default: Date.now},
 	actions: [String],
-	position: {x: Number, y: Number},
+	position: {x: Number, y: Number, z: Number},
 	nearest: {type: mongoose.Schema.ObjectId, ref: 'Thing'},
 	zone: {type: mongoose.Schema.ObjectId, ref: 'Zone'}
 });
