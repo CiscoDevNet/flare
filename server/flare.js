@@ -17,14 +17,18 @@ var express = require("express"),
 	methodOverride = require('method-override'),
 	actions = require('./actions'),
 	model = require('./model.json'),
+	arp = require('node-arp'),
 	hostname = process.env.HOSTNAME || 'localhost',
 	port = parseInt(process.env.PORT, 10) || 1234,
 	publicDir = process.argv[2] || __dirname + '/public',
 	io = require('socket.io').listen(app.listen(port)),
 	d = new Date(),
 	globalSocket = null,
-	minDistance = 1.5; // TODO: minimum distance in meters, could be configurable per device and/or thing
-
+	minDistance = 1.5, // TODO: minimum distance in meters, could be configurable per device and/or thing
+	defaultCeiling = 3.0,
+	defaultDepth = 1.0, // defaultDepth should be above defaultFloor and below defaultCeiling
+	defaultFloor = 0.0;
+	
 // if false, handleAction messages will only be broadcast if the action is not handled on the server (i.e. implemented in actions.js)
 // if true, handleAction messages will be broadcast regardless if they are handled on the server
 var broadcastHandledActions = true;
@@ -207,9 +211,11 @@ app.get('/environments/:environment_id/zones/:zone_id/things', function (req, re
 		
 		var x = req.query.x;
 		var y = req.query.y;
+		var z = req.query.z;
+		if (z == undefined) z = defaultDepth;
 		var distance = req.query.distance;
 		if (x !== undefined && y !== undefined && distance !== undefined) {
-			var point = {x:x, y:y};
+			var point = {x:x, y:y, z:z};
 			list = list.filter(function(thing) {
 				return distanceBetween(thing.position, point) < distance;
 			});
@@ -299,9 +305,11 @@ app.get('/environments/:environment_id/devices', function (req, res) {
 		
 		var x = req.query.x;
 		var y = req.query.y;
+		var z = req.query.z;
+		if (z == undefined) z = defaultDepth;
 		var distance = req.query.distance;
 		if (x !== undefined && y !== undefined && distance !== undefined) {
-			var point = {x:x, y:y};
+			var point = {x:x, y:y, z:z};
 			list = list.filter(function(device) {
 				return distanceBetween(device.position, point) < distance;
 			});
@@ -324,9 +332,24 @@ app.post('/environments/:environment_id/devices', function (req, res) {
 	device.environment = req.params.environment_id; // verify that it's a valid object
 	device.created = new Date();
 	device.modifed = new Date();
-	flaredb.Device.create(req.body, function (err, post) {
-		if (err) return res.send(err);
-		res.json(post);
+	
+	var ipAddress = req.connection.remoteAddress;
+	if (ipAddress != null && ipAddress.indexOf('::ffff:') === 0) ipAddress = ipAddress.substring(7);
+	arp.getMAC(ipAddress, function(err, mac) {
+	    if (!err) {
+	        console.log("mac: " + mac);
+			device.data.mac = mac;
+			flaredb.Device.create(req.body, function (err, post) {
+				if (err) return res.send(err);
+				res.json(post);
+			});
+	    } else {
+	    	console.log("mac error: " + err);
+			flaredb.Device.create(req.body, function (err, post) {
+				if (err) return res.send(err);
+				res.json(post);
+			});
+	    }
 	});
 });
 
@@ -831,13 +854,24 @@ function distanceBetween(p1, p2) {
 	// if p1 and p2 aren't valid points, return -1
 	if (p1 == undefined || p1.x == undefined || p1.y == undefined || 
 		p2 == undefined || p2.x == undefined || p2.y == undefined) return -1;
-		
-	return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+	if (p1.z == undefined) p1.z = defaultDepth;
+	if (p2.z == undefined) p2.z = defaultDepth;
+	
+	var dx = p1.x - p2.x;
+	var dy = p1.y - p2.y;
+	var dz = p1.z - p2.z;
+	
+	return Math.sqrt(dx * dx + dy * dy + dz * dz);
 }
 
 function containsPoint(perimeter, point) {
+	if (perimeter.origin.z == undefined) perimeter.origin.z = defaultFloor;
+	if (perimeter.size.depth == undefined) perimeter.size.depth = defaultCeiling;
+	if (point.z == undefined) point.z = defaultDepth;
+	
 	return perimeter.origin.x <= point.x && point.x <= perimeter.origin.x + perimeter.size.width &&
-		   perimeter.origin.y <= point.y && point.y <= perimeter.origin.y + perimeter.size.height;
+		   perimeter.origin.y <= point.y && point.y <= perimeter.origin.y + perimeter.size.height && 
+		   perimeter.origin.z <= point.z && point.z <= perimeter.origin.z + perimeter.size.depth;
 }
 
 function getActions(message) {
