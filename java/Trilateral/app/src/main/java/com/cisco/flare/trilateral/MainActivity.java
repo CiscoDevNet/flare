@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -39,9 +40,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -63,6 +67,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FlareManager.Delegate, CompassManager.Delegate, BeaconConsumer {
@@ -195,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 					mobileDevice.setNearbyThing(newNearbyThing);
 					objectsChanged();
 				});
+
+				getMacAddress(mobileDevice);
 			} else {
 				Log.d(TAG, "Could not load mobile device.");
 			}
@@ -205,10 +213,12 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 				setWatchDevice(newWatchDevice);
 				flareManager.subscribe(watchDevice);
 
-				flareManager.getCurrentZone(environment.getId(), mobileDevice.getPosition(), (newZone) -> {
+				if (watchDevice.getPosition() == null) newWatchDevice.setPosition(new PointF(0,0));
+
+				flareManager.getCurrentZone(environment.getId(), watchDevice.getPosition(), (newZone) -> {
 					watchDevice.setCurrentZone(newZone);
 
-					flareManager.getNearbyThing(environment.getId(), mobileDevice.getId(), (newNearbyThing) -> {
+					flareManager.getNearbyThing(environment.getId(), watchDevice.getId(), (newNearbyThing) -> {
 						watchDevice.setNearbyThing(newNearbyThing);
 
 						sendEnvironmentToWearable();
@@ -217,6 +227,27 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			} else {
 				Log.d(TAG, "Could not load watch device.");
 			}
+		});
+	}
+
+	public void getMacAddress(Device device) {
+		if (device != null) {
+			try {
+				String mac = device.getData().getString("mac");
+				if (mac == null || mac.equals("02:00:00:00:00:00")) {
+					loadMacAddress(device);
+				}
+			} catch (Exception e) {
+				loadMacAddress(device);
+			}
+		}
+	}
+
+	public void loadMacAddress(Device device) {
+		flareManager.getMacAddress((String mac) -> {
+			Log.d(TAG, "mac: " + mac);
+			try { device.getData().put("mac", mac); } catch (Exception e) {}
+			flareManager.setData(device, "mac", mac, device);
 		});
 	}
 
@@ -273,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		if (value != null) {
 			loadDevices();
 
+			flareManager.subscribe(environment, true);
 			FlareBeaconManager.setEnvironment(environment);
 
 			printEnvironment(value);
@@ -331,8 +363,10 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		if (brand.equals("google")) brand = "Google";
 		String description = brand + " " + Build.MODEL + ", Android " + Build.VERSION.RELEASE;
 		JSONObject data = new JSONObject();
-		String macAddress = macAddress();
-		if (macAddress != null) try { data.put("mac", macAddress); } catch (Exception e) {}
+
+		// This doesn't work anymore as of Android 6
+		// String macAddress = macAddress();
+		// if (macAddress != null) try { data.put("mac", macAddress); } catch (Exception e) {}
 
 		JSONObject template = new JSONObject();
 		try { template.put("name", deviceName ); } catch (Exception e) {}
@@ -380,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		return fullName;
 	}
 
+	// this doesn't work anymore as of Android 6
 	public String macAddress() {
 		String macAddr = null;
 		try {
@@ -521,7 +556,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		if ((device == mobileDevice || device == watchDevice) && thing != device.getNearbyThing()) {
 			device.setNearbyThing(thing);
 			objectsChanged();
-			flareManager.subscribe(thing);
+			// not necessary because we're subscribing to all things
+			// flareManager.subscribe(thing);
 			flareManager.getData(thing);
 			flareManager.getPosition(thing);
 
@@ -540,8 +576,13 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	public void far(Thing thing, Device device) {
 		Log.d(TAG, device.getName() + " is far from " + thing.getName());
 
+		/*
+		// we're turning off far messages
+		// with manual selection, we don't want the selection to randomly go away
+
 		if ((device == mobileDevice || device == watchDevice) && thing == device.getNearbyThing()) {
-			flareManager.unsubscribe(thing);
+			// not necessary because we're subscribing to all things
+			// flareManager.unsubscribe(thing);
 			device.setNearbyThing(null);
 			objectsChanged();
 
@@ -554,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 		for (FlareFragment fragment : flareFragments) {
 			fragment.far(thing, device);
-		}
+		} */
 	}
 
 	private Location getLastKnownLocation() {
@@ -879,6 +920,164 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		}
 	}
 
+	public static class CatalogFragment extends FlareFragment {
+
+		public ListView catalogListView;
+		public ThingArrayAdapter adapter;
+		public ArrayList<Thing> things;
+
+		public CatalogFragment() {
+
+		}
+
+		public static CatalogFragment newInstance() {
+			return new CatalogFragment();
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			View view = inflater.inflate(R.layout.fragment_list, container, false);
+
+			catalogListView = (ListView) view.findViewById(R.id.catalogListView);
+			catalogListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+			Device device = mainActivity.getDevice();
+			Zone currentZone = device != null ? device.getCurrentZone() : null;
+			Thing nearbyThing = device != null ? device.getNearbyThing() : null;
+			things = currentZone != null ? currentZone.getThings() : null;
+			sortThingsByDistanceFrom(device);
+
+			adapter = new ThingArrayAdapter(getContext(), things);
+			catalogListView.setAdapter(adapter);
+			catalogListView.setOnItemClickListener((parent, view2, position, id) -> {
+				Thing selectedThing = (Thing) catalogListView.getItemAtPosition(position);
+				if (selectedThing != null) {
+					// simulate a near message to select the device
+					mainActivity.near(selectedThing, device, device.distanceTo(selectedThing));
+				}
+				Log.d(TAG, "Selected: " + selectedThing.getName());
+			});
+
+			selectThing(nearbyThing);
+			objectsChanged();
+
+			return view;
+		}
+
+		public void sortThingsByDistanceFrom(Device device) {
+			Collections.sort(things, (Thing t1, Thing t2) -> (int)(device.distanceTo(t1) - device.distanceTo(t2)));
+		}
+
+		public class ThingArrayAdapter extends ArrayAdapter<Thing> {
+			private final Context context;
+			private ArrayList<Thing> values;
+			private HashMap<String, Drawable> imageMap = new HashMap<>();
+
+			public ThingArrayAdapter(Context context, ArrayList<Thing> values) {
+				super(context, -1, values);
+				this.context = context;
+				this.values = values;
+			}
+
+			@Override
+			public View getView(int position, View rowView, ViewGroup parent) {
+				LayoutInflater inflater = (LayoutInflater) context
+						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				if (rowView == null) {
+					rowView = inflater.inflate(R.layout.fragment_list_thing, parent, false);
+				}
+
+				boolean selected = catalogListView.isItemChecked(position);
+				rowView.setBackgroundColor(selected ? Color.LTGRAY : Color.WHITE);
+
+				ImageView thingIcon = (ImageView) rowView.findViewById(R.id.thing_icon);
+				TextView nameView = (TextView) rowView.findViewById(R.id.thing_name);
+				TextView descriptionView = (TextView) rowView.findViewById(R.id.thing_description);
+				TextView priceView = (TextView) rowView.findViewById(R.id.thing_price);
+				TextView distanceView = (TextView) rowView.findViewById(R.id.thing_distance);
+
+				Thing thing = values.get(position);
+				Device device = mainActivity.getDevice();
+				int price = 99;
+				try { price = thing.getData().getInt("price"); } catch (Exception e) {}
+				double distance = device.distanceTo(thing);
+
+				nameView.setText(thing.getName());
+				descriptionView.setText(thing.getDescription());
+				priceView.setText("$" + price);
+				distanceView.setText(String.format("%.2fm", distance));
+
+				try {
+					String imageName = thing.getName().toLowerCase() + "_" + thing.getColor() + "_small";
+					Drawable image = imageMap.get(imageName);
+					if (image == null) {
+						Log.d(TAG, "Getting image: " + imageName);
+						image = mainActivity.getImageNamed(imageName);
+						if (image != null) imageMap.put(imageName, image);
+					}
+					thingIcon.setImageDrawable(image);
+				} catch (Exception e) {
+					thingIcon.setImageResource(android.R.color.transparent);
+				}
+
+				return rowView;
+			}
+		}
+
+
+		@Override
+		public void showMessage(String message) {
+
+		}
+
+		@Override
+		public void objectsChanged() {
+			super.objectsChanged();
+
+			Device device = mainActivity.getDevice();
+			Zone currentZone = device != null ? device.getCurrentZone() : null;
+			Thing nearbyThing = device != null ? device.getNearbyThing() : null;
+			things = currentZone != null ? currentZone.getThings() : null;
+			sortThingsByDistanceFrom(device);
+			selectThing(nearbyThing);
+
+			adapter.notifyDataSetChanged();
+		}
+
+		private void selectThing(Thing thing) {
+			if (catalogListView != null) {
+				if (thing != null) {
+					int position = things.indexOf(thing);
+					if (position != -1) {
+						catalogListView.setItemChecked(position, true);
+					}
+				}
+			}
+		}
+
+		@Override
+		public void positionChanged() {
+			Device device = mainActivity.getDevice();
+			sortThingsByDistanceFrom(device);
+			adapter.notifyDataSetChanged();
+		}
+
+		@Override
+		public void angleChanged() {
+
+		}
+
+		@Override
+		public void near(Thing thing, Device device, double distance) {
+			// change selection
+		}
+
+		@Override
+		public void far(Thing thing, Device device) {
+
+		}
+	}
+
 	public static class ThingFragment extends FlareFragment {
 		public ThingFragment() {
 			Log.d(TAG, "ThingFragment");
@@ -1066,7 +1265,6 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 				try {
 					String name = nearbyThing.getName().toLowerCase();
 					String imageName = name + "_" + selectedColor;
-					Log.d(TAG, "imageName: " + imageName);
 					if (imageView != null) imageView.setImageDrawable(mainActivity.getImageNamed(imageName));
 				} catch (Exception e) {
 					if (imageView != null) imageView.setImageResource(android.R.color.transparent);
@@ -1106,7 +1304,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 
 		@Override
 		public int getCount() {
-			return 4;
+			return 5;
 		}
 
 		@Override
@@ -1116,9 +1314,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 				case 0: item = PhoneFragment.newInstance(); break;
 				case 1: item = CompassFragment.newInstance(); break;
 				case 2: item = MapFragment.newInstance(); break;
-				case 3: item = ThingFragment.newInstance(); break;
+				case 3: item = CatalogFragment.newInstance(); break;
+				case 4: item = ThingFragment.newInstance(); break;
 			}
-			Log.d(TAG, "Get item " + position);
 			return item;
 		}
 
@@ -1126,9 +1324,10 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
 				case 0: return "PHONE";
-				case 1: return "COMPASS";
+				case 1: return "RIM";
 				case 2: return "MAP";
-				case 3: return "THING";
+				case 3: return "LIST";
+				case 4: return "THING";
 			}
 			return null;
 		}

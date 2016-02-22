@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import io.socket.client.IO;
@@ -53,6 +54,10 @@ public class FlareManager {
 
     public interface ListHandler {
         public void gotResponse(ArrayList<JSONObject> object);
+    }
+
+    public interface StringHandler {
+        public void gotResponse(String value);
     }
 
     // TODO: can we combine these?
@@ -361,6 +366,18 @@ public class FlareManager {
         queue.add(request);
     }
 
+    public void sendStringRequest(int method, String uri, final StringHandler handler) {
+        String url = uri.contains("://") ? uri : server + uri;
+        StringRequest request = new StringRequest(method, url, (response) -> {
+            if (debugRest) Log.d(TAG, uri + ": " + response);
+            handler.gotResponse(response);
+        }, (error) -> {
+            Log.e(TAG, "Could not connect to: " + uri);
+            handler.gotResponse(null);
+        });
+        queue.add(request);
+    }
+
     // convert JSONArray to ArrayList<JSONObject> so that we can enumerate them!
     public ArrayList<JSONObject> toList(JSONArray jsonArray) {
         ArrayList<JSONObject> list = new ArrayList<>();
@@ -504,6 +521,11 @@ public class FlareManager {
     public void deleteDevice(String deviceId, String environmentId, Handler handler) {
         String uri = "/environments/" + environmentId + "/devices/" + deviceId;
         sendRequest(Request.Method.DELETE, uri, handler);
+    }
+
+    public void getMacAddress(StringHandler handler) {
+        String url = "http://" + this.host + "/mac/mac.php";
+        sendStringRequest(Request.Method.GET, url, handler);
     }
 
     // MARK: ScoketIO sent

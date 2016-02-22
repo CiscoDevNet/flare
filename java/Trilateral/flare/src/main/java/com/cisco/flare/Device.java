@@ -21,9 +21,7 @@ public class Device extends Flare implements Flare.PositionObject {
         super(json);
 
         try {
-            try { this.position = getPoint(json.getJSONObject("position")); } catch (Exception e) { }
-
-            // Log.d("Device", "name: "+this.name+" - color: "+getColorString());
+            try { this.position = getPoint(json.getJSONObject("position")); } catch (Exception e) { this.position = new PointF(0,0); }
         } catch (Exception e) {
             Log.e("Flare", "Parse error: ", e);
         }
@@ -47,6 +45,14 @@ public class Device extends Flare implements Flare.PositionObject {
         return json;
     }
 
+    public double getAngle() {
+        try {
+            return getData().getDouble("angle");
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     public PointF getPosition() {
         return position;
     }
@@ -56,6 +62,7 @@ public class Device extends Flare implements Flare.PositionObject {
     }
 
     public double distanceTo(Thing thing) {
+        if (position == null || thing.getPosition() == null) return 0;
         double dy = thing.getPosition().y - position.y;
         double dx = thing.getPosition().x - position.x;
         return Math.sqrt((dx * dx) + (dy * dy));

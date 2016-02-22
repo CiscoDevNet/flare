@@ -261,12 +261,11 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
         if (device == mDevice) {
             for (Thing t : mSelectedZone.getThings()) {
                 if (t == thing) {
-                    Log.i(TAG, "found thing the device is near to");
+                    // Log.i(TAG, "found thing the device is near to");
                     synchronized (mSurfaceHolder) {
-                        // find if this is already in the array (to avoid duplications)
-                        if (!mThingsNearDevice.contains(thing)) {
-                            mThingsNearDevice.add(thing);
-                        }
+                        // we only want to keep track of one nearby object at a time
+                        mThingsNearDevice.clear();
+                        mThingsNearDevice.add(thing);
                     }
                     dataChanged();
                     break;

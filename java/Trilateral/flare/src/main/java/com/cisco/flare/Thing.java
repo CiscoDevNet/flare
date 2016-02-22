@@ -147,4 +147,14 @@ public class Thing extends Flare implements Flare.PositionObject {
 	public void setInverseSquareDistance(double inverseSquareDistance ) {
 		this.inverseSquareDistance = inverseSquareDistance ;
 	}
+
+	public double distanceTo(Device device) {
+		return distanceTo(device.getPosition());
+	}
+
+	public double distanceTo(PointF point) {
+		double dy = point.y - position.y;
+		double dx = point.x - position.x;
+		return Math.sqrt((dx * dx) + (dy * dy));
+	}
 }

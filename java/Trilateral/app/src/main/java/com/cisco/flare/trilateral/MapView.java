@@ -57,9 +57,9 @@ public class MapView extends CommonView {
         mPerimeterPaint.setColor(Color.BLACK);
 
         mLinkPaint = new Paint();
-        mLinkPaint.setStrokeWidth(5);
+        mLinkPaint.setStrokeWidth(10);
         mLinkPaint.setStyle(Paint.Style.STROKE);
-        mLinkPaint.setColor(Color.YELLOW);
+        mLinkPaint.setColor(Color.BLUE);
 
         mDrawableThing = mContext.getResources().getDrawable(R.drawable.thing);
         mDrawableThingDimensions = new Rect(0, 0, mDrawableThing.getMinimumWidth(), mDrawableThing.getMinimumHeight());
@@ -115,15 +115,16 @@ public class MapView extends CommonView {
                     yMax = yMin + mPerimeterToCanvasMultiplier * perimeter.height();
             canvas.drawRect(xMin, yMin, xMax, yMax, mPerimeterPaint);
 
+            // draw a link between the device and things it is near to
+            for (Thing t : mThingsNearDevice) {
+                drawLinkBetweenDeviceAndThing(canvas, t);
+            }
+
             // draw things
             for (Thing thing : mSelectedZone.getThings()) {
                 PointF position = thing.getPosition();
                 mDrawableThing.setColorFilter(determineThingColor(thing), PorterDuff.Mode.SRC);
-                drawAtObjectPosition(canvas, mDrawableThing, (int)position.x, (int)position.y);
-            }
-            // draw a link between the device and things it is near to
-            for (Thing t : mThingsNearDevice) {
-                drawLinkBetweenDeviceAndThing(canvas, t);
+                drawAtObjectPosition(canvas, mDrawableThing, (int) position.x, (int) position.y);
             }
         }
 
@@ -161,7 +162,7 @@ public class MapView extends CommonView {
 
     private PointF positionFromCanvas(PointF pos) {
         float x = (pos.x-mPerimeterOriginOnCanvas.x)/mPerimeterToCanvasMultiplier;
-        float y = (pos.y-mPerimeterOriginOnCanvas.y)/mPerimeterToCanvasMultiplier;
+        float y = ((mCanvasHeight - pos.y)-mPerimeterOriginOnCanvas.y)/mPerimeterToCanvasMultiplier;
         return new PointF(x, y);
     }
 
@@ -177,30 +178,43 @@ public class MapView extends CommonView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // ignore touches if we mFlareManager or mDevice aren't initialised
-        if (mFlareManager == null || mDevice == null) return false;
+        if (mFlareManager == null || mDevice == null || mSelectedZone == null) return false;
 
-        PointF touchedCoords = new PointF(event.getX(), event.getY());
+        if (MotionEvent.ACTION_UP == event.getAction()) {
+            PointF touchedCoords = new PointF(event.getX(), event.getY());
+            RectF perimeter = mSelectedZone.getPerimeter();
+            float xMin = mPerimeterOriginOnCanvas.x,
+                    yMin = mPerimeterOriginOnCanvas.y,
+                    xMax = xMin + mPerimeterToCanvasMultiplier * perimeter.width(),
+                    yMax = yMin + mPerimeterToCanvasMultiplier * perimeter.height();
+            if (touchedCoords.x >= xMin &&
+                    touchedCoords.y >= yMin &&
+                    touchedCoords.x <= xMax &&
+                    touchedCoords.y <= yMax) {
+                // transform from canvas to perimeter coordinates
+                PointF position = positionFromCanvas(touchedCoords);
 
-        RectF perimeter = mSelectedZone.getPerimeter();
-        float xMin = mPerimeterOriginOnCanvas.x,
-              yMin = mPerimeterOriginOnCanvas.y,
-              xMax = xMin + mPerimeterToCanvasMultiplier * perimeter.width(),
-              yMax = yMin + mPerimeterToCanvasMultiplier * perimeter.height();
-        if (touchedCoords.x >= xMin &&
-            touchedCoords.y >= yMin &&
-            touchedCoords.x <= xMax &&
-            touchedCoords.y <= yMax) {
-            // transform from canvas to perimeter coordinates
-            PointF position = positionFromCanvas(touchedCoords);
-
-            // TODO: instead of manually updating the device position here, wait for the setPosition notification from FlareManager
-            // updating the device position
-            mDevice.setPosition(position);
-
-            // and notify the Flare Manager, which should normally notify MobileMainActivity and the views (but it's not at the moment)
-            mFlareManager.setPosition(this.mDevice, position, this.mDevice);
+                Thing nearThing = thingNearPoint(position, 1.0f);
+                if (nearThing != null) {
+                    Log.d(TAG, "Selected: " + nearThing.getName());
+                    final MainActivity activity = (MainActivity)getContext();
+                    activity.near(nearThing, mDevice, mDevice.distanceTo(nearThing));
+                }
+            }
         }
 
         return true;
+    }
+
+    public Thing thingNearPoint(PointF point, float distance) {
+        if (mSelectedZone == null) return null;
+
+        for (Thing thing : mSelectedZone.getThings()) {
+            if (thing.distanceTo(point) < distance) {
+                return thing;
+            }
+        }
+
+        return null;
     }
 }

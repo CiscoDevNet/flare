@@ -43,7 +43,7 @@ public class DrawableThing extends Thing {
     // returns an angle in degrees
     private float getAngleToPosition(PointF target) {
         // OF: the origin is in the top left hand corner
-        float angle = /*180 - */(float) Math.toDegrees(Math.atan2(target.y - position.y, target.x - position.x));
+        float angle = 180 - (float) Math.toDegrees(Math.atan2(target.y - position.y, target.x - position.x));
 
         if (angle < 0) {
             angle += 360;
