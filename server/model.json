@@ -271,6 +271,184 @@
                     ]
                 }
             ]
+        },
+        {
+            "angle": 0,
+            "description": "New York, NY",
+            "geofence": {
+                "latitude": 40.7512146,
+                "longitude": -73.9947581,
+                "radius": 10000
+            },
+            "name": "New York",
+            "data": {
+                "uuid": "F7826DA6-4FA2-4E98-8024-BC5B71E0893E"
+            },
+            "perimeter": {
+                "origin": {
+                    "x": -1,
+                    "y": -1
+                },
+                "size": {
+                    "height": 13,
+                    "width": 13
+                }
+            },
+			"devices": [
+                {
+                    "data": {
+                        "color": "red",
+						"angle": 90
+                    },
+                    "description": "iPhone 6 (32 GB)",
+                    "name": "Andrew's iPhone",
+                    "position": {
+                        "x": 3,
+                        "y": 1
+                    },
+                    "type": "mobile"
+                }
+			],
+            "zones": [
+                {
+                    "data": {
+                        "major": 101
+                    },
+                    "name": "Open Space",
+                    "perimeter": {
+                        "origin": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "size": {
+                            "height": 11,
+                            "width": 11
+                        }
+                    },
+                    "things": [
+                        {
+                            "data": {
+                                "minor": 62708
+                            },
+                            "description": "8Kzf",
+                            "name": "Kontakt 1",
+                            "position": {
+                                "x": 1,
+                                "y": 1
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 4922
+                            },
+                            "description": "O7LU",
+                            "name": "Kontakt 2",
+                            "position": {
+                                "x": 2,
+                                "y": 2
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 11177
+                            },
+                            "description": "OlQm",
+                            "name": "Kontakt 3",
+                            "position": {
+                                "x": 3,
+                                "y": 3
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 7427
+                            },
+                            "description": "SgAk",
+                            "name": "Kontakt 4",
+                            "position": {
+                                "x": 4,
+                                "y": 4
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 44748
+                            },
+                            "description": "UtNz",
+                            "name": "Kontakt 5",
+                            "position": {
+                                "x": 5,
+                                "y": 5
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 18942
+                            },
+                            "description": "VEZU",
+                            "name": "Kontakt 6",
+                            "position": {
+                                "x": 6,
+                                "y": 6
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 60120
+                            },
+                            "description": "ZGsJ",
+                            "name": "Kontakt 7",
+                            "position": {
+                                "x": 7,
+                                "y": 7
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 29164
+                            },
+                            "description": "ayuk",
+                            "name": "Kontakt 8",
+                            "position": {
+                                "x": 8,
+                                "y": 8
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 17942
+                            },
+                            "description": "g1Py",
+                            "name": "Kontakt 9",
+                            "position": {
+                                "x": 9,
+                                "y": 9
+                            },
+                            "type": "beacon"
+                        },
+                        {
+                            "data": {
+                                "minor": 15222
+                            },
+                            "description": "gYHW",
+                            "name": "Kontakt 10",
+                            "position": {
+                                "x": 10,
+                                "y": 10
+                            },
+                            "type": "beacon"
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
