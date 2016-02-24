@@ -13,20 +13,45 @@ public typealias JSONDictionary = [String:AnyObject]
 public typealias JSONArray = [JSONDictionary]
 
 public struct Point3D {
-    var x: CGFloat
-    var y: CGFloat
-    var z: CGFloat
+    public var x: CGFloat
+    public var y: CGFloat
+    public var z: CGFloat
+    
+    public init(x: CGFloat, y: CGFloat, z: CGFloat) {
+        self.x = x
+        self.y = y
+        self.z = z
+    }
+    
+    public init(x: Double, y: Double, z: Double) {
+        self.x = CGFloat(x)
+        self.y = CGFloat(y)
+        self.z = CGFloat(z)
+    }
 }
 
+let Point3DZero = Point3D(x: CGFloat(0), y: CGFloat(0), z: CGFloat(0))
+
 public struct Size3D {
-    var width: CGFloat
-    var height: CGFloat
-    var depth: CGFloat
+    public var width: CGFloat
+    public var height: CGFloat
+    public var depth: CGFloat
+    
+    public init(width: CGFloat, height: CGFloat, depth: CGFloat) {
+        self.width = width
+        self.height = height
+        self.depth = depth
+    }
 }
 
 public struct Cube3D {
-    var origin: Point3D
-    var size: Size3D
+    public var origin: Point3D
+    public var size: Size3D
+    
+    public init(origin: Point3D, size: Size3D) {
+        self.origin = origin
+        self.size = size
+    }
 }
 
 // compare JSONDictionary objects
@@ -209,7 +234,7 @@ public extension Double {
 public extension CGRect {
     
     // returns the point at the center of the rectangle
-    func center() -> CGPoint {
+    public func center() -> CGPoint {
         return CGPoint(x: (self.minX + self.maxX) / 2.0,
             y: (self.minY + self.maxY) / 2.0)
     }
@@ -222,10 +247,20 @@ public extension CGRect {
 public extension Cube3D {
     
     // returns the point at the center of the cube
-    func center() -> Point3D {
+    public func center() -> Point3D {
         return Point3D(x: self.origin.x + self.size.width / 2.0,
             y: self.origin.y + self.size.height / 2.0,
             z: self.origin.z + self.size.depth / 2.0)
+    }
+    
+    public func contains(point: Point3D) -> Bool {
+        return self.origin.x <= point.x && point.x <= self.origin.x + self.size.width &&
+            self.origin.y <= point.y && point.y <= self.origin.y + self.size.height &&
+            self.origin.z <= point.z && point.z <= self.origin.z + self.size.depth
+    }
+    
+    public func toRect() -> CGRect {
+        return CGRect(origin: self.origin.toPoint(), size: self.size.toSize())
     }
     
     public func toJSON() -> JSONDictionary {
@@ -257,6 +292,10 @@ public extension Size3D {
         return sqrt(x2 + y2 + z2)
     }
     
+    public func toSize() -> CGSize {
+        return CGSize(width: self.width, height: self.height)
+    }
+    
     public func toJSON() -> JSONDictionary {
         return ["width": self.width, "height": self.height, "depth": self.depth]
     }
@@ -281,6 +320,10 @@ public extension Point3D {
         return Point3D(x: CGFloat(self.x.roundTo(precision)),
             y: CGFloat(self.y.roundTo(precision)),
             z: CGFloat(self.z.roundTo(precision)))
+    }
+    
+    public func toPoint() -> CGPoint {
+        return CGPoint(x: self.x, y: self.y)
     }
     
     public func toJSON() -> JSONDictionary {

@@ -10,14 +10,14 @@ import Foundation
 import CoreGraphics
 import SocketIO
 
-@objc public protocol FlareManagerDelegate {
-    optional func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?)
-    optional func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?)
-    optional func handleAction(flare: Flare, action: String, sender: Flare?)
-    optional func enter(zone: Zone, device: Device)
-    optional func exit(zone: Zone, device: Device)
-    optional func near(thing: Thing, device: Device, distance: Double)
-    optional func far(thing: Thing, device: Device)
+public protocol FlareManagerDelegate {
+    func didReceiveData(flare: Flare, data: JSONDictionary, sender: Flare?)
+    func didReceivePosition(flare: Flare, oldPosition: Point3D, newPosition: Point3D, sender: Flare?)
+    func handleAction(flare: Flare, action: String, sender: Flare?)
+    func enter(zone: Zone, device: Device)
+    func exit(zone: Zone, device: Device)
+    func near(thing: Thing, device: Device, distance: Double)
+    func far(thing: Thing, device: Device)
 }
 
 public class FlareManager: APIManager {
@@ -318,8 +318,8 @@ public class FlareManager: APIManager {
     }
     
     // return only zones in the environment containing the given point
-    public func listZones(environmentId: String, point: CGPoint, handler:(JSONArray) -> ()) {
-        let params = ["x":"\(point.x)", "y":"\(point.x)"]
+    public func listZones(environmentId: String, point: Point3D, handler:(JSONArray) -> ()) {
+        let params = point.toJSON()
         listZones(environmentId, params: params, handler: handler)
     }
     
@@ -590,13 +590,13 @@ public class FlareManager: APIManager {
         emit("getPosition", message: message)
     }
     
-    public func setPosition(flare: Flare, position: CGPoint, sender: Flare?) {
+    public func setPosition(flare: Flare, position: Point3D, sender: Flare?) {
         var message = flare.flareInfo
-        if position.x.isNaN || position.y.isNaN {
+        if position.x.isNaN || position.y.isNaN || position.z.isNaN {
             NSLog("Invalid position: \(position)")
             return
         }
-        message["position"] = ["x":position.x, "y":position.y]
+        message["position"] = position.toJSON()
         if sender != nil { message["sender"] = sender!.id }
         emit("setPosition", message: message)
     }
@@ -626,7 +626,7 @@ public class FlareManager: APIManager {
                     sender = self.flareIndex[senderId]
                 }
                 
-                self.delegate?.didReceiveData?(flare, data: data, sender: sender)
+                self.delegate?.didReceiveData(flare, data: data, sender: sender)
             }
         }
         
@@ -636,8 +636,8 @@ public class FlareManager: APIManager {
                 positionDict = message["position"] as? JSONDictionary
             {
                 if self.debugSocket { NSLog("position: \(message)") }
-                let newPosition = getPoint(positionDict);
-                var oldPosition = CGPointZero
+                let newPosition = getPoint3D(positionDict);
+                var oldPosition = Point3DZero
                 
                 if let thing = flare as? Thing {
                     oldPosition = thing.position
@@ -652,7 +652,7 @@ public class FlareManager: APIManager {
                     sender = self.flareIndex[senderId]
                 }
                 
-                self.delegate?.didReceivePosition?(flare, oldPosition: oldPosition, newPosition: newPosition, sender: sender)
+                self.delegate?.didReceivePosition(flare, oldPosition: oldPosition, newPosition: newPosition, sender: sender)
             }
         }
         
@@ -668,7 +668,7 @@ public class FlareManager: APIManager {
                     sender = self.flareIndex[senderId]
                 }
                 
-                self.delegate?.handleAction?(flare, action: action, sender: sender)
+                self.delegate?.handleAction(flare, action: action, sender: sender)
             }
         }
         
@@ -680,7 +680,7 @@ public class FlareManager: APIManager {
                 device = self.flareIndex[deviceId] as? Device
             {
                 if self.debugSocket { NSLog("enter: \(message)") }
-                self.delegate?.enter?(zone, device: device)
+                self.delegate?.enter(zone, device: device)
             }
         }
         
@@ -692,7 +692,7 @@ public class FlareManager: APIManager {
                 device = self.flareIndex[deviceId] as? Device
             {
                 if self.debugSocket { NSLog("exit: \(message)") }
-                self.delegate?.exit?(zone, device: device)
+                self.delegate?.exit(zone, device: device)
             }
         }
         
@@ -705,7 +705,7 @@ public class FlareManager: APIManager {
                 distance = message["distance"] as? Double
             {
                 if self.debugSocket { NSLog("near: \(message)") }
-                self.delegate?.near?(thing, device: device, distance: distance)
+                self.delegate?.near(thing, device: device, distance: distance)
             }
         }
         
@@ -717,7 +717,7 @@ public class FlareManager: APIManager {
                 device = self.flareIndex[deviceId] as? Device
             {
                 if self.debugSocket { NSLog("far: \(message)") }
-                self.delegate?.far?(thing, device: device)
+                self.delegate?.far(thing, device: device)
             }
         }
     }

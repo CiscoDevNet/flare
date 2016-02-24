@@ -38,7 +38,7 @@ public class Flare: NSObject {
         return "\(self.flareClass) \(self.id) - \(self.name)"
     }
 
-    public func setDistanceFrom(currentPosition: CGPoint) {
+    public func setDistanceFrom(currentPosition: Point3D) {
         // override to calculate the distance
     }
     
@@ -79,16 +79,16 @@ public class Flare: NSObject {
 }
 
 public protocol FlarePosition {
-    var position: CGPoint { get set }
+    var position: Point3D { get set }
 }
 
 public protocol FlarePerimeter {
-    var perimeter: CGRect { get set }
+    var perimeter: Cube3D { get set }
 }
 
 public class Environment: Flare, FlarePerimeter {
     public var geofence: Geofence
-    public var perimeter: CGRect
+    public var perimeter: Cube3D
     public var angle: Double
     public var uuid: String?
 
@@ -106,7 +106,7 @@ public class Environment: Flare, FlarePerimeter {
     
     public override init(json: JSONDictionary) {
         self.geofence = Geofence(json: json.getDictionary("geofence"))
-        self.perimeter = getRect(json.getDictionary("perimeter"))
+        self.perimeter = getCube3D(json.getDictionary("perimeter"))
         self.angle = json.getDouble("angle")
         
         for child: JSONDictionary in json.getArray("zones") {
@@ -142,8 +142,8 @@ public class Environment: Flare, FlarePerimeter {
         return json
     }
 
-    public override func setDistanceFrom(latlong: CGPoint) {
-        self.distance = self.geofence.distanceFrom(latlong)
+    public override func setDistanceFrom(latlong: Point3D) {
+        self.distance = self.geofence.distanceFrom(latlong.toPoint())
     }
 
     public func here() -> Bool {
@@ -181,8 +181,8 @@ public class Environment: Flare, FlarePerimeter {
 public class Zone: Flare, FlarePerimeter {
     public var environmentId: String
     
-    public var perimeter: CGRect
-    public var center: CGPoint
+    public var perimeter: Cube3D
+    public var center: Point3D
     public var major: Int?
     
     public var things = [Thing]()
@@ -190,7 +190,7 @@ public class Zone: Flare, FlarePerimeter {
     public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
 
-        self.perimeter = getRect(json.getDictionary("perimeter"))
+        self.perimeter = getCube3D(json.getDictionary("perimeter"))
         self.center = self.perimeter.center()
         
         for child: JSONDictionary in json.getArray("things") {
@@ -222,7 +222,7 @@ public class Zone: Flare, FlarePerimeter {
         return json
     }
 
-    public override func setDistanceFrom(currentPosition: CGPoint) {
+    public override func setDistanceFrom(currentPosition: Point3D) {
         self.distance = perimeter.contains(currentPosition) ? 0.0 : Double(currentPosition - self.center)
     }
 }
@@ -232,7 +232,7 @@ public class Thing: Flare, FlarePosition {
     public var zoneId: String
     
     public var type: String
-    public var position: CGPoint
+    public var position: Point3D
     public var minor: Int?
     
     public var distances = [Double]()
@@ -252,7 +252,7 @@ public class Thing: Flare, FlarePosition {
         self.zoneId = json.getString("zone")
         
         self.type = json.getString("type")
-        self.position = getPoint(json.getDictionary("position"))
+        self.position = getPoint3D(json.getDictionary("position"))
         
         super.init(json: json)
 
@@ -273,7 +273,7 @@ public class Thing: Flare, FlarePosition {
         return json
     }
     
-    public override func setDistanceFrom(currentPosition: CGPoint) {
+    public override func setDistanceFrom(currentPosition: Point3D) {
         self.distance = Double(currentPosition - self.position)
     }
 
@@ -313,12 +313,12 @@ public class Thing: Flare, FlarePosition {
 public class Device: Flare, FlarePosition {
     public var environmentId: String
 
-    public var position: CGPoint
+    public var position: Point3D
     
     public override init(json: JSONDictionary) {
         self.environmentId = json.getString("environment")
 
-        self.position = getPoint(json.getDictionary("position"))
+        self.position = getPoint3D(json.getDictionary("position"))
         
         super.init(json: json)
     }
@@ -410,10 +410,9 @@ public func getPoint(json: JSONDictionary) -> CGPoint {
 }
 
 public func getPoint3D(json: JSONDictionary) -> Point3D {
-    // TODO: check for undefined z
     return Point3D(x: CGFloat(json.getDouble("x")),
         y: CGFloat(json.getDouble("y")),
-        z: CGFloat(json.getDouble("z")))
+        z: CGFloat(json.getDouble("z"))) // default is 0
 }
 
 public func getSize(json: JSONDictionary) -> CGSize {
@@ -421,8 +420,7 @@ public func getSize(json: JSONDictionary) -> CGSize {
 }
 
 public func getSize3D(json: JSONDictionary) -> Size3D {
-    // TODO: check for undefined depth
     return Size3D(width: CGFloat(json.getDouble("width")),
         height: CGFloat(json.getDouble("height")),
-        depth: CGFloat(json.getDouble("depth")))
+        depth: CGFloat(json.getDouble("depth"))) // default is 0
 }

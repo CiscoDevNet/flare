@@ -93,7 +93,7 @@ class IndoorMap: NSView {
     override func drawRect(rect: CGRect) {
         if (environment != nil) {
             let inset = CGRectInset(NSRect(origin: CGPointZero, size: self.frame.size), 20, 20)
-            let grid = environment!.perimeter
+            let grid = environment!.perimeter.toRect()
 
             updateScale()
             insetCenter = inset.center()
@@ -102,35 +102,35 @@ class IndoorMap: NSView {
             fillRect(grid, color: white, inset: 0)
 
             for zone in zones {
-                fillRect(zone.perimeter, color: white, inset: 2)
+                fillRect(zone.perimeter.toRect(), color: white, inset: 2)
                 
                 let label = labelForFlare(zone)
-                label.frame.origin = convertPoint(zone.perimeter.center()) - CGSize(width: 100, height: 10)
+                label.frame.origin = convertPoint(zone.perimeter.center().toPoint()) - CGSize(width: 100, height: 10)
             }
             
             for thing in things {
                 let color = IndoorMap.colorForThing(thing)
 
                 if thing == selectedFlare {
-                    fillCircle(thing.position, radius: 15, color: selectedColor)
+                    fillCircle(thing.position.toPoint(), radius: 15, color: selectedColor)
                 }
                 if thing == nearbyThing {
-                    fillCircle(thing.position, radius: 15, color: halo)
+                    fillCircle(thing.position.toPoint(), radius: 15, color: halo)
                 }
-                fillCircle(thing.position, radius: 10, color: color)
+                fillCircle(thing.position.toPoint(), radius: 10, color: color)
                 
                 let label = labelForFlare(thing)
-                label.frame.origin = convertPoint(thing.position) - CGSize(width: 100, height: 33)
+                label.frame.origin = convertPoint(thing.position.toPoint()) - CGSize(width: 100, height: 33)
             }
 
             for device in environment!.devices {
                 if device == selectedFlare {
-                    fillCircle(device.position, radius: 15, color: selectedColor)
+                    fillCircle(device.position.toPoint(), radius: 15, color: selectedColor)
                 }
-                fillCircle(device.position, radius: 10, color: blue)
+                fillCircle(device.position.toPoint(), radius: 10, color: blue)
 
                 let label = labelForFlare(device)
-                label.frame.origin = convertPoint(device.position) - CGSize(width: 100, height: 33)
+                label.frame.origin = convertPoint(device.position.toPoint()) - CGSize(width: 100, height: 33)
             }
         }
     }

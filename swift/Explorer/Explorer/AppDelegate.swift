@@ -31,8 +31,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     @IBOutlet weak var uuidField: NSTextField!
     @IBOutlet weak var environmentXField: NSTextField!
     @IBOutlet weak var environmentYField: NSTextField!
+    @IBOutlet weak var environmentZField: NSTextField!
     @IBOutlet weak var environmentWidthField: NSTextField!
     @IBOutlet weak var environmentHeightField: NSTextField!
+    @IBOutlet weak var environmentDepthField: NSTextField!
     @IBOutlet weak var environmentAngleField: NSTextField!
     @IBOutlet weak var latitudeField: NSTextField!
     @IBOutlet weak var longitudeField: NSTextField!
@@ -41,19 +43,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     @IBOutlet weak var majorField: NSTextField!
     @IBOutlet weak var zoneXField: NSTextField!
     @IBOutlet weak var zoneYField: NSTextField!
+    @IBOutlet weak var zoneZField: NSTextField!
     @IBOutlet weak var zoneWidthField: NSTextField!
     @IBOutlet weak var zoneHeightField: NSTextField!
+    @IBOutlet weak var zoneDepthField: NSTextField!
 
     @IBOutlet weak var minorField: NSTextField!
     @IBOutlet weak var colorField: NSTextField!
     @IBOutlet weak var brightnessField: NSTextField!
     @IBOutlet weak var thingXField: NSTextField!
     @IBOutlet weak var thingYField: NSTextField!
+    @IBOutlet weak var thingZField: NSTextField!
 
     @IBOutlet weak var macField: NSTextField!
     @IBOutlet weak var angleField: NSTextField!
     @IBOutlet weak var deviceXField: NSTextField!
     @IBOutlet weak var deviceYField: NSTextField!
+    @IBOutlet weak var deviceZField: NSTextField!
 
     @IBOutlet weak var nearbyDeviceView: NSView!
     @IBOutlet weak var nearbyDeviceIdField: NSTextField!
@@ -396,19 +402,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
         compass.dataChanged()
     }
     
-    func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?) {
+    func didReceivePosition(flare: Flare, oldPosition: Point3D, newPosition: Point3D, sender: Flare?) {
         // NSLog("\(flare.name) position: \(newPosition)")
         if defaults.boolForKey("logDetailed") {
-            addLogEvent("position", flare1: flare, flare2: sender, key: "position", value: "\(newPosition.x),\(newPosition.y)")
+            addLogEvent("position", flare1: flare, flare2: sender, key: "position", value: "\(newPosition.x),\(newPosition.y),\(newPosition.z)")
         }
         
         if flare == selectedFlare {
             if flare is Thing {
                 thingXField.doubleValue = Double(newPosition.x)
                 thingYField.doubleValue = Double(newPosition.y)
+                thingZField.doubleValue = Double(newPosition.z)
             } else if flare is Device {
                 deviceXField.doubleValue = Double(newPosition.x)
                 deviceYField.doubleValue = Double(newPosition.y)
+                deviceZField.doubleValue = Double(newPosition.z)
             }
         } else if flare == nearbyFlare {
             if let device = nearbyFlare as? Device, thing = selectedFlare as? Thing {
@@ -598,25 +606,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     
     @IBAction func changePosition(sender: NSTextField) {
         if let thing = selectedFlare as? Thing {
-            let newPosition = CGPoint(x: thingXField.doubleValue, y: thingYField.doubleValue)
+            let newPosition = Point3D(x: thingXField.doubleValue, y: thingYField.doubleValue, z: thingZField.doubleValue)
             animateFlare(thing, oldPosition: thing.position, newPosition: newPosition)
             flareManager.setPosition(thing, position: newPosition, sender: nil)
-            addLogEvent("position", flare1: thing, flare2: nil, key: "position", value: "\(newPosition.x),\(newPosition.y)")
+            addLogEvent("position", flare1: thing, flare2: nil, key: "position", value: "\(newPosition.x),\(newPosition.y),\(newPosition.z)")
         } else if let device = selectedFlare as? Device {
-            let newPosition = CGPoint(x: deviceXField.doubleValue, y: deviceYField.doubleValue)
+            let newPosition = Point3D(x: deviceXField.doubleValue, y: deviceYField.doubleValue, z: deviceZField.doubleValue)
             animateFlare(device, oldPosition: device.position, newPosition: newPosition)
             flareManager.setPosition(device, position: newPosition, sender: nil)
-            addLogEvent("position", flare1: device, flare2: nil, key: "position", value: "\(newPosition.x),\(newPosition.y)")
+            addLogEvent("position", flare1: device, flare2: nil, key: "position", value: "\(newPosition.x),\(newPosition.y),\(newPosition.z)")
         }
     }
 
-    func animateFlare(var flare: FlarePosition, oldPosition: CGPoint, newPosition: CGPoint) {
+    func animateFlare(var flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
         let dx = (newPosition.x - oldPosition.x) / CGFloat(animationSteps)
         let dy = (newPosition.y - oldPosition.y) / CGFloat(animationSteps)
+        let dz = (newPosition.z - oldPosition.z) / CGFloat(animationSteps)
 
         delayLoop(animationDelay, steps: animationSteps) { i in
-            flare.position = CGPoint(x: oldPosition.x + CGFloat(i) * dx,
-                                     y: oldPosition.y + CGFloat(i) * dy)
+            flare.position = Point3D(x: oldPosition.x + CGFloat(i) * dx,
+                                     y: oldPosition.y + CGFloat(i) * dy,
+                                     z: oldPosition.z + CGFloat(i) * dz)
             self.map.dataChanged()
             self.compass.dataChanged()
         }
@@ -642,9 +652,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     
     @IBAction func changeEnvironmentPerimeter(sender: NSTextField) {
         if let environment = selectedFlare as? Environment {
-            let perimeter = ["origin":["x":environmentXField.doubleValue, "y":environmentYField.doubleValue],
-                "size":["width":environmentWidthField.doubleValue, "height":environmentHeightField.doubleValue]]
-            environment.perimeter = getRect(perimeter)
+            let perimeter = ["origin":["x":environmentXField.doubleValue, "y":environmentYField.doubleValue, "z":environmentZField.doubleValue],
+                "size":["width":environmentWidthField.doubleValue, "height":environmentHeightField.doubleValue, "depth":environmentDepthField.doubleValue]]
+            environment.perimeter = getCube3D(perimeter)
             map.dataChanged()
             flareManager.updateFlare(environment, json: ["perimeter":perimeter]) {json in }
         }
@@ -652,9 +662,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     
     @IBAction func changeZonePerimeter(sender: NSTextField) {
         if let zone = selectedFlare as? Zone {
-            let perimeter = ["origin":["x":zoneXField.doubleValue, "y":zoneYField.doubleValue],
-                "size":["width":zoneWidthField.doubleValue, "height":zoneHeightField.doubleValue]]
-            zone.perimeter = getRect(perimeter)
+            let perimeter = ["origin":["x":zoneXField.doubleValue, "y":zoneYField.doubleValue, "z":zoneZField.doubleValue],
+                "size":["width":zoneWidthField.doubleValue, "height":zoneHeightField.doubleValue, "depth":zoneDepthField.doubleValue]]
+            zone.perimeter = getCube3D(perimeter)
             map.dataChanged()
             flareManager.updateFlare(zone, json: ["perimeter":perimeter]) {json in }
         }
@@ -752,8 +762,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
             uuidField.stringValue = ""
             environmentXField.stringValue = ""
             environmentYField.stringValue = ""
+            environmentZField.stringValue = ""
             environmentWidthField.stringValue = ""
             environmentHeightField.stringValue = ""
+            environmentDepthField.stringValue = ""
             environmentAngleField.stringValue = ""
             latitudeField.stringValue = ""
             longitudeField.stringValue = ""
@@ -761,17 +773,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
             majorField.stringValue = ""
             zoneXField.stringValue = ""
             zoneYField.stringValue = ""
+            zoneZField.stringValue = ""
             zoneWidthField.stringValue = ""
             zoneHeightField.stringValue = ""
+            zoneDepthField.stringValue = ""
             minorField.stringValue = ""
             colorField.stringValue = ""
             brightnessField.stringValue = ""
             thingXField.stringValue = ""
             thingYField.stringValue = ""
+            thingZField.stringValue = ""
             macField.stringValue = ""
             angleField.stringValue = ""
             deviceXField.stringValue = ""
             deviceYField.stringValue = ""
+            deviceZField.stringValue = ""
         }
         
         selectedFlare = selectedItem()
@@ -815,8 +831,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 if let uuid = environment.data["uuid"] as? String { uuidField.stringValue = uuid }
                 environmentXField.doubleValue = Double(environment.perimeter.origin.x)
                 environmentYField.doubleValue = Double(environment.perimeter.origin.y)
+                environmentZField.doubleValue = Double(environment.perimeter.origin.z)
                 environmentWidthField.doubleValue = Double(environment.perimeter.size.width)
                 environmentHeightField.doubleValue = Double(environment.perimeter.size.height)
+                environmentDepthField.doubleValue = Double(environment.perimeter.size.depth)
                 environmentAngleField.doubleValue = Double(environment.angle)
                 latitudeField.doubleValue = Double(environment.geofence.latitude)
                 longitudeField.doubleValue = Double(environment.geofence.longitude)
@@ -831,8 +849,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 
                 zoneXField.doubleValue = Double(zone.perimeter.origin.x)
                 zoneYField.doubleValue = Double(zone.perimeter.origin.y)
+                zoneZField.doubleValue = Double(zone.perimeter.origin.z)
                 zoneWidthField.doubleValue = Double(zone.perimeter.size.width)
                 zoneHeightField.doubleValue = Double(zone.perimeter.size.height)
+                zoneDepthField.doubleValue = Double(zone.perimeter.size.depth)
             } else if let thing = selectedFlare as? Thing {
                 NSLog("Selected \(thing)")
                 tabView.selectTabViewItemAtIndex(2)
@@ -848,6 +868,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 
                 thingXField.doubleValue = Double(thing.position.x)
                 thingYField.doubleValue = Double(thing.position.y)
+                thingZField.doubleValue = Double(thing.position.z)
                 
                 compass.selectedThing = thing
                 compass.dataChanged()
@@ -862,6 +883,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 if let mac = device.data["mac"] as? String { macField.stringValue = mac }
                 deviceXField.doubleValue = Double(device.position.x)
                 deviceYField.doubleValue = Double(device.position.y)
+                deviceZField.doubleValue = Double(device.position.z)
                 
                 if let environment = flareManager.environmentForFlare(device) {
                     compass.environment = environment

@@ -67,6 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         NSLog("Server: \(host):\(port)")
         NSLog("GPS: \(defaults.boolForKey("useGPS") ? "on" : "off")")
         NSLog("Beacons: \(defaults.boolForKey("useBeacons") ? "on" : "off")")
+        NSLog("CMX: \(defaults.boolForKey("useCMX") ? "on" : "off")")
         NSLog("Compass: \(defaults.boolForKey("useCompass") ? "on" : "off")")
         
         flareManager = FlareManager(host: host, port: port)
@@ -242,6 +243,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         if defaults.boolForKey("useBeacons") { beaconManager.stop() }
         if defaults.boolForKey("useGPS") { beaconManager.stopMonitoringLocation() }
         if defaults.boolForKey("useCompass") { beaconManager.stopUpdatingHeading() }
+        
+        // not necessary to unsubscribe as disconnecting will take care of that
         flareManager.disconnect()
     }
 
@@ -254,16 +257,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
-        // if the environments have not been loaded, try again
-        // the server address may have changed
-        if currentLocation != nil && currentEnvironment == nil {
-            loadEnvironments()
+        flareManager.connect()
+        
+        if currentLocation != nil {
+            loadEnvironments() // reload the data and resubscribe
         }
         
         if defaults.boolForKey("useBeacons") { beaconManager.start() }
         if defaults.boolForKey("useGPS") { beaconManager.startMonitoringLocation() }
         if defaults.boolForKey("useCompass") { beaconManager.startUpdatingHeading() }
-        flareManager.connect()
     }
 
     func applicationWillTerminate(application: UIApplication) {
@@ -304,8 +306,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
     
     func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?) {
-        NSLog("\(flare.name) position: \(newPosition)")
-        animateFlare(flare as! FlarePosition, oldPosition: oldPosition, newPosition: newPosition)
+        if defaults.boolForKey("useCMX") {
+            NSLog("\(flare.name) position: \(newPosition)")
+            animateFlare(flare as! FlarePosition, oldPosition: oldPosition, newPosition: newPosition)
+        }
     }
     
     var didEnter = false // for half a second after an enter message arrives, ignore exit messages
@@ -353,16 +357,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
     }
 
-    func animateFlare(var flare: FlarePosition, oldPosition: CGPoint, newPosition: CGPoint) {
+    func animateFlare(var flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
         if oldPosition == newPosition { return }
         
         let dx = (newPosition.x - oldPosition.x) / CGFloat(animationSteps)
         let dy = (newPosition.y - oldPosition.y) / CGFloat(animationSteps)
+        let dz = (newPosition.z - oldPosition.z) / CGFloat(animationSteps)
         
         flare.position = oldPosition
         delayLoop(animationDelay, steps: animationSteps) { i in
             flare.position = CGPoint(x: oldPosition.x + CGFloat(i) * dx,
-                                     y: oldPosition.y + CGFloat(i) * dy)
+                                     y: oldPosition.y + CGFloat(i) * dy,
+                                     z: oldPosition.z + CGFloat(i) * dz)
             self.animate()
             if i == self.animationSteps - 1 { self.dataChanged() }
         }

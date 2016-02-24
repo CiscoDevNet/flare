@@ -68,6 +68,16 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
+			<string>Use CMX</string>
+			<key>Key</key>
+			<string>useCMX</string>
+			<key>DefaultValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
 			<string>Use Compass</string>
 			<key>Key</key>
 			<string>useCompass</string>
