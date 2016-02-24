@@ -11,7 +11,7 @@ import CoreLocation
 import CoreGraphics
 
 public protocol BeaconManagerDelegate {
-    func devicePositionDidChange(position: CGPoint)
+    func devicePositionDidChange(position: Point3D)
     func deviceLocationDidChange(location: CLLocation)
     func deviceAngleDidChange(angle: Double)
 }
@@ -151,10 +151,11 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
     
     // the average position of all nearby beacons,
     // weighted according to the inverse of the square of the distance
-    public func weightedLocation(average: Bool) -> CGPoint {
+    public func weightedLocation(average: Bool) -> Point3D {
         var total = 0.0
         var x = 0.0
         var y = 0.0
+        var z = 0.0
         
         for (_,beacon) in beacons {
             let distance = average ? beacon.averageDistance() : beacon.lastDistance()
@@ -198,11 +199,12 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
                 let weight = beacon.inverseDistance
                 x += Double(beacon.position.x) * weight
                 y += Double(beacon.position.y) * weight
+                z += Double(beacon.position.z) * weight
                 total += weight
             }
         }
         
-        let result = CGPoint(x:x / total, y:y / total)
+        let result = Point3D(x:x / total, y:y / total, z:z / total)
         // NSLog("Result: \(result)")
         return result
     }

@@ -115,7 +115,7 @@ class IndoorMap: UIView, FlareController {
             CGContextTranslateCTM(context, 0, -self.bounds.size.height);
             
             let inset = CGRectInset(self.frame, 40, 40)
-            let grid = currentEnvironment!.perimeter
+            let grid = currentEnvironment!.perimeter.toRect()
             
             updateScale()
             insetCenter = inset.center()
@@ -124,16 +124,16 @@ class IndoorMap: UIView, FlareController {
             fillRect(grid, color: lightGray, inset: 0)
             
             for zone in zones {
-                fillRect(zone.perimeter, color: lightGray, inset: 2)
+                fillRect(zone.perimeter.toRect(), color: lightGray, inset: 2)
 
                 let label = labelForFlare(zone)
-                label.center = flipPoint(convertPoint(zone.perimeter.center()))
+                label.center = flipPoint(convertPoint(zone.perimeter.toRect().center()))
             }
 
             if device != nil && nearbyThing != nil {
                 let line = UIBezierPath()
-                line.moveToPoint(convertPoint(device!.position))
-                line.addLineToPoint(convertPoint(nearbyThing!.position))
+                line.moveToPoint(convertPoint(device!.position.toPoint()))
+                line.addLineToPoint(convertPoint(nearbyThing!.position.toPoint()))
                 line.lineWidth = 3
                 selectedColor.setStroke()
                 line.stroke()
@@ -142,19 +142,19 @@ class IndoorMap: UIView, FlareController {
             for thing in things {
                 let color = IndoorMap.colorForThing(thing)
                 
-                if thing == nearbyThing { fillCircle(thing.position, radius: 15, color: selectedColor) }
-                fillCircle(thing.position, radius: 10, color: color)
+                if thing == nearbyThing { fillCircle(thing.position.toPoint(), radius: 15, color: selectedColor) }
+                fillCircle(thing.position.toPoint(), radius: 10, color: color)
                 
                 let label = labelForFlare(thing)
-                label.center = flipPoint(convertPoint(thing.position) + CGSize(width: 2, height: -22))
+                label.center = flipPoint(convertPoint(thing.position.toPoint()) + CGSize(width: 2, height: -22))
             }
             
             if device != nil && !device!.position.x.isNaN && !device!.position.y.isNaN {
-                if nearbyThing != nil { fillCircle(device!.position, radius: 15, color: selectedColor) }
-                fillCircle(device!.position, radius: 10, color: blue)
+                if nearbyThing != nil { fillCircle(device!.position.toPoint(), radius: 15, color: selectedColor) }
+                fillCircle(device!.position.toPoint(), radius: 10, color: blue)
                 
                 let label = labelForFlare(device!)
-                label.center = flipPoint(convertPoint(device!.position) + CGSize(width: 2, height: -22))
+                label.center = flipPoint(convertPoint(device!.position.toPoint()) + CGSize(width: 2, height: -22))
             }
         }
     }
@@ -171,7 +171,7 @@ class IndoorMap: UIView, FlareController {
     
     func thingNearPoint(point: CGPoint) -> Thing? {
         for thing in things {
-            if thing.position - point < 1.0 {
+            if thing.position.toPoint() - point < 1.0 {
                 return thing
             }
         }

@@ -272,7 +272,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func devicePositionDidChange(position: CGPoint) {
+    func devicePositionDidChange(position: Point3D) {
         if device != nil {
             animateFlare(device!, oldPosition: device!.position, newPosition: position)
             flareManager.setPosition(device!, position: position, sender: nil)
@@ -305,7 +305,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         dataChanged()
     }
     
-    func didReceivePosition(flare: Flare, oldPosition: CGPoint, newPosition: CGPoint, sender: Flare?) {
+    func didReceivePosition(flare: Flare, oldPosition: Point3D, newPosition: Point3D, sender: Flare?) {
         if defaults.boolForKey("useCMX") {
             NSLog("\(flare.name) position: \(newPosition)")
             animateFlare(flare as! FlarePosition, oldPosition: oldPosition, newPosition: newPosition)
@@ -357,6 +357,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
     }
 
+    func handleAction(flare: Flare, action: String, sender: Flare?) {
+        
+    }
+    
     func animateFlare(var flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
         if oldPosition == newPosition { return }
         
@@ -366,7 +370,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         flare.position = oldPosition
         delayLoop(animationDelay, steps: animationSteps) { i in
-            flare.position = CGPoint(x: oldPosition.x + CGFloat(i) * dx,
+            flare.position = Point3D(x: oldPosition.x + CGFloat(i) * dx,
                                      y: oldPosition.y + CGFloat(i) * dy,
                                      z: oldPosition.z + CGFloat(i) * dz)
             self.animate()

@@ -48,9 +48,9 @@ class DeviceController: UIViewController, FlareController {
         nearbyThingComment.text = nearbyThing?.comment ?? ""
         
         if let position = device?.position {
-            positionLabel.text = String(format: "%.2f, %.2f", position.x.roundTo(0.05), position.y.roundTo(0.05))
+            positionLabel.text = String(format: "%.2f, %.2f, %.2f", position.x.roundTo(0.05), position.y.roundTo(0.05), position.z.roundTo(0.05))
         } else {
-            positionLabel.text = "0.00, 0.00"
+            positionLabel.text = "0.00, 0.00, 0.00"
         }
 
         if let angle = device?.data["angle"] as? Double {
