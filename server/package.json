@@ -13,7 +13,8 @@
     "mongodb": "^2.0.39",
     "mongoose": "^4.1.0",
     "request": "^2.64.0",
-    "socket.io": "^1.0.0"
+    "socket.io": "^1.0.0",
+    "node-arp": "^1.0.5"
   },
   "devDependencies": {},
   "scripts": {

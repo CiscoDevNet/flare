@@ -26,7 +26,7 @@ var express = require("express"),
 	globalSocket = null,
 	minDistance = 1.5, // TODO: minimum distance in meters, could be configurable per device and/or thing
 	defaultCeiling = 3.0,
-	defaultDepth = 1.0, // defaultDepth should be above defaultFloor and below defaultCeiling
+	defaultDepth = 0.0, // defaultDepth should be above defaultFloor and below defaultCeiling
 	defaultFloor = 0.0;
 	
 // if false, handleAction messages will only be broadcast if the action is not handled on the server (i.e. implemented in actions.js)
@@ -135,8 +135,11 @@ app.get('/environments/:environment_id/zones', function (req, res) {
 
 		var x = req.query.x;
 		var y = req.query.y;
+		var z = req.query.z;
+		if (z == undefined) z = defaultDepth;
+		
 		if (x !== undefined && y !== undefined) {
-			var point = {x:x, y:y};
+			var point = {x:x, y:y, z:z};
 			list = list.filter(function(zone) {
 				return containsPoint(zone.perimeter, point);
 			});
@@ -355,19 +358,25 @@ app.post('/environments/:environment_id/devices', function (req, res) {
 
 // CMX notification
 app.post('/environments/:environment_id/devices/position', function (req, res) {
+	var ignoreNull = true;
 	var error = null;
 	var notifications = req.body.notifications;
 	if (notifications != undefined) {
 		for (var i = 0; i < notifications.length; i++) {
 			var notification = notifications[i];
+			var ssid = notification.ssid;
+			if (ssid == null) continue;
 			var mac = notification.deviceId;
+			// console.log('CMX notification: ' + JSON.stringify(notification));
+
 			if (mac != undefined) {
+				var locationCoordinate = notification.locationCoordinate;
+				console.log('Device: ' + mac.toLowerCase() + ", position: " + locationCoordinate.x + "," + locationCoordinate.y);
 				var query = {environment: req.params.environment_id, "data.mac": mac.toLowerCase()}
 				flaredb.Device.find(query, function (err, results) {
 					if (err) return res.send(err);
 					if (results.length) {
 						var device = results[0];
-						var locationCoordinate = notification.locationCoordinate;
 						console.log('Setting position for device: ' + device.name);
 						if (locationCoordinate != undefined) {
 							var position = {x: locationCoordinate.x, y: locationCoordinate.y};
@@ -741,9 +750,11 @@ function setPosition(message, callback) {
 		
 		var x = position.x;
 		var y = position.y;
+		var z = position.z;
 		if (x == undefined) return; // ERROR no position.x in message
 		if (y == undefined) return; // ERROR no position.y in message
-		position = {x:x, y:y}; // recreate the position object to make sure no other data is added
+		if (z == undefined) z = defaultDepth;
+		position = {x:x, y:y, z:z}; // recreate the position object to make sure no other data is added
 		
 		var oldPosition = object.position;
 		// don't do anything if the old value and the new value are the same

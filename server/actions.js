@@ -21,6 +21,16 @@ exports.handlers['west'] = function(socket, message, object) {
 	exports.notifications.notifyPosition(socket, message, object);
 };
 
+exports.handlers['up'] = function(socket, message, object) {
+	object.position.z++;
+	exports.notifications.notifyPosition(socket, message, object);
+};
+
+exports.handlers['down'] = function(socket, message, object) {
+	object.position.z--;
+	exports.notifications.notifyPosition(socket, message, object);
+};
+
 var defaultColors = ['red','orange','yellow','green','blue','purple'];
 
 exports.handlers['previousColor'] = function(socket, message, object) {
