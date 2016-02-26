@@ -28,11 +28,13 @@
                 <outlet property="deviceZField" destination="t6Z-Lq-mCo" id="fcD-J8-zSb"/>
                 <outlet property="environmentAngleField" destination="GYB-Sb-nxY" id="pgF-fC-KN3"/>
                 <outlet property="environmentDepthField" destination="PMB-88-9wx" id="Hvx-Zd-CGt"/>
+                <outlet property="environmentDistanceField" destination="bvd-UG-LdA" id="Xq2-fN-cB8"/>
                 <outlet property="environmentHeightField" destination="bux-gy-mPb" id="LRV-Ep-nlZ"/>
                 <outlet property="environmentWidthField" destination="qwe-cw-yxv" id="OMy-Rb-RVm"/>
                 <outlet property="environmentXField" destination="wmE-27-6i4" id="mRF-CZ-WKO"/>
                 <outlet property="environmentYField" destination="7e2-wu-j30" id="BfJ-R0-bcT"/>
                 <outlet property="environmentZField" destination="aQl-La-J2A" id="FIb-HM-aIu"/>
+                <outlet property="flippedCheckbox" destination="6mE-qa-rUF" id="h6Y-3h-RIy"/>
                 <outlet property="idField" destination="QsS-jj-YNt" id="srr-aj-XxD"/>
                 <outlet property="latitudeField" destination="ewo-Ic-V61" id="N3X-04-Yi0"/>
                 <outlet property="logTable" destination="SeK-Xm-tqT" id="ko4-gh-qV7"/>
@@ -1107,6 +1109,38 @@
                                                                 <rect key="frame" x="193" y="257" width="14" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="," id="eDr-qc-tG0">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                            <button identifier="flipped" toolTip="Normally the positive Y-axis points up. In a flipped environment, the positive Y-axis points down." id="6mE-qa-rUF">
+                                                                <rect key="frame" x="413" y="198" width="67" height="18"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <buttonCell key="cell" type="check" title="Flipped" bezelStyle="regularSquare" imagePosition="left" inset="2" id="k1a-cY-MuX">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="system"/>
+                                                                </buttonCell>
+                                                                <connections>
+                                                                    <action selector="changeState:" target="Voe-Tx-rLC" id="AEz-zU-h8S"/>
+                                                                </connections>
+                                                            </button>
+                                                            <textField identifier="distance double" verticalHuggingPriority="750" id="bvd-UG-LdA">
+                                                                <rect key="frame" x="98" y="169" width="43" height="22"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="gTD-Vy-Du3">
+                                                                    <font key="font" metaFont="system"/>
+                                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                                <connections>
+                                                                    <action selector="changeData:" target="Voe-Tx-rLC" id="sM7-q5-nMj"/>
+                                                                </connections>
+                                                            </textField>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Ve6-nF-nX3">
+                                                                <rect key="frame" x="0.0" y="170" width="92" height="17"/>
+                                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Near distance:" id="Fob-oU-X7b">
                                                                     <font key="font" metaFont="system"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

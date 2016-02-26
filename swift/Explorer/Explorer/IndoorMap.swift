@@ -21,8 +21,8 @@ class IndoorMap: NSView {
             // self.needsDisplay = true
         }
     }
+    var environmentFlipped = false
     var selectedFlare: Flare?
-    
     var labels = [String:NSTextField]()
     
     var viewHeight: CGFloat = 768.0
@@ -53,6 +53,7 @@ class IndoorMap: NSView {
                     self.window!.title = environment!.name
                 }
 
+                updateFlipped()
                 updateScale()
                 self.zones = environment!.zones
                 self.things = environment!.things()
@@ -61,7 +62,24 @@ class IndoorMap: NSView {
         }
     }
     
+    override var flipped:Bool {
+        get {
+            return environmentFlipped
+        }
+    }
+
+    func updateFlipped() {
+        if environment != nil {
+            if let flipped = environment!.data["flipped"] as? Int {
+                self.environmentFlipped = flipped != 0
+            } else {
+                self.environmentFlipped = false
+            }
+        }
+    }
+    
     func dataChanged() {
+        updateFlipped()
         self.needsDisplay = true
     }
     
@@ -120,7 +138,7 @@ class IndoorMap: NSView {
                 fillCircle(thing.position.toPoint(), radius: 10, color: color)
                 
                 let label = labelForFlare(thing)
-                label.frame.origin = convertPoint(thing.position.toPoint()) - CGSize(width: 100, height: 33)
+                label.frame.origin = convertPoint(thing.position.toPoint()) - CGSize(width: 100, height: environmentFlipped ? -12 : 33)
             }
 
             for device in environment!.devices {
@@ -130,7 +148,7 @@ class IndoorMap: NSView {
                 fillCircle(device.position.toPoint(), radius: 10, color: blue)
 
                 let label = labelForFlare(device)
-                label.frame.origin = convertPoint(device.position.toPoint()) - CGSize(width: 100, height: 33)
+                label.frame.origin = convertPoint(device.position.toPoint()) - CGSize(width: 100, height: environmentFlipped ? -12 : 33)
             }
         }
     }

@@ -786,7 +786,7 @@
 					"../SocketIO/Output/Release-iphoneos",
 				);
 				INFOPLIST_FILE = Trilateral/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)com.cisco.flare.Trilateral";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -805,7 +805,7 @@
 					"../SocketIO/Output/Release-iphoneos",
 				);
 				INFOPLIST_FILE = Trilateral/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)com.cisco.flare.Trilateral";
 				PRODUCT_NAME = "$(TARGET_NAME)";

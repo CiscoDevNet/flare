@@ -22,6 +22,7 @@ class IndoorMap: UIView, FlareController {
                 labels.removeAll(keepCapacity: true)
                 
                 if currentEnvironment != nil {
+                    updateFlipped()
                     updateScale()
                     self.zones = currentEnvironment!.zones
                     self.things = currentEnvironment!.things()
@@ -30,6 +31,7 @@ class IndoorMap: UIView, FlareController {
             }
         }
     }
+    var flipped = false
     var currentZone: Zone? { didSet(value) { /* highlight? */ }}
     var zones = [Zone]()
     var things = [Thing]()
@@ -106,6 +108,17 @@ class IndoorMap: UIView, FlareController {
         let xScale = inset.size.width / grid.size.width
         let yScale = inset.size.height / grid.size.height
         scale = (xScale < yScale) ? xScale : yScale
+    }
+
+    func updateFlipped() {
+        if currentEnvironment != nil {
+            if let flipped = currentEnvironment!.data["flipped"] as? Int {
+                self.flipped = flipped != 0
+            } else {
+                self.flipped = false
+            }
+        }
+        NSLog("Flipped: \(self.flipped ? "yes" : "no")")
     }
 
     override func drawRect(rect: CGRect) {
@@ -241,11 +254,12 @@ class IndoorMap: UIView, FlareController {
     
     func convertPoint(gridPoint: CGPoint) -> CGPoint {
         return CGPoint(x: round(insetCenter.x - (gridCenter.x - gridPoint.x) * scale),
-                       y: round(insetCenter.y - (gridCenter.y - gridPoint.y) * scale))
+            y: round(insetCenter.y - (gridCenter.y - gridPoint.y) * scale * (flipped ? -1 : 1)))
     }
     
     func convertSize(gridSize: CGSize) -> CGSize {
-        return CGSize(width: round(gridSize.width * scale), height: round(gridSize.height * scale))
+        return CGSize(width: round(gridSize.width * scale),
+            height: round(gridSize.height * scale * (flipped ? -1 : 1)))
     }
     
     func convertRect(gridRect: CGRect) -> CGRect {
@@ -254,6 +268,6 @@ class IndoorMap: UIView, FlareController {
     
     func undoConvertPoint(viewPoint: CGPoint) -> CGPoint {
         return CGPoint(x: gridCenter.x - (insetCenter.x - viewPoint.x) / scale,
-            y: gridCenter.y - (insetCenter.y - viewPoint.y) / scale)
+            y: gridCenter.y - (insetCenter.y - viewPoint.y) / scale * (flipped ? -1 : 1))
     }
 }

@@ -25,7 +25,7 @@ protocol FlareController {
 }
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate, FlareManagerDelegate, BeaconManagerDelegate, WCSessionDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate, FlareManagerDelegate, BeaconManagerDelegate /*, WCSessionDelegate */ {
 
     var window: UIWindow?
 
@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     // when the tab is changed, the new flareController should call updateFlareController()
     var flareController: FlareController? = nil
     
-    var session: WCSession?
+    // var session: WCSession?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         registerDefaultsFromSettingsBundle()
@@ -80,12 +80,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         if !defaults.boolForKey("useGPS") { loadDefaultEnvironment() }
 
-        if WCSession.isSupported() {
+/*        if WCSession.isSupported() {
             session = WCSession.defaultSession()
             session!.delegate = self
             session!.activateSession()
         }
-        
+ */
         return true
     }
 
@@ -114,6 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             } else {
                 self.flareManager.loadEnvironments(nil, loadDevices: false) { (environments) -> () in // load all environments
                     if environments.count > 0 {
+                        self.allEnvironments = environments
                         NSLog("No environments found nearby, using default environment.")
                         self.allEnvironments = environments
                         self.loadEnvironment(environments[0])
@@ -128,6 +129,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func loadDefaultEnvironment() {
         self.flareManager.loadEnvironments(nil, loadDevices: false) { (environments) -> () in // load all environments
             if environments.count > 0 {
+                self.allEnvironments = environments
                 if let environmentId = self.defaults.stringForKey("environmentId"),
                     environment = self.environmentWithId(environments, environmentId: environmentId)
                 {
@@ -307,7 +309,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         if device != nil {
             animateFlare(device!, oldPosition: device!.position, newPosition: position)
             flareManager.setPosition(device!, position: position, sender: nil)
-            sendMessage(["position": position.toJSON()])
+            // sendMessage(["position": position.toJSON()])
             
             if nearbyThing != nil {
                 let distance = device!.distanceTo(nearbyThing!)
@@ -464,7 +466,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         defaults.registerDefaults(defaultsToRegister)
         defaults.synchronize()
     }
-    
+/*
     func sendMessage(message: JSONDictionary?) {
         if (session != nil && message != nil) {
             NSLog("Sending: \(message!)")
@@ -516,7 +518,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             return nil
         }
     }
-    
+*/
 
 
 }

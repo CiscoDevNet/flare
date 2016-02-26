@@ -29,7 +29,13 @@ let circleColor = UIColor.blackColor()
 class CompassView: UIView, FlareController {
     
     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-    var currentEnvironment: Environment? { didSet { setNeedsDisplay() }}
+    var currentEnvironment: Environment? {
+        didSet {
+            updateFlipped()
+            setNeedsDisplay()
+        }
+    }
+    var flipped = false
     var currentZone: Zone? { didSet { setNeedsDisplay() }}
     var device: Device? { didSet { setNeedsDisplay() }}
     var selectedThing: Thing? { didSet { setNeedsDisplay() }}
@@ -90,6 +96,16 @@ class CompassView: UIView, FlareController {
         }
     }
  
+    func updateFlipped() {
+        if currentEnvironment != nil {
+            if let flipped = currentEnvironment!.data["flipped"] as? Int {
+                self.flipped = flipped != 0
+            } else {
+                self.flipped = false
+            }
+        }
+    }
+    
     func updateThing() {
         if nearbyThingLabel != nil && nearbyThingComment != nil {
             nearbyThingLabel.text = nearbyThing?.name ?? ""
@@ -153,7 +169,7 @@ class CompassView: UIView, FlareController {
     }
     
     func convertAngle(angle: CGFloat) -> CGFloat {
-        return (angle + heading - offset) % 360.0
+        return (angle * (flipped ? -1 : 1) + heading - offset) % 360.0
     }
     
     func sweepForDistance(distance: CGFloat) -> CGFloat {

@@ -36,9 +36,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     @IBOutlet weak var environmentHeightField: NSTextField!
     @IBOutlet weak var environmentDepthField: NSTextField!
     @IBOutlet weak var environmentAngleField: NSTextField!
+    @IBOutlet weak var environmentDistanceField: NSTextField!
     @IBOutlet weak var latitudeField: NSTextField!
     @IBOutlet weak var longitudeField: NSTextField!
     @IBOutlet weak var radiusField: NSTextField!
+    @IBOutlet weak var flippedCheckbox: NSButton!
     
     @IBOutlet weak var majorField: NSTextField!
     @IBOutlet weak var zoneXField: NSTextField!
@@ -604,6 +606,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
         }
     }
     
+    @IBAction func changeState(sender: NSButton) {
+        let identifiers = sender.identifier!.componentsSeparatedByString(" ")
+        let key = identifiers.first!
+        let nearby = identifiers.contains("nearby")
+        let value = sender.state
+        
+        if let flare = nearby ? nearbyFlare : selectedFlare {
+            flare.data[key] = value
+            flareManager.setData(flare, key: key, value: value, sender: nil)
+            addLogEvent("data", flare1: flare, flare2: nil, key: key, value: value)
+            
+            map.dataChanged()
+            compass.dataChanged()
+        }
+    }
+
     @IBAction func changePosition(sender: NSTextField) {
         if let thing = selectedFlare as? Thing {
             let newPosition = Point3D(x: thingXField.doubleValue, y: thingYField.doubleValue, z: thingZField.doubleValue)
@@ -767,9 +785,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
             environmentHeightField.stringValue = ""
             environmentDepthField.stringValue = ""
             environmentAngleField.stringValue = ""
+            environmentDistanceField.stringValue = ""
             latitudeField.stringValue = ""
             longitudeField.stringValue = ""
             radiusField.stringValue = ""
+            flippedCheckbox.state = 0
             majorField.stringValue = ""
             zoneXField.stringValue = ""
             zoneYField.stringValue = ""
@@ -839,6 +859,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 latitudeField.doubleValue = Double(environment.geofence.latitude)
                 longitudeField.doubleValue = Double(environment.geofence.longitude)
                 radiusField.doubleValue = Double(environment.geofence.radius)
+                if let flipped = environment.data["flipped"] as? Int { flippedCheckbox.state = flipped }
+                if let distance = environment.data["distance"] as? Double { environmentDistanceField.doubleValue = distance }
             } else if let zone = selectedFlare as? Zone {
                 NSLog("Selected \(zone)")
                 tabView.selectTabViewItemAtIndex(1)

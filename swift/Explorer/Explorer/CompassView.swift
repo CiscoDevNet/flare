@@ -39,9 +39,27 @@ class CompassView: NSView {
 
     var selectedThing: Thing?
     var nearbyThing: Thing?
+    var environmentFlipped = false
     
     func dataChanged() {
+        updateFlipped()
         self.needsDisplay = true
+    }
+    
+    func updateFlipped() {
+        if environment != nil {
+            if let flipped = environment!.data["flipped"] as? Int {
+                self.environmentFlipped = flipped != 0
+            } else {
+                self.environmentFlipped = false
+            }
+        }
+    }
+    
+    override var flipped:Bool {
+        get {
+            return environmentFlipped
+        }
     }
     
     override func drawRect(rect: CGRect) {
