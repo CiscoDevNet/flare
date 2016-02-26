@@ -203,9 +203,13 @@ public class FlareManager {
         });
     }
 
+    public String deviceIdKey(String environmentId, String deviceType) {
+        return "deviceId-" + deviceType + "-" + environmentId;
+    }
+
     // looks for an existing device object in the current environment, and if found calls the handler with it
     public void savedDevice(String environmentId, String deviceType, SharedPreferences prefs, FlareManager.DeviceHandler handler) {
-        String deviceId = prefs.getString("deviceId" + deviceType, null);
+        String deviceId = prefs.getString(deviceIdKey(environmentId, deviceType), null);
         if (deviceId != null) {
             getDevice(deviceId, environmentId, (json) -> {
                 try {
@@ -269,7 +273,7 @@ public class FlareManager {
             addToIndex(device);
 
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("deviceId" + deviceType, device.getId());
+            editor.putString(deviceIdKey(environmentId, deviceType), device.getId());
             editor.commit();
 
             Log.d(TAG, "Created new device: " + device.getName());

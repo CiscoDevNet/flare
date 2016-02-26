@@ -146,7 +146,7 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
     protected boolean mFlareVariablesChanged;
     protected boolean mDataChanged;
     protected int mThingDefaultColor;
-
+    protected boolean mFlipped = false;
     protected ArrayList<Thing> mThingsNearDevice;
 
     public CommonView(Context context, AttributeSet attrs) {
@@ -241,6 +241,11 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
             mDevice = device;
             mFlareVariablesChanged = true;
             mDataChanged = true;
+
+            mFlipped = false;
+            try {
+                mFlipped = mEnvironment.getData().getInt("flipped") != 0;
+            } catch (Exception e) {}
         }
     }
 
@@ -310,6 +315,6 @@ public abstract class CommonView extends SurfaceView implements SurfaceHolder.Ca
 
     protected float deviceAngle() {
         if (mEnvironment == null) return 0;
-        return mDeviceAngle + (float)mEnvironment.getAngle();
+        return mDeviceAngle - (float)mEnvironment.getAngle();
     }
 }

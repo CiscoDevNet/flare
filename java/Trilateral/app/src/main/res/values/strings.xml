@@ -2,6 +2,7 @@
     <string name="app_name">Trilateral</string>
     <string name="action_settings">Settings</string>
     <string name="action_reload">Reload</string>
+    <string name="toggle_environment">Toggle Environment</string>
     <string name="update_watch">Update Watch</string>
 
     <string name="environment">Environment</string>
@@ -18,5 +19,6 @@
 
     <string name="use_gps_title">Use GPS</string>
     <string name="use_beacons_title">Use Beacons</string>
+    <string name="use_cmx_title">Use CMX</string>
     <string name="use_compass_title">Use Compass</string>
 </resources>

@@ -38,6 +38,7 @@ public class MapView extends CommonView {
     private PointF mPerimeterOriginOnCanvas;
     private int mMapBgColor;
     private Paint mLinkPaint; // link between an object near the device
+    private RectF mZonePerimeter;
 
     public MapView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -77,7 +78,7 @@ public class MapView extends CommonView {
         if (mSelectedZone == null)
             return;
 
-        RectF perimeter = mSelectedZone.getPerimeter();
+        mZonePerimeter = mSelectedZone.getPerimeter();
         // leave a margin on the canvas to be able to draw Things (half a Thing on each side) on the perimeter if needed
         float halfThingWidth = (float)mDrawableDeviceDimensions.width()*0.7f, // changed from 0.5f
               halfThingHeight = (float)mDrawableDeviceDimensions.height()*0.7f;
@@ -85,16 +86,16 @@ public class MapView extends CommonView {
               canvasHeight = (float)mCanvasHeight - 2*halfThingHeight;
 
         mPerimeterOriginOnCanvas.set(halfThingWidth, halfThingHeight);
-        mPerimeterToCanvasMultiplier = canvasWidth / perimeter.width();
-        float yMax = mPerimeterToCanvasMultiplier * perimeter.height();
+        mPerimeterToCanvasMultiplier = canvasWidth / mZonePerimeter.width();
+        float yMax = mPerimeterToCanvasMultiplier * mZonePerimeter.height();
         if (yMax <= canvasHeight) {
             // the map fits vertically
             mPerimeterOriginOnCanvas.set(halfThingWidth, halfThingHeight+(canvasHeight-yMax)/2);
         }
         else {
             // the map doesn't fit vertically, we need to recalculate the multiplier
-            mPerimeterToCanvasMultiplier = canvasHeight / perimeter.height();
-            float xMax = mPerimeterToCanvasMultiplier * perimeter.width();
+            mPerimeterToCanvasMultiplier = canvasHeight / mZonePerimeter.height();
+            float xMax = mPerimeterToCanvasMultiplier * mZonePerimeter.width();
             mPerimeterOriginOnCanvas.set(halfThingWidth + (canvasWidth - xMax) / 2, halfThingHeight);
         }
     }
@@ -108,11 +109,11 @@ public class MapView extends CommonView {
 
         // draw perimeter
         if (mSelectedZone != null) {
-            RectF perimeter = mSelectedZone.getPerimeter();
+            mZonePerimeter = mSelectedZone.getPerimeter();
             float xMin = mPerimeterOriginOnCanvas.x,
                     yMin = mPerimeterOriginOnCanvas.y,
-                    xMax = xMin + mPerimeterToCanvasMultiplier * perimeter.width(),
-                    yMax = yMin + mPerimeterToCanvasMultiplier * perimeter.height();
+                    xMax = xMin + mPerimeterToCanvasMultiplier * mZonePerimeter.width(),
+                    yMax = yMin + mPerimeterToCanvasMultiplier * mZonePerimeter.height();
             canvas.drawRect(xMin, yMin, xMax, yMax, mPerimeterPaint);
 
             // draw a link between the device and things it is near to
@@ -124,7 +125,7 @@ public class MapView extends CommonView {
             for (Thing thing : mSelectedZone.getThings()) {
                 PointF position = thing.getPosition();
                 mDrawableThing.setColorFilter(determineThingColor(thing), PorterDuff.Mode.SRC);
-                drawAtObjectPosition(canvas, mDrawableThing, (int) position.x, (int) position.y);
+                drawAtObjectPosition(canvas, mDrawableThing, position.x, position.y);
             }
         }
 
@@ -155,8 +156,8 @@ public class MapView extends CommonView {
     }
 
     private PointF positionInCanvas(PointF pos) {
-        float xInCanvas = mPerimeterOriginOnCanvas.x+mPerimeterToCanvasMultiplier*pos.x;
-        float yInCanvas = mCanvasHeight - (mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier*pos.y);
+        float xInCanvas = mPerimeterOriginOnCanvas.x+mPerimeterToCanvasMultiplier * (pos.x - mZonePerimeter.left);
+        float yInCanvas = mCanvasHeight - (mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier * (pos.y - mZonePerimeter.top));
         return new PointF(xInCanvas, yInCanvas);
     }
 
@@ -166,11 +167,11 @@ public class MapView extends CommonView {
         return new PointF(x, y);
     }
 
-    private void drawAtObjectPosition(Canvas canvas, Drawable object, int x, int y) {
-        int halfWidth = object.getMinimumWidth()/2,
-            halfHeight = object.getMinimumHeight()/2;
-        int xInCanvas = (int)(mPerimeterOriginOnCanvas.x+mPerimeterToCanvasMultiplier*x);
-        int yInCanvas = mCanvasHeight - (int)(mPerimeterOriginOnCanvas.y+mPerimeterToCanvasMultiplier*y);
+    private void drawAtObjectPosition(Canvas canvas, Drawable object, float x, float y) {
+        int halfWidth = object.getMinimumWidth() / 2,
+            halfHeight = object.getMinimumHeight() / 2;
+        int xInCanvas = (int)(mPerimeterOriginOnCanvas.x + mPerimeterToCanvasMultiplier * (x - mZonePerimeter.left));
+        int yInCanvas = mCanvasHeight - (int)(mPerimeterOriginOnCanvas.y + mPerimeterToCanvasMultiplier * (y - mZonePerimeter.top));
         object.setBounds(xInCanvas - halfWidth, yInCanvas - halfHeight, xInCanvas + halfWidth, yInCanvas + halfHeight);
         object.draw(canvas);
     }

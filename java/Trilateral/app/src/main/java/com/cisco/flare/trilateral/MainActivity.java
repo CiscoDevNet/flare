@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	private CompassManager compassManager;
 
 	public FlareManager flareManager;
+	public ArrayList<Environment> allEnvironments;
 	public Environment environment;
 	public Device mobileDevice;
 	public Device watchDevice;
@@ -157,26 +158,73 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		boolean useGPS = prefs.getBoolean("use_gps", true);
 		currentLocation = useGPS ? getLastKnownLocation() : null;
 
-		flareManager.loadEnvironments(currentLocation, (environments) -> {
-			if (environments != null) {
-				if (!environments.isEmpty()) {
-					setEnvironment(environments.get(0));
+		if (currentLocation != null) {
+			flareManager.loadEnvironments(currentLocation, (environments) -> {
+				if (environments != null) {
+					if (!environments.isEmpty()) {
+						this.allEnvironments = environments;
+						setEnvironment(environments.get(0));
+					} else {
+						// got an empty list of environments while filtering, try again with no location
+						loadDefaultEnvironment();
+					}
 				} else {
-					flareManager.loadEnvironments(null, (allEnvironments) -> {
-						if (allEnvironments != null && !allEnvironments.isEmpty()) {
-							Log.d(TAG, "No nearby environment found, using first environment.");
-							setEnvironment(allEnvironments.get(0));
-						} else {
-							Log.d(TAG, "No environments found.");
-							showMessage("No environments found");
-						}
-					});
+					// didn't get a list of environments while filtering, try again with no location
+					loadDefaultEnvironment();
+				}
+			});
+		} else {
+			// GPS is turned off or we don't have a location
+			loadDefaultEnvironment();
+		}
+	}
+
+	public void loadDefaultEnvironment() {
+		flareManager.loadEnvironments(null, (environments) -> {
+			if (environments != null && !environments.isEmpty()) {
+				this.allEnvironments = environments;
+				String savedEnvironmentId = prefs.getString("environmentId", null);
+				Environment savedEnvironment = this.getEnvironmentWithId(environments, savedEnvironmentId);
+
+				if (savedEnvironment != null) {
+					Log.d(TAG, "Using saved environment.");
+					setEnvironment(savedEnvironment);
+				} else {
+					Log.d(TAG, "No nearby environment found, using first environment.");
+					setEnvironment(environments.get(0));
 				}
 			} else {
-				Log.d(TAG, "Could not connect to server.");
-				showMessage("Could not connect to server.");
+				Log.d(TAG, "No environments found.");
+				showMessage("No environments found");
 			}
 		});
+
+	}
+
+	public Environment getEnvironmentWithId(ArrayList<Environment> environments, String environmentId) {
+		if (environments == null || environmentId == null) return null;
+
+		for (Environment environment : environments) {
+			if (environment.getId().equals(environmentId)) {
+				return environment;
+			}
+		}
+		return null;
+	}
+
+	public void toggleEnvironment() {
+		if (allEnvironments != null && allEnvironments.size() > 0 && environment != null) {
+			int index = allEnvironments.indexOf(environment);
+			int next = (index + 1) % allEnvironments.size();
+			Environment nextEnvironment = allEnvironments.get(next);
+			setEnvironment(nextEnvironment);
+		}
+	}
+
+	public void setPref(String key, String value) {
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(key, value);
+		editor.commit();
 	}
 
 	public void showMessage(String message) {
@@ -213,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 				setWatchDevice(newWatchDevice);
 				flareManager.subscribe(watchDevice);
 
-				if (watchDevice.getPosition() == null) newWatchDevice.setPosition(new PointF(0,0));
+				if (watchDevice.getPosition() == null) newWatchDevice.setPosition(new PointF(0, 0));
 
 				flareManager.getCurrentZone(environment.getId(), watchDevice.getPosition(), (newZone) -> {
 					watchDevice.setCurrentZone(newZone);
@@ -246,7 +294,10 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	public void loadMacAddress(Device device) {
 		flareManager.getMacAddress((String mac) -> {
 			Log.d(TAG, "mac: " + mac);
-			try { device.getData().put("mac", mac); } catch (Exception e) {}
+			try {
+				device.getData().put("mac", mac);
+			} catch (Exception e) {
+			}
 			flareManager.setData(device, "mac", mac, device);
 		});
 	}
@@ -302,6 +353,8 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		this.environment = value;
 
 		if (value != null) {
+			setPref("environmentId", value.getId());
+
 			loadDevices();
 
 			flareManager.subscribe(environment, true);
@@ -513,9 +566,11 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	}
 
 	public void didReceivePosition(Flare flare, PointF oldPosition, PointF newPosition, Flare sender) {
-		Log.d(TAG, flare.getName() + " position: " + newPosition.toString());
-		for (FlareFragment fragment : flareFragments) {
-			fragment.positionChanged();
+		if (prefs.getBoolean("use_cmx", true)) {
+			Log.d(TAG, flare.getName() + " position: " + newPosition.toString());
+			for (FlareFragment fragment : flareFragments) {
+				fragment.positionChanged();
+			}
 		}
 	}
 
@@ -541,13 +596,13 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 	}
 
 	public void exit(Zone zone, Device device) {
-		if (!didEnter) {
+		/* if (!didEnter) {
 			Log.d(TAG, device.getName() + " exited " + zone.getName());
 			device.setCurrentZone(null);
 			objectsChanged();
 		} else {
 			Log.d(TAG, "Ignoring exit message just after enter message");
-		}
+		} */
 	}
 
 	public void near(Thing thing, Device device, double distance) {
@@ -947,16 +1002,18 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			things = currentZone != null ? currentZone.getThings() : null;
 			sortThingsByDistanceFrom(device);
 
-			adapter = new ThingArrayAdapter(getContext(), things);
-			catalogListView.setAdapter(adapter);
-			catalogListView.setOnItemClickListener((parent, view2, position, id) -> {
-				Thing selectedThing = (Thing) catalogListView.getItemAtPosition(position);
-				if (selectedThing != null) {
-					// simulate a near message to select the device
-					mainActivity.near(selectedThing, device, device.distanceTo(selectedThing));
-				}
-				Log.d(TAG, "Selected: " + selectedThing.getName());
-			});
+			if (things != null) {
+				adapter = new ThingArrayAdapter(getContext(), things);
+				catalogListView.setAdapter(adapter);
+				catalogListView.setOnItemClickListener((parent, view2, position, id) -> {
+					Thing selectedThing = (Thing) catalogListView.getItemAtPosition(position);
+					if (selectedThing != null) {
+						// simulate a near message to select the device
+						mainActivity.near(selectedThing, device, device.distanceTo(selectedThing));
+					}
+					Log.d(TAG, "Selected: " + selectedThing.getName());
+				});
+			}
 
 			selectThing(nearbyThing);
 			objectsChanged();
@@ -965,7 +1022,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 		}
 
 		public void sortThingsByDistanceFrom(Device device) {
-			Collections.sort(things, (Thing t1, Thing t2) -> (int)(device.distanceTo(t1) - device.distanceTo(t2)));
+			try {
+				Collections.sort(things, (Thing t1, Thing t2) -> (int) (device.distanceTo(t1) - device.distanceTo(t2)));
+			} catch (Exception e) {}
 		}
 
 		public class ThingArrayAdapter extends ArrayAdapter<Thing> {
@@ -1041,7 +1100,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			sortThingsByDistanceFrom(device);
 			selectThing(nearbyThing);
 
-			adapter.notifyDataSetChanged();
+			if (adapter != null) adapter.notifyDataSetChanged();
 		}
 
 		private void selectThing(Thing thing) {
@@ -1354,6 +1413,9 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 			return true;
 		} else if (id == R.id.action_reload) {
 			load();
+			return true;
+		} else if (id == R.id.action_toggle_environment) {
+			toggleEnvironment();
 			return true;
 		} else if (id == R.id.action_update_watch) {
 			sendEnvironmentToWearable();

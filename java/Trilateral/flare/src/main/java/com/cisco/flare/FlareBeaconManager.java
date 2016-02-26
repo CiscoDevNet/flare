@@ -97,7 +97,7 @@ public class FlareBeaconManager {
                                 minor = beacon.getId3().toInt();
                             }
 
-                            if (beaconDebug) Log.d(TAG, "Found major: " + major + ", minor: " + minor + ", distance: " + distance + ", type: " + (isEddystone ? "Eddystone" : "AltBeacon"));
+                            if (beaconDebug) Log.d(TAG, "Found uuid: " + beaconUuid + ", major: " + major + ", minor: " + minor + ", distance: " + distance + ", type: " + (isEddystone ? "Eddystone" : "AltBeacon"));
 
                             Thing thing = thisInstance.environment.getThingForBeacon(major, minor);
                             if (thing != null) {

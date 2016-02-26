@@ -13,8 +13,13 @@
         android:title="@string/action_reload"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/action_toggle_environment"
+        android:orderInCategory="300"
+        android:title="@string/toggle_environment"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_update_watch"
-        android:orderInCategory="200"
+        android:orderInCategory="400"
         android:title="@string/update_watch"
         app:showAsAction="never"/>
 </menu>

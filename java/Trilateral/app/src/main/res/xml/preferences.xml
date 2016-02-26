@@ -25,6 +25,10 @@
             android:title="@string/use_beacons_title" />
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="use_cmx"
+            android:title="@string/use_cmx_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="use_compass"
             android:title="@string/use_compass_title" />
     </PreferenceCategory>

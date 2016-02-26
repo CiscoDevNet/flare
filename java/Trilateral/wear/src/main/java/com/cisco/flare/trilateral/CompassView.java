@@ -172,7 +172,7 @@ public class CompassView extends SurfaceView {
 		canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
 
 		// draw the objects
-		myScene.draw(rectF, canvas, environmentAngle + globalAngle, touchInfo, finStrokeWidth, nearFinStrokeWidth);
+		myScene.draw(rectF, canvas, 0 - environmentAngle + globalAngle, touchInfo, finStrokeWidth, nearFinStrokeWidth);
 	}
 
 	public void selectThing(Thing thing) {
