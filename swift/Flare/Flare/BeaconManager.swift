@@ -18,7 +18,6 @@ public protocol BeaconManagerDelegate {
 
 public class BeaconManager: NSObject, CLLocationManagerDelegate {
     
-    let squareDistance = false
     let beaconDebug = false
     
     public var delegate: BeaconManagerDelegate?

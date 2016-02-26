@@ -377,11 +377,28 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="dCF-N7-rs6">
-                                <rect key="frame" x="710" y="89" width="30" height="30"/>
+                                <rect key="frame" x="718" y="90" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="▶︎"/>
                                 <connections>
-                                    <action selector="toggleEnvironment:" destination="7ex-jB-g52" eventType="touchUpInside" id="8ga-FT-JSt"/>
+                                    <action selector="nextEnvironment:" destination="7ex-jB-g52" eventType="touchUpInside" id="lLU-Nq-e40"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="1oT-dd-FlF">
+                                <rect key="frame" x="19" y="90" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="◀︎"/>
+                                <connections>
+                                    <action selector="previousEnvironment:" destination="7ex-jB-g52" eventType="touchUpInside" id="edm-Tz-oYl"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aGb-Ff-6tZ">
+                                <rect key="frame" x="24" y="918" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                <state key="normal" title="↺"/>
+                                <connections>
+                                    <action selector="reload:" destination="7ex-jB-g52" eventType="touchUpInside" id="om1-sc-7dF"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -418,7 +435,7 @@
                                 <rect key="frame" x="0.0" y="30" width="768" height="70"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ffa-8t-G5K" id="4ZH-nW-gwf">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="70"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="69.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$199" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ayp-An-BiW">

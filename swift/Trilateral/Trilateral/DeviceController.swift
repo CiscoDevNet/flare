@@ -64,7 +64,15 @@ class DeviceController: UIViewController, FlareController {
 
     }
     
-    @IBAction func toggleEnvironment(sender: AnyObject?) {
-        appDelegate.toggleEnvironment()
+    @IBAction func nextEnvironment(sender: AnyObject?) {
+        appDelegate.nextEnvironment()
+    }
+    
+    @IBAction func previousEnvironment(sender: AnyObject?) {
+        appDelegate.previousEnvironment()
+    }
+    
+    @IBAction func reload(sender: AnyObject?) {
+        appDelegate.reload()
     }
 }

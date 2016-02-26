@@ -355,6 +355,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate {
     func far(thing: Thing, device: Device) {
         
     }
+    
+    func enter(zone: Zone, device: Device) {
+        
+    }
+    
+    func exit(zone: Zone, device: Device) {
+        
+    }
+    
+    func didReceivePosition(flare: Flare, oldPosition: Point3D, newPosition: Point3D, sender: Flare?) {
+        
+    }
 }
 
 extension Dictionary {

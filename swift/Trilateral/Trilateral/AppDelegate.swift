@@ -97,6 +97,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         loadEnvironments()
     }
     
+    @IBAction func reload() {
+        loadEnvironments()
+    }
+    
     func loadEnvironments() {
         var params: JSONDictionary? = nil
         if currentLocation != nil {
@@ -110,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             } else {
                 self.flareManager.loadEnvironments(nil, loadDevices: false) { (environments) -> () in // load all environments
                     if environments.count > 0 {
-                        NSLog("No environments found nearby, using first one.")
+                        NSLog("No environments found nearby, using default environment.")
                         self.allEnvironments = environments
                         self.loadEnvironment(environments[0])
                     } else {
@@ -124,18 +128,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func loadDefaultEnvironment() {
         self.flareManager.loadEnvironments(nil, loadDevices: false) { (environments) -> () in // load all environments
             if environments.count > 0 {
-                NSLog("Using default environment.")
-                self.loadEnvironment(environments[0])
+                if let environmentId = self.defaults.stringForKey("environmentId"),
+                    environment = self.environmentWithId(environments, environmentId: environmentId)
+                {
+                    NSLog("Using saved environment.")
+                    self.loadEnvironment(environment)
+                } else {
+                    NSLog("Using first environment.")
+                    self.loadEnvironment(environments[0])
+                }
             } else {
                 NSLog("No environments found.")
             }
         }
     }
     
+    func environmentWithId(environments: [Environment], environmentId: String) -> Environment? {
+        for environment in environments {
+            if environment.id == environmentId {
+                return environment
+            }
+        }
+        return nil
+    }
+    
     func loadEnvironment(environment: Environment) {
         self.currentEnvironment = environment
         self.flareManager.subscribe(environment, all: true)
         NSLog("Current environment: \(environment.name)")
+        
+        defaults.setObject(environment.id, forKey: "environmentId")
         
         self.flareManager.getCurrentDevice(environment.id, template: self.deviceTemplate()) { (device) -> () in
             self.loadDevice(device)
@@ -150,12 +172,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
     }
     
-    func toggleEnvironment() {
+    func nextEnvironment() {
         if allEnvironments.count > 0 && currentEnvironment != nil {
             let index = allEnvironments.indexOf(currentEnvironment!)
             let next = (index! + 1) % allEnvironments.count
             let nextEnvironment = allEnvironments[next]
             loadEnvironment(nextEnvironment)
+        }
+    }
+    
+    func previousEnvironment() {
+        if allEnvironments.count > 0 && currentEnvironment != nil {
+            let index = allEnvironments.indexOf(currentEnvironment!)
+            let previous = (index! - 1 + allEnvironments.count) % allEnvironments.count
+            let previousEnvironment = allEnvironments[previous]
+            loadEnvironment(previousEnvironment)
         }
     }
     
