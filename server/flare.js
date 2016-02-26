@@ -24,7 +24,7 @@ var express = require("express"),
 	io = require('socket.io').listen(app.listen(port)),
 	d = new Date(),
 	globalSocket = null,
-	minDistance = 1.5, // TODO: minimum distance in meters, could be configurable per device and/or thing
+	defaultMinDistance = 1.5,
 	defaultCeiling = 3.0,
 	defaultDepth = 0.0, // defaultDepth should be above defaultFloor and below defaultCeiling
 	defaultFloor = 0.0;
@@ -771,53 +771,59 @@ function setPosition(message, callback) {
 
 function findNearest(socket, message) {
 	getObjectForMessage(message, function(device) {
-		if (device == undefined) {
-			return;
-		}
+		flaredb.Environment.findById(device.environment, function (err, environment) {
+			if (device == undefined) {
+				return;
+			}
 	
-		var oldNearestId = device.nearest;
-		getNearestThing(device, minDistance, function (newNearest) {
-			var newNearestId = newNearest ? newNearest._id : undefined;
+			var minDistance = environment.data.distance
+			if (minDistance == undefined || minDistance == 0) minDistance = defaultMinDistance;
+			// console.log("Min distance: " + minDistance)
+	
+			var oldNearestId = device.nearest;
+			getNearestThing(device, minDistance, function (newNearest) {
+				var newNearestId = newNearest ? newNearest._id : undefined;
 
-			if ("" + oldNearestId != "" + newNearestId) {
-				if (oldNearestId != undefined) {
-					console.log('device ' + device._id + ' far from thing ' + oldNearestId);
-					flaredb.Thing.findById(oldNearestId, function (err, oldNearest) {
-						notify(socket, getId(message), 'far', {thing: oldNearestId}, parentIds(oldNearest, true));
-					});
-				}
+				if ("" + oldNearestId != "" + newNearestId) {
+					if (oldNearestId != undefined) {
+						console.log('device ' + device._id + ' far from thing ' + oldNearestId);
+						flaredb.Thing.findById(oldNearestId, function (err, oldNearest) {
+							notify(socket, getId(message), 'far', {thing: oldNearestId}, parentIds(oldNearest, true));
+						});
+					}
 		
-				if (newNearestId != undefined) {
-					var distance = distanceBetween(device.position, newNearest.position);
-					console.log('device ' + device._id + ' near to thing ' + newNearestId + ' (' + distance + ')');
-					notify(socket, getId(message), 'near', {thing: newNearestId, distance: distance}, parentIds(newNearest, true));
-				}
+					if (newNearestId != undefined) {
+						var distance = distanceBetween(device.position, newNearest.position);
+						console.log('device ' + device._id + ' near to thing ' + newNearestId + ' (' + distance + ')');
+						notify(socket, getId(message), 'near', {thing: newNearestId, distance: distance}, parentIds(newNearest, true));
+					}
 		
-				device.nearest = newNearestId;
-				device.save();
-			}
-		});
+					device.nearest = newNearestId;
+					device.save();
+				}
+			});
 
-		var oldZoneId = device.zone;
-		getZoneForDevice(device, function (newZone) {
-			var newZoneId = newZone ? newZone._id : undefined;
+			var oldZoneId = device.zone;
+			getZoneForDevice(device, function (newZone) {
+				var newZoneId = newZone ? newZone._id : undefined;
 
-			if ("" + oldZoneId != "" + newZoneId) {
-				if (oldZoneId != undefined) {
-					console.log('device ' + device._id + ' exited zone ' + oldZoneId);
-					flaredb.Zone.findById(oldZoneId, function (err, oldZone) {
-						notify(socket, getId(message), 'exit', {zone: oldZoneId}, parentIds(oldZone, true));
-					});
-				}
+				if ("" + oldZoneId != "" + newZoneId) {
+					if (oldZoneId != undefined) {
+						console.log('device ' + device._id + ' exited zone ' + oldZoneId);
+						flaredb.Zone.findById(oldZoneId, function (err, oldZone) {
+							notify(socket, getId(message), 'exit', {zone: oldZoneId}, parentIds(oldZone, true));
+						});
+					}
 		
-				if (newZoneId != undefined) {
-					console.log('device ' + device._id + ' entered zone ' + newZoneId);
-					notify(socket, getId(message), 'enter', {zone: newZoneId}, parentIds(newZone, true));
-				}
+					if (newZoneId != undefined) {
+						console.log('device ' + device._id + ' entered zone ' + newZoneId);
+						notify(socket, getId(message), 'enter', {zone: newZoneId}, parentIds(newZone, true));
+					}
 		
-				device.zone = newZoneId;
-				device.save();
-			}
+					device.zone = newZoneId;
+					device.save();
+				}
+			});
 		});
 	});
 }
