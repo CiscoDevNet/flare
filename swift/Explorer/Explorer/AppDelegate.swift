@@ -281,9 +281,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
                 if let url = panel.URL {
                     NSLog("Open: \(url)")
                     if let data = NSData(contentsOfURL: url) {
-                        if let jsonArray = try? NSJSONSerialization.JSONObjectWithData(data, options: []) as? JSONArray {
+                        if let json = try? NSJSONSerialization.JSONObjectWithData(data, options: []) as? JSONDictionary,
+                            jsonArray = json!["environments"] as? JSONArray
+                        {
                             NSLog("Objects: \(jsonArray)")
-                            self.importEnvironments(jsonArray!)
+                            self.importEnvironments(jsonArray)
                         }
                     }
                 }
@@ -298,8 +300,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
             if result == NSFileHandlingPanelOKButton {
                 if let url = panel.URL {
                     NSLog("Save: \(url)")
-                    let jsonArray = self.environments.map({$0.toJSON()})
-                    if let data = try? NSJSONSerialization.dataWithJSONObject(jsonArray, options: []) {
+                    let json = ["environments": self.environments.map({$0.toJSON()})]
+                    if let data = try? NSJSONSerialization.dataWithJSONObject(json, options: []) {
                         data.writeToURL(url, atomically: true)
                     }
                 }
