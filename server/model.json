@@ -1,454 +1,341 @@
 {
-    "environments": [
+  "environments": [
+    {
+      "name": "Cisco Live",
+      "angle": 195,
+      "_id": "5645fa4c0f1b508cb3e53979",
+      "data": {
+        "uuid": "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6"
+      },
+      "zones": [
         {
-            "angle": 0,
-            "description": "Paris, France",
-            "geofence": {
-                "latitude": 48.8676305,
-                "longitude": 2.3473456,
-                "radius": 10000
-            },
-            "name": "Paris",
-            "data": {
-                "uuid": "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6"
-            },
-            "perimeter": {
-                "origin": {
-                    "x": -1,
-                    "y": -1
-                },
+          "description": "Open Space",
+          "things": [
+            {
+              "description": "sofa with footstool",
+              "_id": "5645fa4c0f1b508cb3e5397d",
+              "data": {
+                "price": 510,
                 "size": {
-                    "height": 22,
-                    "width": 22
-                }
+                  "width": 955,
+                  "height": 500
+                },
+                "sku": "298.937.59",
+                "designer": "IKEA of Sweden",
+                "options": [
+                  "white",
+                  "red",
+                  "orange",
+                  "green",
+                  "blue"
+                ],
+                "brightness": 0.5,
+                "color": "orange",
+                "location": {
+                  "aisle": 2,
+                  "section": 17
+                },
+                "dimensions": {
+                  "depth": 76,
+                  "width": 217,
+                  "height": 66
+                },
+                "quantity": {
+                  "red": 12,
+                  "white": 4,
+                  "orange": 16,
+                  "blue": 9,
+                  "green": 5
+                },
+                "url": "http://www.ikea.com/us/en/catalog/products/S29893759/",
+                "minor": 2
+              },
+              "position": {
+                "y": 10,
+                "x": 0
+              },
+              "name": "Arholma"
             },
-			"devices": [
-                {
-                    "data": {
-                        "color": "red",
-						"angle": 90
-                    },
-                    "description": "iPhone 6 (32 GB)",
-                    "name": "Andrew's iPhone",
-                    "position": {
-                        "x": 3,
-                        "y": 1
-                    },
-                    "type": "mobile"
-                }
-			],
-            "zones": [
-                {
-                    "data": {
-                        "major": 1
-                    },
-                    "name": "Southwest",
-                    "perimeter": {
-                        "origin": {
-                            "x": 0,
-                            "y": 0
-                        },
-                        "size": {
-                            "height": 10,
-                            "width": 10
-                        }
-                    },
-                    "things": [
-                        {
-                            "data": {
-                                "minor": 1
-                            },
-                            "description": "Southwest corner",
-                            "name": "Beacon 1",
-                            "position": {
-                                "x": 0,
-                                "y": 0
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 2
-                            },
-                            "description": "South center",
-                            "name": "Beacon 2",
-                            "position": {
-                                "x": 10,
-                                "y": 0
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 4
-                            },
-                            "description": "West center",
-                            "name": "Beacon 4",
-                            "position": {
-                                "x": 0,
-                                "y": 10
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 5
-                            },
-                            "description": "Center",
-                            "name": "Beacon 5",
-                            "position": {
-                                "x": 10,
-                                "y": 10
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "color": "red",
-								"brightness": 0.5
-                            },
-                            "description": "Middle of southwest zone",
-                            "name": "Thing 1",
-                            "position": {
-                                "x": 5,
-                                "y": 5
-                            },
-                            "type": "display"
-                        }
-                    ]
+            {
+              "description": "sofa",
+              "_id": "5645fa4c0f1b508cb3e5397c",
+              "data": {
+                "price": 350,
+                "size": {
+                  "width": 955,
+                  "height": 500
                 },
-                {
-                    "data": {
-                        "major": 1
-                    },
-                    "name": "Southeast",
-                    "perimeter": {
-                        "origin": {
-                            "x": 10,
-                            "y": 0
-                        },
-                        "size": {
-                            "height": 10,
-                            "width": 10
-                        }
-                    },
-                    "things": [
-                        {
-                            "data": {
-                                "minor": 3
-                            },
-                            "description": "Southeast corner",
-                            "name": "Beacon 3",
-                            "position": {
-                                "x": 20,
-                                "y": 0
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 6
-                            },
-                            "description": "East center",
-                            "name": "Beacon 6",
-                            "position": {
-                                "x": 20,
-                                "y": 10
-                            },
-                            "type": "beacon"
-                        },
-						{
-                            "data": {
-                                "color": "yellow",
-								"brightness": 0.5
-                            },
-                            "description": "Middle of southest zone",
-                            "name": "Thing 2",
-                            "position": {
-                                "x": 15,
-                                "y": 5
-                            },
-                            "type": "display"
-                        }
-                    ]
+                "on": true,
+                "designer": "Cisc&oslash; of Chandlers Fj&ouml;rd",
+                "brightness": 0.5,
+                "color": "red",
+                "location": {
+                  "aisle": 2,
+                  "section": 20
                 },
-                {
-                    "data": {
-                        "major": 1
-                    },
-                    "name": "Northwest",
-                    "perimeter": {
-                        "origin": {
-                            "x": 0,
-                            "y": 10
-                        },
-                        "size": {
-                            "height": 10,
-                            "width": 10
-                        }
-                    },
-                    "things": [
-                        {
-                            "data": {
-                                "minor": 7
-                            },
-                            "description": "Northwest corner",
-                            "name": "Beacon 7",
-                            "position": {
-                                "x": 0,
-                                "y": 20
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 8
-                            },
-                            "description": "North center",
-                            "name": "Beacon 8",
-                            "position": {
-                                "x": 10,
-                                "y": 20
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "color": "green",
-								"brightness": 0.5
-                            },
-                            "description": "Middle of northwest zone",
-                            "name": "Thing 3",
-                            "position": {
-                                "x": 5,
-                                "y": 15
-                            },
-                            "type": "display"
-                        }
-                    ]
+                "dimensions": {
+                  "depth": 93,
+                  "width": 205,
+                  "height": 80
                 },
-                {
-                    "data": {
-                        "major": 1
-                    },
-                    "name": "Northeast",
-                    "perimeter": {
-                        "origin": {
-                            "x": 10,
-                            "y": 10
-                        },
-                        "size": {
-                            "height": 10,
-                            "width": 10
-                        }
-                    },
-                    "things": [
-                        {
-                            "data": {
-                                "minor": 9
-                            },
-                            "description": "Northeast corner",
-                            "name": "Beacon 9",
-                            "position": {
-                                "x": 20,
-                                "y": 20
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "color": "blue",
-								"brightness": 0.5
-                            },
-                            "description": "Middle of northeast zone",
-                            "name": "Thing 4",
-                            "position": {
-                                "x": 15,
-                                "y": 15
-                            },
-                            "type": "display"
-                        }
-                    ]
-                }
-            ]
+                "sku": "098.405.35",
+                "options": [
+                  "gray",
+                  "lightgray",
+                  "black",
+                  "yellow",
+                  "red"
+                ],
+                "quantity": {
+                  "black": 7,
+                  "red": 12,
+                  "gray": 5,
+                  "lightgray": 10,
+                  "yellow": 3
+                },
+                "url": "http://www.ikea.com/us/en/catalog/products/S09840535/",
+                "minor": 1
+              },
+              "position": {
+                "y": 0,
+                "x": 0
+              },
+              "name": "Coombe"
+            },
+            {
+              "description": "loveseat with chaise",
+              "_id": "5645fa4c0f1b508cb3e5397e",
+              "data": {
+                "size": {
+                  "width": 1050,
+                  "height": 500
+                },
+                "price": 699,
+                "on": false,
+                "designer": "Carl &Ouml;jerstam",
+                "brightness": 0.5,
+                "color": "red",
+                "location": {
+                  "aisle": 2,
+                  "section": 18
+                },
+                "dimensions": {
+                  "depth": 123,
+                  "width": 157,
+                  "height": 77
+                },
+                "sku": "602.991.96",
+                "options": [
+                  "red",
+                  "green",
+                  "lightblue",
+                  "purple"
+                ],
+                "quantity": {
+                  "lightblue": 6,
+                  "red": 5,
+                  "purple": 22,
+                  "green": 18
+                },
+                "url": "http://www.ikea.com/us/en/catalog/products/60299196/",
+                "minor": 3
+              },
+              "position": {
+                "y": 10,
+                "x": 10
+              },
+              "name": "Dagarn"
+            },
+            {
+              "description": "sofa bed",
+              "_id": "5645fa4c0f1b508cb3e5397f",
+              "data": {
+                "price": 449,
+                "size": {
+                  "width": 875,
+                  "height": 500
+                },
+                "on": true,
+                "designer": "IKEA of Sweden",
+                "brightness": 0.5,
+                "color": "teal",
+                "location": {
+                  "aisle": 2,
+                  "section": 19
+                },
+                "dimensions": {
+                  "depth": 68,
+                  "width": 162,
+                  "height": 60
+                },
+                "sku": "902.932.30",
+                "options": [
+                  "red",
+                  "salmon",
+                  "orange",
+                  "teal",
+                  "purple"
+                ],
+                "quantity": {
+                  "salmon": 10,
+                  "teal": 3,
+                  "red": 5,
+                  "orange": 7,
+                  "purple": 12
+                },
+                "url": "http://www.ikea.com/us/en/catalog/products/90293230/",
+                "minor": 4
+              },
+              "position": {
+                "y": 0,
+                "x": 10
+              },
+              "name": "Erska"
+            },
+            {
+              "description": "loveseat",
+              "_id": "56a68870f2cc40ab0e2bc378",
+              "data": {
+                "price": 99,
+                "size": {
+                  "width": 750,
+                  "height": 500
+                },
+                "on": true,
+                "designer": "Nike Karlsson",
+                "brightness": 0.5,
+                "color": "green",
+                "location": {
+                  "aisle": 3,
+                  "section": 9
+                },
+                "dimensions": {
+                  "depth": 76,
+                  "width": 119,
+                  "height": 69
+                },
+                "sku": "102.651.08",
+                "options": [
+                  "pink",
+                  "yellow",
+                  "green",
+                  "blue"
+                ],
+                "quantity": {
+                  "yellow": 7,
+                  "pink": 10,
+                  "blue": 12,
+                  "green": 3
+                },
+                "url": "http://www.ikea.com/us/en/catalog/products/10265108/",
+                "minor": 8
+              },
+              "position": {
+                "y": 10,
+                "x": 5
+              },
+              "name": "Knopparp"
+            }
+          ],
+          "_id": "5645fa4c0f1b508cb3e5397a",
+          "data": {
+            "major": 1979
+          },
+          "perimeter": {
+            "origin": {
+              "y": -0.5,
+              "x": -0.5
+            },
+            "size": {
+              "width": 11,
+              "height": 11
+            }
+          },
+          "name": "DevNet Zone"
+        }
+      ],
+      "perimeter": {
+        "origin": {
+          "y": -1,
+          "x": -1
+        },
+        "size": {
+          "width": 12,
+          "height": 12
+        }
+      },
+      "description": "Berlin, Germany",
+      "devices": [
+        {
+          "description": "Google Nexus 5, Android 6.0.1",
+          "_id": "56c5dd1fcfecb3e58bbcab73",
+          "data": {
+            "angle": 145,
+            "mac": "64:89:9a:4f:67:98"
+          },
+          "position": {
+            "y": 1.31,
+            "x": 1.31
+          },
+          "name": "Andrew's Nexus 5"
         },
         {
-            "angle": 0,
-            "description": "New York, NY",
-            "geofence": {
-                "latitude": 40.7512146,
-                "longitude": -73.9947581,
-                "radius": 10000
-            },
-            "name": "New York",
-            "data": {
-                "uuid": "F7826DA6-4FA2-4E98-8024-BC5B71E0893E"
-            },
-            "perimeter": {
-                "origin": {
-                    "x": -1,
-                    "y": -1
-                },
-                "size": {
-                    "height": 13,
-                    "width": 13
-                }
-            },
-			"devices": [
-                {
-                    "data": {
-                        "color": "red",
-						"angle": 90
-                    },
-                    "description": "iPhone 6 (32 GB)",
-                    "name": "Andrew's iPhone",
-                    "position": {
-                        "x": 3,
-                        "y": 1
-                    },
-                    "type": "mobile"
-                }
-			],
-            "zones": [
-                {
-                    "data": {
-                        "major": 101
-                    },
-                    "name": "Open Space",
-                    "perimeter": {
-                        "origin": {
-                            "x": 0,
-                            "y": 0
-                        },
-                        "size": {
-                            "height": 11,
-                            "width": 11
-                        }
-                    },
-                    "things": [
-                        {
-                            "data": {
-                                "minor": 62708
-                            },
-                            "description": "8Kzf",
-                            "name": "Kontakt 1",
-                            "position": {
-                                "x": 1,
-                                "y": 1
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 4922
-                            },
-                            "description": "O7LU",
-                            "name": "Kontakt 2",
-                            "position": {
-                                "x": 2,
-                                "y": 2
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 11177
-                            },
-                            "description": "OlQm",
-                            "name": "Kontakt 3",
-                            "position": {
-                                "x": 3,
-                                "y": 3
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 7427
-                            },
-                            "description": "SgAk",
-                            "name": "Kontakt 4",
-                            "position": {
-                                "x": 4,
-                                "y": 4
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 44748
-                            },
-                            "description": "UtNz",
-                            "name": "Kontakt 5",
-                            "position": {
-                                "x": 5,
-                                "y": 5
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 18942
-                            },
-                            "description": "VEZU",
-                            "name": "Kontakt 6",
-                            "position": {
-                                "x": 6,
-                                "y": 6
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 60120
-                            },
-                            "description": "ZGsJ",
-                            "name": "Kontakt 7",
-                            "position": {
-                                "x": 7,
-                                "y": 7
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 29164
-                            },
-                            "description": "ayuk",
-                            "name": "Kontakt 8",
-                            "position": {
-                                "x": 8,
-                                "y": 8
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 17942
-                            },
-                            "description": "g1Py",
-                            "name": "Kontakt 9",
-                            "position": {
-                                "x": 9,
-                                "y": 9
-                            },
-                            "type": "beacon"
-                        },
-                        {
-                            "data": {
-                                "minor": 15222
-                            },
-                            "description": "gYHW",
-                            "name": "Kontakt 10",
-                            "position": {
-                                "x": 10,
-                                "y": 10
-                            },
-                            "type": "beacon"
-                        }
-                    ]
-                }
-            ]
+          "description": "Moto 360, Android 5.0",
+          "_id": "56c5dd1fcfecb3e58bbcab74",
+          "data": {
+            "mac": "64:89:9a:4f:67:98"
+          },
+          "position": {
+            "y": 0,
+            "x": 0
+          },
+          "name": "Andrew's Watch"
+        },
+        {
+          "description": "iPhone, iOS 9.2.1",
+          "_id": "56c5dc0ad7cfbcaa8b0e5b2c",
+          "data": {
+            "angle": 330,
+            "mac": "98:e0:d9:53:94:57"
+          },
+          "position": {
+            "y": 6.81,
+            "x": 2.07
+          },
+          "name": "Andrew's iPhone"
+        },
+        {
+          "description": "Google Nexus 5, Android 6.0.1",
+          "_id": "56c44e0dc3838184027b9849",
+          "data": {
+            "angle": 150,
+            "mac": "64:89:9a:4f:63:19"
+          },
+          "position": {
+            "y": 5.94,
+            "x": 4.07
+          },
+          "name": "Simon's Nexus 5"
+        },
+        {
+          "description": "Moto 360, Android 5.0",
+          "_id": "56c2d32cc3838184027b9833",
+          "data": {
+            "angle": 200,
+            "mac": "02:00:00:00:00:00"
+          },
+          "position": {
+            "y": 5.48,
+            "x": 4.57
+          },
+          "name": "Simon's Watch"
         }
-    ]
+      ],
+      "geofence": {
+        "radius": 2000,
+        "longitude": -77.044207,
+        "latitude": 38.93444
+      }
+    }
+  ]
 }
