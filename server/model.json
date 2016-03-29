@@ -15,11 +15,11 @@
               "description": "sofa with footstool",
               "_id": "5645fa4c0f1b508cb3e5397d",
               "data": {
-                "price": 510,
                 "size": {
                   "width": 955,
                   "height": 500
                 },
+                "price": 510,
                 "sku": "298.937.59",
                 "designer": "IKEA of Sweden",
                 "options": [
@@ -52,7 +52,8 @@
               },
               "position": {
                 "y": 10,
-                "x": 0
+                "x": 0,
+                "z": 0
               },
               "name": "Arholma"
             },
@@ -60,11 +61,11 @@
               "description": "sofa",
               "_id": "5645fa4c0f1b508cb3e5397c",
               "data": {
-                "price": 350,
                 "size": {
                   "width": 955,
                   "height": 500
                 },
+                "price": 350,
                 "on": true,
                 "designer": "Cisc&oslash; of Chandlers Fj&ouml;rd",
                 "brightness": 0.5,
@@ -98,7 +99,8 @@
               },
               "position": {
                 "y": 0,
-                "x": 0
+                "x": 0,
+                "z": 0
               },
               "name": "Coombe"
             },
@@ -142,7 +144,8 @@
               },
               "position": {
                 "y": 10,
-                "x": 10
+                "x": 10,
+                "z": 0
               },
               "name": "Dagarn"
             },
@@ -150,11 +153,11 @@
               "description": "sofa bed",
               "_id": "5645fa4c0f1b508cb3e5397f",
               "data": {
-                "price": 449,
                 "size": {
                   "width": 875,
                   "height": 500
                 },
+                "price": 449,
                 "on": true,
                 "designer": "IKEA of Sweden",
                 "brightness": 0.5,
@@ -188,19 +191,84 @@
               },
               "position": {
                 "y": 0,
-                "x": 10
+                "x": 10,
+                "z": 0
               },
               "name": "Erska"
+            },
+            {
+              "description": "",
+              "_id": "56cdd2e0746b13141740d930",
+              "data": {
+                "color": "oak",
+                "brightness": 0.04072944379596444,
+                "options": [
+                  "birch",
+                  "black",
+                  "oak",
+                  "white"
+                ],
+                "minor": 5
+              },
+              "position": {
+                "y": 5,
+                "x": 0,
+                "z": 0
+              },
+              "name": "Kallax"
+            },
+            {
+              "description": "",
+              "_id": "56cdd2bc746b13141740d92e",
+              "data": {
+                "options": [
+                  "magenta",
+                  "orange",
+                  "turquoise",
+                  "white",
+                  "yellow"
+                ],
+                "color": "magenta",
+                "minor": 6
+              },
+              "position": {
+                "y": 5,
+                "x": 10,
+                "z": 0
+              },
+              "name": "Karlstad"
+            },
+            {
+              "description": "",
+              "_id": "56cdd2cd746b13141740d92f",
+              "data": {
+                "color": "gray",
+                "brightness": 0.5,
+                "options": [
+                  "black",
+                  "gray",
+                  "green",
+                  "red",
+                  "teal"
+                ],
+                "minor": 7
+              },
+              "position": {
+                "y": 0,
+                "x": 5,
+                "z": 0
+              },
+              "name": "Knislinge"
             },
             {
               "description": "loveseat",
               "_id": "56a68870f2cc40ab0e2bc378",
               "data": {
-                "price": 99,
                 "size": {
                   "width": 750,
                   "height": 500
                 },
+                "price": 99,
                 "on": true,
                 "designer": "Nike Karlsson",
                 "brightness": 0.5,
@@ -232,23 +300,26 @@
               },
               "position": {
                 "y": 10,
-                "x": 5
+                "x": 5,
+                "z": 0
               },
               "name": "Knopparp"
             }
           ],
           "_id": "5645fa4c0f1b508cb3e5397a",
           "data": {
-            "major": 1979
+            "major": 1
           },
           "perimeter": {
             "origin": {
               "y": -0.5,
-              "x": -0.5
+              "x": -0.5,
+              "z": 0
             },
             "size": {
               "width": 11,
-              "height": 11
+              "height": 11,
+              "depth": 0
             }
           },
           "name": "DevNet Zone"
@@ -257,11 +328,13 @@
       "perimeter": {
         "origin": {
           "y": -1,
-          "x": -1
+          "x": -1,
+          "z": 0
         },
         "size": {
           "width": 12,
-          "height": 12
+          "height": 12,
+          "depth": 0
         }
       },
       "description": "Berlin, Germany",
@@ -274,8 +347,9 @@
             "mac": "64:89:9a:4f:67:98"
           },
           "position": {
-            "y": 1.31,
-            "x": 1.31
+            "y": 2,
+            "x": 1,
+            "z": 0
           },
           "name": "Andrew's Nexus 5"
         },
@@ -286,8 +360,9 @@
             "mac": "64:89:9a:4f:67:98"
           },
           "position": {
-            "y": 0,
-            "x": 0
+            "y": 2,
+            "x": 4,
+            "z": 0
           },
           "name": "Andrew's Watch"
         },
@@ -299,36 +374,11 @@
             "mac": "98:e0:d9:53:94:57"
           },
           "position": {
-            "y": 6.81,
-            "x": 2.07
+            "y": 2,
+            "x": 7,
+            "z": 0
           },
           "name": "Andrew's iPhone"
-        },
-        {
-          "description": "Google Nexus 5, Android 6.0.1",
-          "_id": "56c44e0dc3838184027b9849",
-          "data": {
-            "angle": 150,
-            "mac": "64:89:9a:4f:63:19"
-          },
-          "position": {
-            "y": 5.94,
-            "x": 4.07
-          },
-          "name": "Simon's Nexus 5"
-        },
-        {
-          "description": "Moto 360, Android 5.0",
-          "_id": "56c2d32cc3838184027b9833",
-          "data": {
-            "angle": 200,
-            "mac": "02:00:00:00:00:00"
-          },
-          "position": {
-            "y": 5.48,
-            "x": 4.57
-          },
-          "name": "Simon's Watch"
         }
       ],
       "geofence": {
