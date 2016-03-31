@@ -309,48 +309,53 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
         }
     }
     
+    var requests = 0
+
+    func startRequest() {
+        requests = requests + 1
+    }
+    
+    func finishRequest() {
+        requests = requests - 1
+        if requests == 0 {
+            self.refresh(self)
+        }
+    }
+    
     // merge the imported files
     func importEnvironments(jsonArray: JSONArray) {
-        var requests = 0
-        
         for environmentJson in jsonArray {
-            requests++
+            self.startRequest()
             self.flareManager.newOrUpdateEnvironment(environmentJson) { newEnvironment in
                 if let environmentId = newEnvironment["_id"] as? String {
                     if let zones = environmentJson["zones"] as? JSONArray {
                         for zoneJson in zones {
-                            requests++
+                            self.startRequest()
                             self.flareManager.newOrUpdateZone(zoneJson, environmentId: environmentId) { newZone in
                                 if let zoneId = newZone["_id"] as? String {
                                     if let things = zoneJson["things"] as? JSONArray {
                                         for thingJson in things {
-                                            requests++
+                                            self.startRequest()
                                             self.flareManager.newOrUpdateThing(thingJson, environmentId: environmentId, zoneId: zoneId) { _ in
-                                                requests--
-                                                if requests == 0 { self.refresh(self) }
+                                                self.finishRequest()
                                             }
                                         }
                                     }
                                 }
-                                
-                                requests--
-                                if requests == 0 { self.refresh(self) }
+                                self.finishRequest()
                             }
                         }
                     }
                     if let devices = environmentJson["devices"] as? JSONArray {
                         for deviceJson in devices {
-                            requests++
+                            self.startRequest()
                             self.flareManager.newOrUpdateDevice(deviceJson, environmentId: environmentId) { _ in
-                                requests--
-                                if requests == 0 { self.refresh(self) }
+                                self.finishRequest()
                             }
                         }
                     }
                 }
-                
-                requests--
-                if requests == 0 { self.refresh(self) }
+                self.finishRequest()
             }
         }
     }

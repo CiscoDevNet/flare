@@ -53,32 +53,39 @@ public class FlareManager: APIManager {
         }
     }
     
+    var requests = 0
+    
+    func startRequest() {
+        requests = requests + 1
+    }
+    
+    func finishRequest(handler:() -> ()) {
+        requests = requests - 1
+        if requests == 0 {
+            handler()
+        }
+    }
+
     // Asynchronously loads all zones and things for one environment, and then calls the handler.
     public func loadEnvironment(environment: Environment, handler:() -> ()) {
-        var requests = 0
-        
-        requests++
+        self.startRequest()
         self.listZones(environment.id) {(jsonArray) -> () in
             for json in jsonArray {
                 let zone = Zone(json: json)
                 environment.zones.append(zone)
                 self.addToIndex(zone)
                 
-                requests++
+                self.startRequest()
                 self.listThings(environment.id, zoneId: zone.id) {(jsonArray) -> () in
                     for json in jsonArray {
                         let thing = Thing(json: json)
                         zone.things.append(thing)
                         self.addToIndex(thing)
                     }
-                    
-                    requests--
-                    if requests == 0 { handler() }
+                    self.finishRequest(handler)
                 }
             }
-            
-            requests--
-            if requests == 0 { handler() }
+            self.finishRequest(handler)
         }
     }
     
@@ -87,27 +94,39 @@ public class FlareManager: APIManager {
         loadEnvironments(nil, loadDevices: true, handler: handler)
     }
     
+    var environmentsRequests = 0
+    
+    func startEnvironmentsRequests() {
+        environmentsRequests = environmentsRequests + 1
+    }
+    
+    func finishEnvironmentsRequest(handler:([Environment]) -> (), environments: [Environment]) {
+        environmentsRequests = environmentsRequests - 1
+        if environmentsRequests == 0 {
+            handler(environments)
+        }
+    }
+    
     // Asynchronously loads the complete environment / zone / thing / device hierarchy, and then calls the handler.
     // params is optional and should contain latitude and longitude
     public func loadEnvironments(params: JSONDictionary?, loadDevices: Bool, handler:([Environment]) -> ()) {
         var environments = [Environment]()
-        var requests = 0
         
-        requests++
+        self.startEnvironmentsRequests()
         self.listEnvironments(params) {(jsonArray) -> () in
             for json in jsonArray {
                 let environment = Environment(json: json)
                 environments.append(environment)
                 self.addToIndex(environment)
                 
-                requests++
+                self.startEnvironmentsRequests()
                 self.listZones(environment.id) {(jsonArray) -> () in
                     for json in jsonArray {
                         let zone = Zone(json: json)
                         environment.zones.append(zone)
                         self.addToIndex(zone)
                         
-                        requests++
+                        self.startEnvironmentsRequests()
                         self.listThings(environment.id, zoneId: zone.id) {(jsonArray) -> () in
                             for json in jsonArray {
                                 let thing = Thing(json: json)
@@ -115,19 +134,15 @@ public class FlareManager: APIManager {
                                 self.addToIndex(thing)
                             }
                             zone.things.sortInPlace() {$1.name > $0.name}
-                            
-                            requests--
-                            if requests == 0 { handler(environments) }
+                            self.finishEnvironmentsRequest(handler, environments: environments)
                         }
                     }
                     environment.zones.sortInPlace() {$1.name > $0.name}
-                    
-                    requests--
-                    if requests == 0 { handler(environments) }
+                    self.finishEnvironmentsRequest(handler, environments: environments)
                 }
                 
                 if loadDevices {
-                    requests++
+                    self.startRequest()
                     self.listDevices(environment.id) {(jsonArray) -> () in
                         for json in jsonArray {
                             let device = Device(json: json)
@@ -135,16 +150,12 @@ public class FlareManager: APIManager {
                             self.addToIndex(device)
                         }
                         environment.devices.sortInPlace() {$1.name > $0.name}
-                        
-                        requests--
-                        if requests == 0 { handler(environments) }
+                        self.finishEnvironmentsRequest(handler, environments: environments)
                     }
                 }
             }
             environments.sortInPlace() {$1.name > $0.name}
-            
-            requests--
-            if requests == 0 { handler(environments) }
+            self.finishEnvironmentsRequest(handler, environments: environments)
         }
     }
 
