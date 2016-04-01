@@ -142,7 +142,7 @@ public class FlareManager: APIManager {
                 }
                 
                 if loadDevices {
-                    self.startRequest()
+                    self.startEnvironmentsRequests()
                     self.listDevices(environment.id) {(jsonArray) -> () in
                         for json in jsonArray {
                             let device = Device(json: json)
