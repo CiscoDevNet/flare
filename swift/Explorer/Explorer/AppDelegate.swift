@@ -312,11 +312,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
     var requests = 0
 
     func startRequest() {
-        requests = requests + 1
+        requests += 1
     }
     
     func finishRequest() {
-        requests = requests - 1
+        requests -= 1
         if requests == 0 {
             self.refresh(self)
         }
@@ -643,15 +643,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, FlareManagerDelegate, NSTabl
         }
     }
 
-    func animateFlare(var flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
+    func animateFlare(flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
+        var animatedFlare = flare
         let dx = (newPosition.x - oldPosition.x) / CGFloat(animationSteps)
         let dy = (newPosition.y - oldPosition.y) / CGFloat(animationSteps)
         let dz = (newPosition.z - oldPosition.z) / CGFloat(animationSteps)
 
         delayLoop(animationDelay, steps: animationSteps) { i in
-            flare.position = Point3D(x: oldPosition.x + CGFloat(i) * dx,
-                                     y: oldPosition.y + CGFloat(i) * dy,
-                                     z: oldPosition.z + CGFloat(i) * dz)
+            animatedFlare.position = Point3D(x: oldPosition.x + CGFloat(i) * dx,
+                                             y: oldPosition.y + CGFloat(i) * dy,
+                                             z: oldPosition.z + CGFloat(i) * dz)
             self.map.dataChanged()
             self.compass.dataChanged()
         }

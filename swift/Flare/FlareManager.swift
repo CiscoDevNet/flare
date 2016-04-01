@@ -56,11 +56,11 @@ public class FlareManager: APIManager {
     var requests = 0
     
     func startRequest() {
-        requests = requests + 1
+        requests += 1
     }
     
     func finishRequest(handler:() -> ()) {
-        requests = requests - 1
+        requests -= 1
         if requests == 0 {
             handler()
         }
@@ -97,11 +97,11 @@ public class FlareManager: APIManager {
     var environmentsRequests = 0
     
     func startEnvironmentsRequests() {
-        environmentsRequests = environmentsRequests + 1
+        environmentsRequests += 1
     }
     
     func finishEnvironmentsRequest(handler:([Environment]) -> (), environments: [Environment]) {
-        environmentsRequests = environmentsRequests - 1
+        environmentsRequests -= 1
         if environmentsRequests == 0 {
             handler(environments)
         }

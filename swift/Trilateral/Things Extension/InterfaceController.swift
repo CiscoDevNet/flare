@@ -32,7 +32,7 @@ class InterfaceController: WKInterfaceController, WCSessionDelegate {
             session!.activateSession()
         }
         
-        for (var i = 0; i < 3; i++) {
+        for i in 1...3 {
             var thingInfo = JSONDictionary()
             thingInfo["name"] = "Thing \(i)"
             thingInfo["description"] = "Stuff \(i)"

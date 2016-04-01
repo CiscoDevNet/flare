@@ -394,16 +394,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
     }
     
-    func animateFlare(var flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
+    func animateFlare( flare: FlarePosition, oldPosition: Point3D, newPosition: Point3D) {
+        var animatedFlare = flare
         if oldPosition == newPosition { return }
         
         let dx = (newPosition.x - oldPosition.x) / CGFloat(animationSteps)
         let dy = (newPosition.y - oldPosition.y) / CGFloat(animationSteps)
         let dz = (newPosition.z - oldPosition.z) / CGFloat(animationSteps)
         
-        flare.position = oldPosition
+        animatedFlare.position = oldPosition
         delayLoop(animationDelay, steps: animationSteps) { i in
-            flare.position = Point3D(x: oldPosition.x + CGFloat(i) * dx,
+            animatedFlare.position = Point3D(x: oldPosition.x + CGFloat(i) * dx,
                                      y: oldPosition.y + CGFloat(i) * dy,
                                      z: oldPosition.z + CGFloat(i) * dz)
             self.animate()
@@ -411,21 +412,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
     }
     
-    func animateAngle(flare: Device, var oldAngle: Double, newAngle: Double) {
+    func animateAngle(flare: Device, oldAngle: Double, newAngle: Double) {
+        var oldAngleAdjusted = oldAngle
         if oldAngle == newAngle { return }
         
         // prevent the compass from spinning the wrong way
-        if newAngle - oldAngle > 180.0 {
-            oldAngle += 360.0
-        } else if newAngle - oldAngle < -180.0 {
-            oldAngle -= 360.0
+        if newAngle - oldAngleAdjusted > 180.0 {
+            oldAngleAdjusted += 360.0
+        } else if newAngle - oldAngleAdjusted < -180.0 {
+            oldAngleAdjusted -= 360.0
         }
         
-        let delta = (newAngle - oldAngle) / Double(animationSteps)
+        let delta = (newAngle - oldAngleAdjusted) / Double(animationSteps)
         
         flare.data["angle"] = oldAngle
         delayLoop(animationDelay, steps: animationSteps) { i in
-            flare.data["angle"] = oldAngle + Double(i) * delta
+            flare.data["angle"] = oldAngleAdjusted + Double(i) * delta
             self.animate()
             if i == self.animationSteps - 1 { self.dataChanged() }
         }

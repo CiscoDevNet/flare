@@ -59,7 +59,7 @@ class CompassView: UIView, FlareController {
         appDelegate.flareController = self
         appDelegate.updateFlareController()
        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"orientationDidChange:", name: UIApplicationDidChangeStatusBarOrientationNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(CompassView.orientationDidChange(_:)), name: UIApplicationDidChangeStatusBarOrientationNotification, object: nil)
     }
     
     override func awakeFromNib() {

@@ -298,7 +298,7 @@ public class Thing: Flare, FlarePosition {
         for value in distances {
             if value != -1 {
                 total += value
-                count++
+                count += 1
             }
         }
         

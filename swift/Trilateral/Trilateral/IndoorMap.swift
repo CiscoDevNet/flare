@@ -55,7 +55,7 @@ class IndoorMap: UIView, FlareController {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector:"orientationDidChange:", name: UIApplicationDidChangeStatusBarOrientationNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector:#selector(IndoorMap.orientationDidChange(_:)), name: UIApplicationDidChangeStatusBarOrientationNotification, object: nil)
     }
     
     func orientationDidChange(note: NSNotification) {
