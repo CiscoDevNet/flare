@@ -1,7 +1,7 @@
 {
   "environments": [
     {
-      "name": "Cisco Live",
+      "name": "NUMA Paris",
       "angle": 195,
       "_id": "5645fa4c0f1b508cb3e53979",
       "data": {
@@ -9,7 +9,7 @@
       },
       "zones": [
         {
-          "description": "Open Space",
+          "description": "4ème étage",
           "things": [
             {
               "description": "sofa with footstool",
@@ -29,8 +29,8 @@
                   "green",
                   "blue"
                 ],
-                "brightness": 0.5,
-                "color": "orange",
+                "brightness": 0.3420486340161606,
+                "color": "red",
                 "location": {
                   "aisle": 2,
                   "section": 17
@@ -51,7 +51,7 @@
                 "minor": 2
               },
               "position": {
-                "y": 10,
+                "y": 8,
                 "x": 0,
                 "z": 0
               },
@@ -68,7 +68,7 @@
                 "price": 350,
                 "on": true,
                 "designer": "Cisc&oslash; of Chandlers Fj&ouml;rd",
-                "brightness": 0.5,
+                "brightness": 0.0601595880150716,
                 "color": "red",
                 "location": {
                   "aisle": 2,
@@ -113,9 +113,9 @@
                   "height": 500
                 },
                 "price": 699,
-                "on": false,
+                "on": true,
                 "designer": "Carl &Ouml;jerstam",
-                "brightness": 0.5,
+                "brightness": 0.0403646525893292,
                 "color": "red",
                 "location": {
                   "aisle": 2,
@@ -143,7 +143,7 @@
                 "minor": 3
               },
               "position": {
-                "y": 10,
+                "y": 8,
                 "x": 10,
                 "z": 0
               },
@@ -160,7 +160,7 @@
                 "price": 449,
                 "on": true,
                 "designer": "IKEA of Sweden",
-                "brightness": 0.5,
+                "brightness": 0.5153351673578948,
                 "color": "teal",
                 "location": {
                   "aisle": 2,
@@ -187,7 +187,7 @@
                   "purple": 12
                 },
                 "url": "http://www.ikea.com/us/en/catalog/products/90293230/",
-                "minor": 4
+                "minor": 9
               },
               "position": {
                 "y": 0,
@@ -201,7 +201,7 @@
               "_id": "56cdd2e0746b13141740d930",
               "data": {
                 "color": "oak",
-                "brightness": 0.04072944379596444,
+                "brightness": 0.1549556224670798,
                 "options": [
                   "birch",
                   "black",
@@ -211,7 +211,7 @@
                 "minor": 5
               },
               "position": {
-                "y": 5,
+                "y": 4,
                 "x": 0,
                 "z": 0
               },
@@ -221,6 +221,8 @@
               "description": "",
               "_id": "56cdd2bc746b13141740d92e",
               "data": {
+                "color": "magenta",
+                "brightness": 0.2732951080390329,
                 "options": [
                   "magenta",
                   "orange",
@@ -228,11 +230,10 @@
                   "white",
                   "yellow"
                 ],
-                "color": "magenta",
                 "minor": 6
               },
               "position": {
-                "y": 5,
+                "y": 4,
                 "x": 10,
                 "z": 0
               },
@@ -243,7 +244,7 @@
               "_id": "56cdd2cd746b13141740d92f",
               "data": {
                 "color": "gray",
-                "brightness": 0.5,
+                "brightness": 0.8486725404957843,
                 "options": [
                   "black",
                   "gray",
@@ -271,7 +272,7 @@
                 "price": 99,
                 "on": true,
                 "designer": "Nike Karlsson",
-                "brightness": 0.5,
+                "brightness": 0.4317570941929854,
                 "color": "green",
                 "location": {
                   "aisle": 3,
@@ -296,10 +297,10 @@
                   "green": 3
                 },
                 "url": "http://www.ikea.com/us/en/catalog/products/10265108/",
-                "minor": 8
+                "minor": 10
               },
               "position": {
-                "y": 10,
+                "y": 8,
                 "x": 5,
                 "z": 0
               },
@@ -308,7 +309,7 @@
           ],
           "_id": "5645fa4c0f1b508cb3e5397a",
           "data": {
-            "major": 1
+            "major": 4
           },
           "perimeter": {
             "origin": {
@@ -318,11 +319,11 @@
             },
             "size": {
               "width": 11,
-              "height": 11,
+              "height": 9,
               "depth": 0
             }
           },
-          "name": "DevNet Zone"
+          "name": "La Terrasse"
         }
       ],
       "perimeter": {
@@ -333,11 +334,11 @@
         },
         "size": {
           "width": 12,
-          "height": 12,
+          "height": 10,
           "depth": 0
         }
       },
-      "description": "Berlin, Germany",
+      "description": "39 rue du Caire",
       "devices": [
         {
           "description": "Google Nexus 5, Android 6.0.1",
@@ -370,21 +371,34 @@
           "description": "iPhone, iOS 9.2.1",
           "_id": "56c5dc0ad7cfbcaa8b0e5b2c",
           "data": {
-            "angle": 330,
+            "angle": 140,
             "mac": "98:e0:d9:53:94:57"
           },
           "position": {
-            "y": 2,
-            "x": 7,
+            "y": 7.15,
+            "x": 8.81,
             "z": 0
           },
           "name": "Andrew's iPhone"
+        },
+        {
+          "description": "iPad, iOS 8.3",
+          "_id": "56fe8584d3f3dc3454a0348d",
+          "data": {
+            "angle": 200
+          },
+          "position": {
+            "y": 6.86,
+            "x": 8.65,
+            "z": 0
+          },
+          "name": "iPad"
         }
       ],
       "geofence": {
-        "radius": 2000,
-        "longitude": -77.044207,
-        "latitude": 38.93444
+        "radius": 2,
+        "longitude": 2.3500192,
+        "latitude": 48.8684287
       }
     }
   ]
