@@ -315,11 +315,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
                 let distance = device!.distanceTo(nearbyThing!)
                 let brightness = 1.0 - (distance)
                 if brightness > 0 {
-                    nearbyThing!.data["brightness"] = brightness
-                    flareManager.setData(nearbyThing!, key: "brightness", value: brightness, sender: device!)
-                    dataChanged()
+                    setDoubleValue(brightness, key: "brightness", precision: 0.1, flare: nearbyThing!)
                 }
             }
+        }
+    }
+    
+    // sets the double value for the given flare, rounded to the given precision, only if it has changed
+    func setDoubleValue(value: Double, key: String, precision: Double, flare: Flare) {
+        let roundedValue = value.roundTo(precision)
+        var shouldChange = false
+        
+        if let oldValue = flare.data[key] as? Double {
+            shouldChange = oldValue != roundedValue
+        } else {
+            shouldChange = true
+        }
+
+        if shouldChange {
+            flare.data[key] = roundedValue
+            flareManager.setData(flare, key: key, value: roundedValue, sender: device!)
+            dataChanged()
         }
     }
     
