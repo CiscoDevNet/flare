@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements FlareManager.Dele
 					objectsChanged();
 				});
 
-				getMacAddress(mobileDevice);
+				// getMacAddress(mobileDevice);
 			} else {
 				Log.d(TAG, "Could not load mobile device.");
 			}
