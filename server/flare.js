@@ -336,6 +336,13 @@ app.post('/environments/:environment_id/devices', function (req, res) {
 	device.created = new Date();
 	device.modifed = new Date();
 	
+	flaredb.Device.create(req.body, function (err, post) {
+		if (err) return res.send(err);
+		res.json(post);
+	});
+	
+	/* 
+	// get the MAC address of the device and add it to the object before saving
 	var ipAddress = req.connection.remoteAddress;
 	if (ipAddress != null && ipAddress.indexOf('::ffff:') === 0) ipAddress = ipAddress.substring(7);
 	arp.getMAC(ipAddress, function(err, mac) {
@@ -354,6 +361,7 @@ app.post('/environments/:environment_id/devices', function (req, res) {
 			});
 	    }
 	});
+	*/
 });
 
 // CMX notification
@@ -771,11 +779,11 @@ function setPosition(message, callback) {
 
 function findNearest(socket, message) {
 	getObjectForMessage(message, function(device) {
+		if (device == undefined) {
+			return;
+		}
+
 		flaredb.Environment.findById(device.environment, function (err, environment) {
-			if (device == undefined) {
-				return;
-			}
-	
 			var minDistance = environment.data.distance
 			if (minDistance == undefined || minDistance == 0) minDistance = defaultMinDistance;
 			// console.log("Min distance: " + minDistance)
