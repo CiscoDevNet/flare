@@ -158,6 +158,7 @@ public class Environment extends Flare implements Flare.PerimeterObject {
 				}
 			}
 		}
+
 		return null;
 	}
 
