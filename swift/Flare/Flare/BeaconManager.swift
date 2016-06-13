@@ -168,33 +168,9 @@ public class BeaconManager: NSObject, CLLocationManagerDelegate {
         var sortedBeacons = [Thing](beacons.values)
         sortedBeacons.sortInPlace { $0.inverseDistance > $1.inverseDistance }
         
-        // let trainDemo = true
-        // var nearest: Thing?
-        // var secondNearest: Thing?
-        
         for (_,beacon) in sortedBeacons.enumerate() {
             if beacon.inverseDistance != -1 {
 
-                // for tracking position on a linear circuit,
-                // only use the nearest beacon and the one before or after it
-                /* if trainDemo {
-                    if nearest == nil {
-                        nearest = beacon
-                        NSLog("Nearest: \(nearest!.name)")
-                    } else if secondNearest == nil {
-                        if beacon.minor == nearest!.minor! + 1 || beacon.minor! == nearest!.minor! - 1 {
-                            secondNearest = beacon
-                            NSLog("Second nearest: \(secondNearest!.name)")
-                        } else {
-                            // other nearby beacon is not consecutive with the nearest one, so ignore it
-                            continue
-                        }
-                    } else {
-                        // we have already found two beacons, ignore the rest
-                        continue
-                    }
-                } */
-                
                 let weight = beacon.inverseDistance
                 x += Double(beacon.position.x) * weight
                 y += Double(beacon.position.y) * weight
