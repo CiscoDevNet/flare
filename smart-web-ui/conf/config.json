@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "interesting_links": [
+    {
+      "name": "The importance of context shifting in UX patterns",
+      "link": "https://css-tricks.com/the-importance-of-context-shifting-in-ux-patterns/"
+    },
+    {
+      "name": "UI Animation and UX",
+      "link": "http://alistapart.com/article/ui-animation-and-ux-a-not-so-secret-friendship"
+    },
+    {
+      "name": "Complex responsive animations",
+      "link": "http://slides.com/sdrasner/cssconf#/"
+    }
+  ]
+}

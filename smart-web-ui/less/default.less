@@ -1,0 +1,102 @@
+@import "mixins";
+@import "fonts";
+
+/* style */
+html {
+    font-size: 0.15vw;
+//    font-size: 1px;
+}
+@media all and (max-width: 500px) {
+    html {
+        font-size: 1px;
+    }
+}
+body {
+    padding-top: 50px;
+    .font-normal;
+}
+html {
+    height: 100%;
+}
+body {
+    min-height: 100%;
+    & > div.container-fluid {
+        height: ~"calc(100vh - 50px)";
+    }
+}
+
+
+th {
+    .font-bold;
+}
+.navbar {
+    #version {
+        &::before {
+            content: "";
+            margin-left: 10px;
+        }
+        display: inline;
+        font-weight: 300;
+        font-size: 14px;
+    }
+}
+.first-row {
+    padding-top: 15px;
+}
+#search {
+    display: inline-flex;
+    float: right;
+}
+#search {
+    & > input {
+        margin: -3px 0 0 10px;
+    }
+}
+
+body > .container-fluid {
+    background: #fcfcfc;
+}
+
+.flex {
+    display: inline-flex;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.hidden  { display: none; }
+
+.row-no-padding {
+    [class*="col-"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+
+button {
+    margin-right: 10px;
+}
+
+.circle {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+}
+
+.yellow {
+    background-color: #ffff00;
+}
+
+.orange {
+    background-color: orange;
+}
+
+.red {
+    background-color: red;
+}
+
+.grey {
+    background-color: grey;
+}
