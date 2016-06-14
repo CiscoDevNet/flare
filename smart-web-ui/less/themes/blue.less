@@ -1,0 +1,50 @@
+@import "../mixins";
+
+@font-face {
+    font-family: 'Signika Negative';
+    src: url('../../../fonts/SignikaNegative/SignikaNegative-Regular.ttf') format('truetype');
+}
+
+@mainColor: #80c6f6;
+body {
+    background: lighten(@mainColor, 10%);
+    font-family: Signika Negative, sans-serif;
+
+    & > .container-fluid {
+        background: transparent !important;
+    }
+}
+
+.groupTitleStyle(@paddingTopBottom:15px, @paddingLeftRight:25px) {
+    padding: @paddingTopBottom @paddingLeftRight;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    .nowrap;
+}
+
+.panel {
+    background: rgba(255, 255, 255, 0.45);
+}
+.panel {
+    &>.panel-heading {
+        .groupTitleStyle;
+    }
+}
+
+.panel-default {
+    &>.panel-heading {
+        background-color: rgba(0, 0, 0, 0.25);
+    }
+}
+
+.panel-info, .panel-warning, .panel-danger {
+    & > .panel-heading {
+        color: #333;
+    }
+}
+
+.btn-default {
+    background-color: @mainColor;
+    border-color: darken(@mainColor, 20%);
+    color: rgba(255, 255, 255, 0.9);
+}

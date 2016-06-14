@@ -1,0 +1,74 @@
+<h1>Page 2</h1>
+<div class="row first-row row-eq-height">
+  <div class="col-sm-6">
+    <h4>Test</h4>
+    This is a test page retrieving a list of users asynchronously via a SampleService.
+  </div>
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">Interesting links</div>
+      <div class="panel-body">
+        This is a list of links coming from <a target="blank" href="/conf/config.json">config.json</a><hr />
+        <ul id="interfaces">
+          <li ng-repeat="link in links"><a target="blank" href='{{link.link}}'>{{link.name}}</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          Users
+          <div id="search">Search: <input ng-model="query"></div>
+      </div>
+      <div class="panel-body">
+        <table id="users" class="table table-hover table-condensed">
+          <thead>
+          <tr>
+            <th class="clickable" ng-click="sortBy('id')">
+              id
+              <div ng-switch="orderProp" class="flex">
+                <span ng-switch-when="id" class="glyphicon" ng-class="orderArrow()" aria-hidden="true"></span>
+              </div>
+            </th>
+            <th class="clickable" ng-click="sortBy('info.name')">
+              name
+              <div ng-switch="orderProp" class="flex">
+                <span ng-switch-when="info.name" class="glyphicon" ng-class="orderArrow()" aria-hidden="true"></span>
+              </div>
+            </th>
+            <th class="clickable" ng-click="sortBy('info.company')">
+              company
+              <div ng-switch="orderProp" class="flex">
+                <span ng-switch-when="info.company" class="glyphicon" ng-class="orderArrow()" aria-hidden="true"></span>
+              </div>
+            </th>
+            <th class="clickable" ng-click="sortBy('info.email')">
+              email
+              <div ng-switch="orderProp" class="flex">
+                <span ng-switch-when="info.email" class="glyphicon" ng-class="orderArrow()" aria-hidden="true"></span>
+              </div>
+            </th>
+            <th class="clickable" ng-click="sortBy('info.phone')">
+              phone
+              <div ng-switch="orderProp" class="flex">
+                <span ng-switch-when="info.phone" class="glyphicon" ng-class="orderArrow()" aria-hidden="true"></span>
+              </div>
+            </th>
+          </tr>
+          </thead>
+          <tr ng-repeat="user in users | filter:query | orderBy:orderProp:reverseOrder">
+            <td>{{user.id}}</td>
+            <td>{{user.info.name}}</td>
+            <td>{{user.info.company}}</td>
+            <td>{{user.info.email}}</td>
+            <td>{{user.info.phone}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

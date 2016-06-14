@@ -1,0 +1,48 @@
+@import "../mixins";
+
+body {
+//    background: -moz-linear-gradient(-45deg, rgba(30,87,153,0.87) 0%, rgba(125,185,232,0.3) 42%, rgba(112,171,221,0.19) 50%, rgba(30,87,153,0.64) 100%); /* FF3.6-15 */
+//    background: -webkit-linear-gradient(-45deg, rgba(30,87,153,0.87) 0%,rgba(125,185,232,0.3) 42%,rgba(112,171,221,0.19) 50%,rgba(30,87,153,0.64) 100%); /* Chrome10-25,Safari5.1-6 */
+//    background: linear-gradient(135deg, rgba(30,87,153,0.87) 0%,rgba(125,185,232,0.3) 42%,rgba(112,171,221,0.19) 50%,rgba(30,87,153,0.64) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    background: rgba(100, 100, 100, 0.6);
+
+    & > .container-fluid {
+        background: transparent !important;
+    }
+}
+
+.groupTitleStyle(@paddingTopBottom:15px, @paddingLeftRight:25px) {
+    padding: @paddingTopBottom @paddingLeftRight;
+    text-transform: uppercase;
+    background-color: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.9);
+    .nowrap;
+}
+
+#curatedView {
+    .panel {
+        background: rgba(255, 255, 255, 0.22);
+    }
+    .panel-default>.panel-heading {
+        .groupTitleStyle;
+    }
+    .group {
+        background: rgba(255, 255, 255, 0.22) !important;
+        padding: 0;
+        & > .title {
+            .groupTitleStyle(10px, 16px);
+        }
+        & > .content {
+            padding: 0 15px;
+        }
+    }
+
+    #dataFlow {
+        svg {
+            path {
+//                stroke: rgba(0, 100, 255, 0.2);
+                stroke: rgba(255, 255, 255, 0.5);
+            }
+        }
+    }
+}
