@@ -72,6 +72,7 @@ public class Flare: NSObject {
         json["name"] = self.name
         json["description"] = self.comment
         json["data"] = self.data
+        if self.actions.count > 0 { json["actions"] = self.actions }
         // json["created"] = self.created
         // json["modified"] = self.modified
         return json

@@ -55,11 +55,7 @@ app.get('/environments', function (req, res) {
 		var longitude = req.query.longitude;
 		if (latitude !== undefined && longitude !== undefined) {
 			list = list.filter(function(environment) {
-				var radius = environment.geofence.radius;
-				if (radius == undefined || radius < 100) radius = 100;
-				var radiusDegrees = radius / 111120.0;
-				return closeTo(latitude, environment.geofence.latitude, radiusDegrees) && 
-					closeTo(longitude, environment.geofence.longitude, radiusDegrees);
+				return insideGeofence(latitude, longitude, environment.geofence);
 			});
 		}
 		
@@ -85,11 +81,7 @@ app.get('/environments/current', function (req, res) {
 			var longitude = device.data.location.longitude;
 			if (latitude !== undefined && longitude !== undefined) {
 				list = list.filter(function(environment) {
-					var radius = environment.geofence.radius;
-					if (radius == undefined || radius < 100) radius = 100;
-					var radiusDegrees = radius / 111120.0;
-					return closeTo(latitude, environment.geofence.latitude, radiusDegrees) && 
-						closeTo(longitude, environment.geofence.longitude, radiusDegrees);
+					return insideGeofence(latitude, longitude, environment.geofence);
 				});
 			}
 		
@@ -97,10 +89,6 @@ app.get('/environments/current', function (req, res) {
 		});
 	});
 });
-
-function closeTo(value, target, tolerance) {
-	return target - tolerance <= value && value <= target + tolerance;
-}
 
 app.post('/environments', function (req, res) {
 	var environment = req.body;
@@ -838,7 +826,8 @@ function findNearest(socket, message) {
 		}
 
 		flaredb.Environment.findById(device.environment, function (err, environment) {
-			var minDistance = environment.data.distance
+			if (environment.data === undefined) environment.data = {};
+			var minDistance = environment.data.distance;
 			if (minDistance == undefined || minDistance == 0) minDistance = defaultMinDistance;
 			// console.log("Min distance: " + minDistance)
 	
@@ -1005,14 +994,47 @@ function performAction(socket, message) {
 // SECURITY
 
 function canSeeThing(device, thing) {
-	return distanceBetween(device.position, thing.position) < 6;
+	// return distanceBetween(device.position, thing.position) < 6;
+	return inSameZone(device, thing);
 }
 
-function canGetData(device, thing) {
+function canGetData(device, thing, key) {
 	return distanceBetween(device.position, thing.position) < 4;
 }
 
-function canSetData(device, thing) {
+function canSetData(device, thing, key) {
 	return distanceBetween(device.position, thing.position) < 2;
 }
+
+function canPerformAction(device, thing, action) {
+	return true;
+}
+
+function inSameZone(device, thing) {
+	return "" + device.zone == "" + thing.zone;
+}
+
+function deviceInZone(device, zone) {
+	return "" + device.zone == "" + zone._id;
+}
+
+function deviceInEnvironment(device, environment) {
+	var latitude = device.data.location.latitude;
+	var longitude = device.data.location.longitude;
+	if (latitude === undefined || longitude === undefined) return false;
+	return insideGeofence(latitude, longitude, environment);
+}
+
+function insideGeofence(latitude, longitude, geofence) {
+	var radius = geofence.radius;
+	if (radius == undefined || radius < 100) radius = 100;
+	var radiusDegrees = radius / 111120.0;
+	return closeTo(latitude, geofence.latitude, radiusDegrees) && 
+		closeTo(longitude, geofence.longitude, radiusDegrees);
+}
+
+function closeTo(value, target, tolerance) {
+	return target - tolerance <= value && value <= target + tolerance;
+}
+
 
