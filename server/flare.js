@@ -75,6 +75,29 @@ app.get('/environments', function (req, res) {
 	});
 });
 
+app.get('/environments/current', function (req, res) {
+	flaredb.Environment.find(function (err, list) {
+	    if (err) return res.send(err);
+	    flaredb.Device.findById(req.query.device, function (err2, device) {
+			if (err2) return res.send(err2);
+			
+			var latitude = device.data.location.latitude;
+			var longitude = device.data.location.longitude;
+			if (latitude !== undefined && longitude !== undefined) {
+				list = list.filter(function(environment) {
+					var radius = environment.geofence.radius;
+					if (radius == undefined || radius < 100) radius = 100;
+					var radiusDegrees = radius / 111120.0;
+					return closeTo(latitude, environment.geofence.latitude, radiusDegrees) && 
+						closeTo(longitude, environment.geofence.longitude, radiusDegrees);
+				});
+			}
+		
+		    res.json(list);
+		});
+	});
+});
+
 function closeTo(value, target, tolerance) {
 	return target - tolerance <= value && value <= target + tolerance;
 }
@@ -157,6 +180,21 @@ app.get('/environments/:environment_id/zones', function (req, res) {
 	});
 });
 
+app.get('/environments/:environment_id/zones/current', function (req, res) {
+	flaredb.Zone.find({environment:req.params.environment_id}, function (err, list) {
+		if (err) return res.send(err);
+	    flaredb.Device.findById(req.query.device, function (err2, device) {
+			if (err2) return res.send(err2);
+
+			list = list.filter(function(zone) {
+				return containsPoint(zone.perimeter, device.position);
+			});
+		
+		    res.json(list);
+		});
+	});
+});
+
 app.post('/environments/:environment_id/zones', function (req, res) {
 	var zone = req.body;
 	zone.environment = req.params.environment_id; // verify that it's a valid object
@@ -210,12 +248,13 @@ app.delete('/environments/:environment_id/zones/:zone_id', function (req, res) {
 
 app.get('/environments/:environment_id/zones/:zone_id/things', function (req, res) {
 	flaredb.Thing.find({zone:req.params.zone_id}, function (err, list) {
-	    if (err) return res.send(err);
-		
+		if (err) return res.send(err);
+
 		var x = req.query.x;
 		var y = req.query.y;
 		var z = req.query.z;
 		if (z == undefined) z = defaultDepth;
+    
 		var distance = req.query.distance;
 		if (x !== undefined && y !== undefined && distance !== undefined) {
 			var point = {x:x, y:y, z:z};
@@ -233,6 +272,21 @@ app.get('/environments/:environment_id/zones/:zone_id/things', function (req, re
 		}
 		
 	    res.json(list);
+	});
+});
+
+app.get('/environments/:environment_id/zones/:zone_id/things/nearby', function (req, res) {
+	flaredb.Thing.find({zone:req.params.zone_id}, function (err, list) {
+		if (err) return res.send(err);
+	    flaredb.Device.findById(req.query.device, function (err2, device) {
+			if (err2) return res.send(err2);
+			
+			list = list.filter(function(thing) {
+				return canSeeThing(device, thing);
+			});
+
+			res.json(list);
+		});
 	});
 });
 
@@ -446,7 +500,7 @@ app.put('/environments/:environment_id/devices/:device_id', function (req, res) 
 	var info = req.body;
 	info.modified = new Date();
 	flaredb.Device.findByIdAndUpdate(req.params.device_id, info, {new: true}, function (err, post) {
-		if (err) return res.err(err);
+		if (err) return res.send(err);
 		res.json(post);
 	});
 });
@@ -947,3 +1001,18 @@ function performAction(socket, message) {
 		}
 	});
 }
+
+// SECURITY
+
+function canSeeThing(device, thing) {
+	return distanceBetween(device.position, thing.position) < 6;
+}
+
+function canGetData(device, thing) {
+	return distanceBetween(device.position, thing.position) < 4;
+}
+
+function canSetData(device, thing) {
+	return distanceBetween(device.position, thing.position) < 2;
+}
+

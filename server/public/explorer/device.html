@@ -49,6 +49,7 @@ function gotData(message) {
 		}
 		
 		setAngle(data);
+        setLocation(data);
 	} else if (message.thing == nearbyThing) {
 		console.log("data: " + JSON.stringify(message));
 		var data = message.data;
@@ -152,6 +153,13 @@ function setAngle(data) {
 	$("img#angle").css('-webkit-transform', 'rotate(' + ((45.0 + deviceAngle) % 360) + 'deg)');
 }
 
+function setLocation(data) {
+	if (data.location != undefined) {
+		$("input#latitude").val(data.location.latitude);
+		$("input#longitude").val(data.location.longitude);	    
+	}
+}
+
 function setColor(data) {
 	if (data.color != undefined) thingColor = data.color;
 	if (data.brightness != undefined) thingBrightness = data.brightness;
@@ -180,6 +188,20 @@ function update(input) {
 		// console.log("Result: " + JSON.stringify(updated));
 	});
 }
+
+function updateLocation() {
+	var location = {
+		latitude: 1.0 * $("input#latitude").val(),
+		longitude: 1.0 * $("input#longitude").val()
+	};
+	
+    setData({device:device_id}, 'location', location, device_id);
+	/* console.log("Update: " + JSON.stringify(data));
+	updateDevice(environment_id, device_id, data, function(updated) {
+		console.log("Result: " + JSON.stringify(updated));
+	}); */
+}
+
 
 function removeDevice() {
 	deleteDevice(environment_id, device_id, function(deleted) {
@@ -235,7 +257,7 @@ function nearbyThingAction(action) {
 <table align="center">
 
 <tr>
-	<td rowspan="6" valign="top">
+	<td rowspan="7" valign="top">
 		<img id="angle" width="50" height="50" src="images/compass.png" style="-webkit-transform: rotate(45deg);">
 	</td>
 	<td align="right">Device:</td>
@@ -301,6 +323,13 @@ function nearbyThingAction(action) {
 		<input type="button" id="east" onclick="return deviceAction('east');" value="East" />
 		<input type="button" id="south" onclick="return deviceAction('south');" value="South" />
 		<input type="button" id="north" onclick="return deviceAction('north');" value="North" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Location:</td>
+	<td colspan="2">
+		<input type="text" size="10" id="latitude" onchange="return updateLocation();" />,<input type="text" size="10" id="longitude" onchange="return updateLocation();" />
 	</td>
 </tr>
 
