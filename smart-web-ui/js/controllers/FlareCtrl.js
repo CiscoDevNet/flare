@@ -4,34 +4,9 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
     $scope.environmentId = "57603ea3e7829cf86f8f0dd5"; // Home
     $scope.deviceId = "576040ace7829cf86f8f0dde"; // Andrew's phone
 
-//    $scope.environments = FlareService.getEnvironments(function(response) {
-//      angular.forEach(response, function(user) {
-//        // turn the 'value' promise into its value when it's available
-//        user.info.then(function(response) {
-//          user.info = response[0];
-//        });
-//      });
-//    });
-
     $scope.getEnvironmentInfo = function() {
       FlareService.getEnvironmentInfo($scope.environmentId).then(function(data) {
         $scope.environment = data;
-        var i, zoneId;
-        for (i = 0 ; i < $scope.environment.zones.length ; i++) {
-          zoneId = $scope.environment.zones[i]._id;
-          FlareService.getThingsForZoneInEnvironment(zoneId, $scope.environmentId).then(function(data) {
-            if (data !== undefined && data.length > 0) {
-              var foundZone = $scope.environment.zones.find(function(z) {
-                if (z._id === data[0].zone) {
-                  return z;
-                }
-              });
-              if (foundZone !== undefined) {
-                foundZone.things = data;
-              }
-            }
-          });
-        }
       });
     };
 
@@ -44,6 +19,11 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
 
     $scope.getEnvironmentInfo();
     $scope.getDeviceInfo();
+
+    $scope.performAction = function(deviceId, action) {
+      console.log("performAction", deviceId, action);
+      socket.emit("performAction", { thing: deviceId, action: action });
+    };
 
     /* Window events and other custom events that force a redraw */
 
@@ -70,11 +50,11 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
 
     // update users when socket.io updates are received.
     socket.on('data', function(obj) {
-//      console.log("FlareCtrl socket update data", obj);
+      console.log("FlareCtrl socket update data", obj);
       if (obj.thing !== undefined) {
         var foundThing;
         for (var i = 0 ; i < $scope.environment.zones.length && foundThing === undefined ; i++) {
-          foundThing = $scope.environment.zones[i].things.find(function(t) {
+          foundThing = $scope.environment.zones[i].things.find(function findThing(t) {
             if (t._id === obj.thing) {
               return t;
             }
@@ -104,6 +84,30 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
           });
           if (foundThing !== undefined) {
             foundThing.position = obj.position;
+          }
+        }
+      }
+    });
+
+    // update users when socket.io updates are received.
+    socket.on('handleAction', function(obj) {
+      console.log("FlareCtrl socket update action", obj);
+      if (obj.thing !== undefined) {
+        var foundThing;
+        for (var i = 0 ; i < $scope.environment.zones.length && foundThing === undefined ; i++) {
+          foundThing = $scope.environment.zones[i].things.find(function(t) {
+            if (t._id === obj.thing) {
+              return t;
+            }
+          });
+          if (foundThing !== undefined) {
+//            for (var key in obj.data) {
+////              console.log("found thing", obj.thing, "in zone", $scope.environment.zones[i].name, foundThing);
+////              console.log("key", key, foundThing.data[key], obj.data[key]);
+//              foundThing.data[key] = obj.data[key];
+//            }
+//          } else {
+////            console.log("didn't find thing", obj.thing, "in zone", $scope.environment.zones[i].name);
           }
         }
       }

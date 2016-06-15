@@ -5,6 +5,16 @@ angular.module('appServices').factory('FlareService', ['$resource', 'ConfigServi
     var flareAPI = ConfigService.flare;
     var environmentsAPI = flareAPI.host + "/environments";
 
+    function getThingsForZoneInEnvironment(zoneId, environmentId) {
+      var url = environmentsAPI + "/" + environmentId + "/zones/" + zoneId + "/things";
+      return $q.all([
+          $http.get(url)
+        ])
+        .then(function(results) {
+          return results[0].data;
+        });
+    }
+
     return {
       getEnvironmentInfo: function(environmentId) {
         var url = environmentsAPI + "/" + environmentId;
@@ -18,21 +28,29 @@ angular.module('appServices').factory('FlareService', ['$resource', 'ConfigServi
           .then(function(results) {
             environments = results[0].data;
             environments.zones = results[1].data;
+            var i, zoneId;
+            function addThingsForZone(data) {
+              if (data !== undefined && data.length > 0) {
+                var foundZone = environments.zones.find(function(z) {
+                  if (z._id === data[0].zone) {
+                    return z;
+                  }
+                });
+                if (foundZone !== undefined) {
+                  foundZone.things = data;
+                }
+              }
+            }
+            for (i = 0 ; i < environments.zones.length ; i++) {
+              var zone = environments.zones[i];
+              getThingsForZoneInEnvironment(zone._id, zone.environment).then(addThingsForZone);
+            }
             timestamp = Date.now();
             return environments;
           });
       },
       getDeviceInfoInEnvironment: function(deviceId, environmentId) {
         var url = environmentsAPI + "/" + environmentId + "/devices/" + deviceId;
-        return $q.all([
-            $http.get(url)
-          ])
-          .then(function(results) {
-            return results[0].data;
-          });
-      },
-      getThingsForZoneInEnvironment: function(zoneId, environmentId) {
-        var url = environmentsAPI + "/" + environmentId + "/zones/" + zoneId + "/things";
         return $q.all([
             $http.get(url)
           ])

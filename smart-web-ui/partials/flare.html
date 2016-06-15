@@ -46,7 +46,7 @@
                         </div>
                       </table>
                       <p ng-if="thing.actions.length > 0">
-                        <button class="button btn btn-default" ng-repeat="action in thing.actions">{{action}}</button>
+                        <button class="button btn btn-default" ng-repeat="action in thing.actions" ng-click="performAction(thing._id, action)">{{action}}</button>
                       </p>
                     </div>
                   </div>
