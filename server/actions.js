@@ -116,6 +116,16 @@ exports.handlers['unlock'] = function(socket, message, object) {
 	exports.notifications.notifyData(socket, message, object, 'locked');
 };
 
+exports.handlers['play'] = function(socket, message, object) {
+  object.set('data.playback', 1.0);
+  exports.notifications.notifyData(socket, message, object, 'playback');
+};
+
+exports.handlers['pause'] = function(socket, message, object) {
+  object.set('data.playback', 0.0);
+  exports.notifications.notifyData(socket, message, object, 'playback');
+};
+ 
 exports.handlers['channelDown'] = function(socket, message, object) {
 	var channel = object.data.channel - 1;
 	if (channel < 1) channel += 100;
