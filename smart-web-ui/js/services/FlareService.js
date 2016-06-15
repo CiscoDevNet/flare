@@ -4,7 +4,7 @@ angular.module('appServices').factory('FlareService', ['$resource', 'ConfigServi
     var timestamp;
     var flareAPI = ConfigService.flare;
     var environmentsAPI = flareAPI.host + "/environments";
-
+    var enviromentCallback;
     function getThingsForZoneInEnvironment(zoneId, environmentId) {
       var url = environmentsAPI + "/" + environmentId + "/zones/" + zoneId + "/things";
       return $q.all([
@@ -38,6 +38,7 @@ angular.module('appServices').factory('FlareService', ['$resource', 'ConfigServi
                 });
                 if (foundZone !== undefined) {
                   foundZone.things = data;
+                  if(enviromentCallback){enviromentCallback()};
                 }
               }
             }
@@ -49,6 +50,7 @@ angular.module('appServices').factory('FlareService', ['$resource', 'ConfigServi
             return environments;
           });
       },
+      setEnviromentCallback: function(cb){enviromentCallback=cb},
       getDeviceInfoInEnvironment: function(deviceId, environmentId) {
         var url = environmentsAPI + "/" + environmentId + "/devices/" + deviceId;
         return $q.all([

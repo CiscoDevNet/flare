@@ -1,0 +1,257 @@
+{
+  "environments": [
+    {
+      "name": "Home",
+      "angle": 0,
+      "_id": "57603ea3e7829cf86f8f0dd5",
+      "data": {
+      },
+      "zones": [
+        {
+          "description": "",
+          "things": [
+            {
+              "description": "",
+              "actions": [
+                "play",
+                "pause"
+              ],
+              "_id": "57603f90e7829cf86f8f0ddd",
+              "data": {
+                "minor": 0,
+                "color": "gray",
+                "on": true,
+                "channel": 1,
+                "content": "Top Gear",
+                "volume": 11,
+                "accessControl": {
+                  "channel": {"policy": "sameZone"},
+                  "channelUp": {"policy": "sameZone"},
+                  "channelDown": {"policy": "sameZone"}
+                }
+              },
+              "position": {
+                "y": 20,
+                "x": 16,
+                "z": 0
+              },
+              "name": "TV 2"
+            }
+          ],
+          "_id": "57603f29e7829cf86f8f0dda",
+          "data": {
+            "major": 0
+          },
+          "perimeter": {
+            "origin": {
+              "y": 11,
+              "x": 11,
+              "z": 0
+            },
+            "size": {
+              "width": 10,
+              "height": 10,
+              "depth": 0
+            }
+          },
+          "name": "Bedroom"
+        },
+        {
+          "description": "",
+          "things": [
+            {
+              "description": "",
+              "actions": [
+                "open",
+                "close"
+              ],
+              "_id": "57603ee2e7829cf86f8f0dd7",
+              "data": {
+                "open": true,
+                "locked": false,
+                "triggers": [
+                  {
+                    "on": "open",
+                    "performAction": {
+                      "thing": "57603f70e7829cf86f8f0ddc",
+                      "action": "channelUp"
+                    }
+                  }
+                ],
+                "accessControl": {
+                  "open": {"policy": "unlocked"},
+                  "close": {"policy": "unlocked"},
+                  "locked": {"policy": "distance", "value": 2},
+                  "lock": {"policy": "distance", "value": 2},
+                  "unlock": {"policy": "distance", "value": 2}
+                }
+              },
+              "position": {
+                "y": 5,
+                "x": 0,
+                "z": 0
+              },
+              "name": "Garage Door"
+            }
+          ],
+          "_id": "57603ebee7829cf86f8f0dd6",
+          "data": {
+          },
+          "perimeter": {
+            "origin": {
+              "y": 0,
+              "x": 0,
+              "z": 0
+            },
+            "size": {
+              "width": 10,
+              "height": 10,
+              "depth": 0
+            }
+          },
+          "name": "Garage"
+        },
+        {
+          "description": "",
+          "things": [
+            {
+              "description": "",
+              "actions": [
+                "on",
+                "off"
+              ],
+              "_id": "57603f47e7829cf86f8f0ddb",
+              "data": {
+                "temperature": 90,
+                "capacity": 1.0,
+                "filled": 0.5,
+                "on": false,
+                "triggers": [
+                  {
+                    "if": {
+                      "key": "temperature",
+                      "operator": ">=",
+                      "value": 80
+                    },
+                    "setData": {
+                      "thing": "57603f70e7829cf86f8f0ddc",
+                      "key": "channel",
+                      "value": 4
+                    }
+                  }
+                ],
+                "accessControl": {
+                  "on": {"policy": "sameZone"},
+                  "off": {"policy": "sameZone"}
+                }
+              },
+              "position": {
+                "y": 3,
+                "x": 19,
+                "z": 0
+              },
+              "name": "Kettle"
+            }
+          ],
+          "_id": "57603ee6e7829cf86f8f0dd8",
+          "data": {
+          },
+          "perimeter": {
+            "origin": {
+              "y": 0,
+              "x": 11,
+              "z": 0
+            },
+            "size": {
+              "width": 10,
+              "height": 10,
+              "depth": 0
+            }
+          },
+          "name": "Kitchen"
+        },
+        {
+          "description": "",
+          "things": [
+            {
+              "description": "",
+              "actions": [
+                "play",
+                "pause"
+              ],
+              "_id": "57603f70e7829cf86f8f0ddc",
+              "data": {
+                "minor": 0,
+                "color": "gray",
+                "on": true,
+                "channel": 17,
+                "content": "Game of Thrones",
+                "volume": 9,
+                "accessControl": {
+                  "channel": {"policy": "sameZone"},
+                  "channelUp": {"policy": "sameZone"},
+                  "channelDown": {"policy": "sameZone"}
+                }
+              },
+              "position": {
+                "y": 20,
+                "x": 5,
+                "z": 0
+              },
+              "name": "TV 1"
+            }
+          ],
+          "_id": "57603f17e7829cf86f8f0dd9",
+          "data": {
+          },
+          "perimeter": {
+            "origin": {
+              "y": 11,
+              "x": 0,
+              "z": 0
+            },
+            "size": {
+              "width": 10,
+              "height": 10,
+              "depth": 0
+            }
+          },
+          "name": "Living Room"
+        }
+      ],
+      "perimeter": {
+        "origin": {
+          "y": -1,
+          "x": -1,
+          "z": 0
+        },
+        "size": {
+          "width": 23,
+          "height": 23,
+          "depth": 0
+        }
+      },
+      "description": "",
+      "devices": [
+        {
+          "description": "iPhone, iOS 9.3.2",
+          "_id": "576040ace7829cf86f8f0dde",
+          "data": {
+            "angle": 20
+          },
+          "position": {
+            "y": 2,
+            "x": 3,
+            "z": 0
+          },
+          "name": "Andrew's iPhone"
+        }
+      ],
+      "geofence": {
+        "radius": 2000,
+        "longitude": -1.3896931,
+        "latitude": 50.9658356
+      }
+    }
+  ]
+}

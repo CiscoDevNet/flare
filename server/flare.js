@@ -1044,20 +1044,39 @@ function canGetData(device, thing, key) {
 }
 
 function canSetData(device, thing, key) {
-	return true;
-	// return distanceBetween(device.position, thing.position) < 2;
-
-	var allowed = inSameZone(device, thing);
-	console.log('Can set data: ' + allowed);
-	return allowed;
+	// for now these are implemented the same
+	return canPerformAction(device, thing, key);
 }
 
 function canPerformAction(device, thing, action) {
-	return true;
+	var accessControl = thing.data.accessControl;
+	if (accessControl === undefined) return true;
+	var actionInfo = accessControl[action];
+	if (actionInfo === undefined) return true;
+	var policy = actionInfo.policy;
+	var allowed = true;
 	
-	var allowed = inSameZone(device, thing);
-	console.log('Can perform action: ' + allowed);
+	if (policy == 'allow') {
+		allowed = true;
+	} else if (policy == 'sameZone') {
+		allowed = inSameZone(device, thing);
+	} else if (policy == 'distance') {
+		var value = actionInfo.value;
+		allowed = distanceBetween(device.position, thing.position) < value;
+	} else if (policy == 'unlocked') {
+		allowed = unlocked(thing);
+	} else if (policy == 'deny') {
+		allowed = false;
+	} else {
+		console.log('Unknown policy: ' + policy);
+	}
+	
+	console.log('Allowed: ' + allowed);
 	return allowed;
+}
+
+function unlocked(thing) {
+	return thing.data.locked == false;
 }
 
 function inSameZone(device, thing) {
@@ -1101,7 +1120,6 @@ function evaluateDataTriggers(socket, object) {
 function evaluateActionTriggers(socket, object, action) {
 	var triggers = object.data.triggers;
 	if (triggers === undefined) return;
-	console.log("evaluating triggers: " + JSON.stringify(triggers));
 	for (var i = 0; i < triggers.length; i++) {
 		var trigger = triggers[i];
 		if (trigger.on == action) {
