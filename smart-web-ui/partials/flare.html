@@ -17,8 +17,8 @@
         <table id="users" class="table table-hover table-condensed">
           <thead>
           <tr>
-            <th class="col-md-3 col-sm-6">ID</th>
-            <th class="col-md-3 col-sm-6">Name</th>
+            <th class="col-md-2 col-sm-6">ID</th>
+            <th class="col-md-2 col-sm-6">Name</th>
             <th class="col-md-6 col-sm-12">Things</th>
           </tr>
           </thead>
@@ -26,9 +26,32 @@
             <td>{{zone._id}}</td>
             <td>{{zone.name}}</td>
             <td ng-if="zone.things.length > 0">
-              <ul>
-                <li ng-repeat="thing in zone.things">{{thing.name}}</li>
-              </ul>
+              <div class="row">
+                <div class="col-sm-4" ng-repeat="thing in zone.things">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      {{thing.name}}
+                    </div>
+                    <div class="panel-body">
+                      <table class="table-condensed">
+                        <tr>
+                          <th>position</th>
+                          <td>({{thing.position.x}}, {{thing.position.y}})</td>
+                        </tr>
+                        <div ng-if="thing.data !== undefined">
+                          <tr ng-repeat="(key, val) in thing.data">
+                            <th>{{key}}</th>
+                            <td>{{val}}</td>
+                          </tr>
+                        </div>
+                      </table>
+                      <p ng-if="thing.actions.length > 0">
+                        <button class="button btn btn-default" ng-repeat="action in thing.actions">{{action}}</button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
         </table>

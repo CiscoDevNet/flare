@@ -45,12 +45,6 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
     $scope.getEnvironmentInfo();
     $scope.getDeviceInfo();
 
-    var subscriptionMsg = {
-      environment: $scope.environmentId,
-      all: true
-    };
-    socket.emit('subscribe', subscriptionMsg);
-
     /* Window events and other custom events that force a redraw */
 
     $(document).scroll(function() {
@@ -68,10 +62,51 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
 
     // Uncomment and adapt the section below to update the model when updates arrive using the socket.io connection
 
-    // update users when socket.io updates are received.
-    var socketupdate = function(obj) {
-      console.log("FlareCtrl socket update", obj);
+    var subscriptionMsg = {
+      environment: $scope.environmentId,
+      all: true
     };
-    socket.on('web-app-template-socket-update', socketupdate);
+    socket.emit('subscribe', subscriptionMsg);
+
+    // update users when socket.io updates are received.
+    socket.on('data', function(obj) {
+//      console.log("FlareCtrl socket update data", obj);
+      if (obj.thing !== undefined) {
+        var foundThing;
+        for (var i = 0 ; i < $scope.environment.zones.length && foundThing === undefined ; i++) {
+          foundThing = $scope.environment.zones[i].things.find(function(t) {
+            if (t._id === obj.thing) {
+              return t;
+            }
+          });
+          if (foundThing !== undefined) {
+            for (var key in obj.data) {
+//              console.log("found thing", obj.thing, "in zone", $scope.environment.zones[i].name, foundThing);
+//              console.log("key", key, foundThing.data[key], obj.data[key]);
+              foundThing.data[key] = obj.data[key];
+            }
+          } else {
+//            console.log("didn't find thing", obj.thing, "in zone", $scope.environment.zones[i].name);
+          }
+        }
+      }
+    });
+
+    socket.on('position', function(obj) {
+//      console.log("FlareCtrl socket update position", obj);
+      if (obj.thing !== undefined) {
+        var foundThing;
+        for (var i = 0 ; i < $scope.environment.zones.length && foundThing === undefined ; i++) {
+          foundThing = $scope.environment.zones[i].things.find(function(t) {
+            if (t._id === obj.thing) {
+              return t;
+            }
+          });
+          if (foundThing !== undefined) {
+            foundThing.position = obj.position;
+          }
+        }
+      }
+    });
   }]
 );
