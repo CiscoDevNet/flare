@@ -1,0 +1,38 @@
+<h1>Flare</h1>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          Environment
+      </div>
+      <div class="panel-body">
+        <p>
+          <h3>Environment ID</h3>
+          {{environmentId}}
+        </p>
+        <p>
+          <h3>Zones</h3>
+        </p>
+        <table id="users" class="table table-hover table-condensed">
+          <thead>
+          <tr>
+            <th class="col-md-3 col-sm-6">ID</th>
+            <th class="col-md-3 col-sm-6">Name</th>
+            <th class="col-md-6 col-sm-12">Things</th>
+          </tr>
+          </thead>
+          <tr ng-repeat="zone in environment.zones">
+            <td>{{zone._id}}</td>
+            <td>{{zone.name}}</td>
+            <td ng-if="zone.things.length > 0">
+              <ul>
+                <li ng-repeat="thing in zone.things">{{thing.name}}</li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

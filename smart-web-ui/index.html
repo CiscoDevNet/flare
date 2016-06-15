@@ -38,7 +38,9 @@
 
   <script src="js/controllers.js"></script>
   <script src="js/controllers/ClusterInfoCtrl.js"></script>
+  <script src="js/controllers/FlareCtrl.js"></script>
   <script src="js/services.js"></script>
+  <script src="js/services/FlareService.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/components.js"></script>
 </head>
@@ -48,18 +50,12 @@
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" bs-navbar>
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand">web-app-template</a>
+        <a class="navbar-brand">Smart UI</a>
         <div ng-controller="ClusterInfoCtrl" class="navbar-brand" id="clustername" ng-bind="clustername"></div>
       </div>
       <ul class="nav navbar-nav">
         <li data-match-route="/$"><a href="#/">Page 1</a></li>
-        <li data-match-route="/page2"><a href="#/page2">Page 2</a></li>
-        <li data-match-route="/github">
-          <a href="https://cto-github.cisco.com/ofrebour/web-app-template" target="_blank">
-            <span class="alt-home-icon"></span>
-            web-app-template on github
-          </a>
-        </li>
+        <li data-match-route="/flare"><a href="#/flare">Flare</a></li>
       </ul>
     </div>
   </nav>

@@ -1,6 +1,0 @@
-{
-  "rest_api": {
-    "host": "http://jsonplaceholder.typicode.com",
-    "get_users": "/users"
-  }
-}
