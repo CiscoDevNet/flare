@@ -1,0 +1,63 @@
+{
+  "devices":[
+  {
+    "name":"kettle",
+    "location":"kitching",
+    "actions":[
+      "Turn On","Turn Off"
+    ],
+    "triggers":[
+      "Switch"
+    ],
+    "data":{
+      "temperture":70,
+       "state": "ON"
+    }
+  },
+    {
+      "name":"TV",
+      "location":"living room",
+      "actions":[
+        "Turn On","Turn Off","Change Channel"
+      ],
+      "triggers":[
+        "Switch",
+        "EndofProgram"
+      ],
+      "data":{
+        "temperture":70,
+        "state": "ON"
+      }
+    },
+    {
+      "name":"Lights",
+      "location":"living room",
+      "actions":[
+        "Turn On","TurnOFF"
+      ],
+      "triggers":[
+        "Switch",
+        "EndofProgram"
+      ],
+      "data":{
+        "temperture":70,
+        "state": "ON"
+      }
+    },
+    {
+      "name":"Front Door",
+      "location":"lobby",
+      "actions":[
+        "Turn On","TurnOFF"
+      ],
+      "triggers":[
+        "Switch",
+        "EndofProgram"
+      ],
+      "data":{
+        "temperture":70,
+        "state": "ON"
+      }
+    }
+  ]
+}

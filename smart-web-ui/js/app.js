@@ -28,7 +28,7 @@ var myWebApp = angular.module('myWebApp', [
       $routeProvider.
         when('/', {
           templateUrl: 'partials/page1.html',
-          controller: 'MySampleCtrl'
+          controller: 'FlareCtrl'
         }).
         when('/page2', {
           templateUrl: 'partials/page2.html',
