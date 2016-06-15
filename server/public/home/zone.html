@@ -1,0 +1,188 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var environment_id = getParameterByName('environment');
+var zone_id = getParameterByName('zone');
+
+var zone = null;
+
+$(function() {
+	$("input#id").val(zone_id);
+
+	getZone(environment_id, zone_id, function(info) {
+		zone = info;
+		document.title = zone.name;
+		$("input#name").val(zone.name);
+		$("input#description").val(zone.description);
+		$("input#x").val(zone.perimeter.origin.x);
+		$("input#y").val(zone.perimeter.origin.y);
+		$("input#width").val(zone.perimeter.size.width);
+		$("input#height").val(zone.perimeter.size.height);
+	});
+
+	subscribe({zone:zone_id});
+	getData({zone:zone_id});
+	
+});
+
+function gotData(message) {
+	if (message.zone == zone_id) {
+		console.log("data: " + JSON.stringify(message));
+		var data = message.data;
+		
+		for (key in data) {
+			var value = data[key];
+			var input = $("input#" + key);
+			input.val(value);
+		}
+	} else {
+		console.log("ignoring: " + JSON.stringify(message));
+	}
+}
+
+function enter(message) {
+	var device = message.device;
+	console.log('entered: ' + device);
+}
+
+function exit(message) {
+	var device = message.device;
+	console.log('exited: ' + device);
+}
+
+function handleAction(message) {
+	if (message.zone == zone_id) {
+		var action = message.action;
+		
+		if (action == 'rainbow') {
+			// process action client-side
+			console.log('rainbow');
+		}
+	}
+}
+
+function dataChanged(input) {
+	var key = input.id;
+	var value = input.value;
+
+	if (key == 'major') value = 1.0 * value; // cast as number
+	
+	setData({zone:zone_id}, key, value, zone_id);
+}
+
+function update(input) {
+	var key = input.id;
+	var value = input.value;
+	
+	var data = {};
+	data[key] = value;
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateZone(environment_id, zone_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function updatePerimeter() {
+	var data = {perimeter: {
+		origin: {x: 1.0 * $("input#x").val(), y: 1.0 * $("input#y").val()},
+		size: {width: 1.0 * $("input#width").val(), height: 1.0 * $("input#height").val()},
+	}};
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateZone(environment_id, zone_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function addThing() {
+	var data = {
+        "description": "Description",
+        "name": "Untitled",
+        "data": {},
+        "position": {"x": 0, "y": 0}
+	}; 
+	
+	newThing(environment_id, zone_id, data, function(thing) {
+		var thing_id = thing._id;
+		var link = "thing.html?environment=" + environment_id + "&zone=" + zone_id + "&thing=" + thing_id;
+		myWindow = window.open(link, thing_id, "width=615, height=335");
+	});
+}
+
+function removeZone() {
+	deleteZone(environment_id, zone_id, function(deleted) {
+		// console.log("Result: " + JSON.stringify(deleted));
+		window.close()
+	});
+}
+
+</script>
+<body bgcolor="white">
+
+<table align="center">
+
+<tr>
+	<td align="right">Zone:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="id" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Name:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="name" onchange="return update(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Description:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="description" onchange="return update(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Origin:</td>
+	<td>
+		<input type="text" size="4" id="x" onchange="return updatePerimeter();" />,<input type="text" size="4" id="y" onchange="return updatePerimeter();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Size:</td>
+	<td>
+		<input type="text" size="4" id="width" onchange="return updatePerimeter();" />,<input type="text" size="4" id="height" onchange="return updatePerimeter();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Major:</td>
+	<td colspan="2">
+		<input type="text" size="4" id="major" onchange="return dataChanged(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">&nbsp;</td>
+	<td>
+		<input type="button" id="newThing" onclick="location.reload();" value="Update" />
+		<input type="button" id="newThing" onclick="return addThing();" value="New Thing" />
+		<input type="button" id="deleteZone" onclick="return removeZone();" value="Delete" />
+	</td>
+</tr>
+
+</table>
+
+</body>
+</html>

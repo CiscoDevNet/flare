@@ -1,0 +1,449 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var environment_id = getParameterByName('environment');
+var device_id = getParameterByName('device');
+
+var device = null;
+var currentPosition = {x:0, y:0};
+var thing1, thing2, thing3, nearbyThing;
+var thingPosition = {x:0, y:0};
+var zone = null;
+
+$(function() {
+	$("input#id").val(device_id);
+
+	getDevice(environment_id, device_id, function(info) {
+		device = info;
+		document.title = device.name;
+		$("input#name").val(device.name);
+		// $("input#created").val(new Date(Date.parse(device.created)));
+		// $("input#modified").val(new Date(Date.parse(device.modified)));
+		$("input#description").val(device.description);
+	});
+	
+    $("tr.nearby").css('visibility', 'visible');
+    
+	subscribe({device:device_id});
+	getData({device:device_id});
+	getPosition({device:device_id});
+	
+    thing1 = loadThing('57603f70e7829cf86f8f0ddc', 'thing1');
+    thing2 = loadThing('57603ee2e7829cf86f8f0dd7', 'thing2');
+    thing3 = loadThing('57603f47e7829cf86f8f0ddb', 'thing3');
+});
+
+function gotData(message) {
+	if (message.device == device_id) {
+		console.log("data: " + JSON.stringify(message));
+		var data = message.data;
+		
+		for (key in data) {
+			var value = data[key];
+			var input = $("input#" + key);
+			input.val(value);
+		}
+		
+		setAngle(data);
+        setLocation(data);
+	} else if (message.thing == thing1 || message.thing == thing2 || message.thing == thing3) {
+		console.log("data: " + JSON.stringify(message));
+		var data = message.data;
+		
+		for (key in data) {
+			var value = data[key];
+			var input = $("input#thing" + key);
+			input.val(value);
+		}
+		
+		// setColor(data);
+	} else {
+		console.log("ignoring: " + JSON.stringify(message));
+	}
+}
+
+function gotPosition(message) {
+	if (message.device == device_id) {
+		console.log("position: " + JSON.stringify(message));
+		currentPosition = message.position;
+		$("input#x").val(currentPosition.x);
+		$("input#y").val(currentPosition.y);
+		updateDistance();
+	} else {
+		console.log("ignoring: " + JSON.stringify(message));
+	}
+}
+
+function updateDistance() {
+	if (nearbyThing == null) return;
+	var distance = distanceBetween(thingPosition, currentPosition);
+	$("input#distance").val(distance.toFixed(3));
+}
+
+function handleAction(message) {
+	if (message.device == device_id) {
+		var action = message.action;
+		
+		if (action == 'rainbow') {
+			// process action client-side
+			console.log('rainbow');
+		}
+	}
+}
+
+function loadThing(id, name) {
+	var thing = id;
+	
+	getThing(environment_id, '-', id, function(info) {
+		console.log("Thing: " + JSON.stringify(info));
+		$("input#" + name + "name").val(info.name);
+	});
+	
+	// $("tr.nearby").css('visibility', 'visible');
+	
+	subscribe({thing:thing});
+	getData({thing:thing});
+	getPosition({thing:thing});   
+    
+    return thing; 
+}
+
+function nearRRR(message) {
+	nearbyThing = message.thing;
+	thingDistance = message.distance;
+	console.log('near thing ' + nearbyThing + ' (' + thingDistance + ')');
+	
+	getThing(environment_id, '-', nearbyThing, function(info) {
+		// console.log("Thing: " + JSON.stringify(info));
+		$("input#thingname").val(info.name);
+		$("input#thingdescription").val(info.description);
+	});
+	
+	// $("tr.nearby").css('visibility', 'visible');
+	$("input#thing").val(nearbyThing);
+	$("input#distance").val(thingDistance.toFixed(3));
+	
+	subscribe({thing:nearbyThing});
+	getData({thing:nearbyThing});
+	getPosition({thing:nearbyThing});
+}
+
+function farRRR(message) {
+	console.log('far thing ' + message.thing);
+	
+	// $("tr.nearby").css('visibility', 'hidden');
+	$("input#thing").val('');
+	$("input#thingname").val('');
+	$("input#thingdescription").val('');
+	$("input#distance").val('');
+	$("input#thingcolor").val('');
+	$("input#thingbrightness").val('');
+
+	if (nearbyThing) unsubscribe({thing:nearbyThing});
+	nearbyThing = null;
+}
+
+function enter(message) {
+	zone = message.zone;
+	console.log('entered zone ' + zone);
+}
+
+function exit(message) {
+	zone = message.zone;
+	console.log('exited zone ' + zone);
+}
+
+var deviceAngle = 0;
+var thingColor = 'red';
+var thingBrightness = 1.0;
+
+function setAngle(data) {
+	if (data.angle != undefined) deviceAngle = data.angle;
+	$("img#angle").css('-webkit-transform', 'rotate(' + ((45.0 + deviceAngle) % 360) + 'deg)');
+}
+
+function setLocation(data) {
+	if (data.location != undefined) {
+		$("input#latitude").val(data.location.latitude);
+		$("input#longitude").val(data.location.longitude);	    
+	}
+}
+
+function setColor(data) {
+	if (data.color != undefined) thingColor = data.color;
+	if (data.brightness != undefined) thingBrightness = data.brightness;
+	$("div#color").css('background', 'hsl(' + colorAngle(thingColor) +',100%,' + (thingBrightness * 100) + '%)');
+}
+
+function colorAngle(color) {
+	if (color == 'red') return 0;
+	if (color == 'orange') return 30;
+	if (color == 'yellow') return 60;
+	if (color == 'green') return 120;
+	if (color == 'blue') return 240;
+	if (color == 'purple') return 280;
+	return 0;
+}
+
+function update(input) {
+	var key = input.id;
+	var value = input.value;
+	
+	var data = {};
+	data[key] = value;
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateDevice(environment_id, device_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function updateLocation() {
+	var location = {
+		latitude: 1.0 * $("input#latitude").val(),
+		longitude: 1.0 * $("input#longitude").val()
+	};
+	
+    setData({device:device_id}, 'location', location, device_id);
+	/* console.log("Update: " + JSON.stringify(data));
+	updateDevice(environment_id, device_id, data, function(updated) {
+		console.log("Result: " + JSON.stringify(updated));
+	}); */
+}
+
+
+function removeDevice() {
+	deleteDevice(environment_id, device_id, function(deleted) {
+		// console.log("Result: " + JSON.stringify(deleted));
+		window.close()
+	});
+}
+
+function dataChanged(input) {
+	var key = input.id;
+	var value = input.value;
+
+	if (key == 'angle') value = 1.0 * value; // cast as number
+	
+	setData({device:device_id}, key, value, device_id);
+	
+	if (key == 'angle') setAngle({angle: value});
+}
+
+function positionChanged(input, key) {
+	var x = 1.0 * $("input#x").val();
+	var y = 1.0 * $("input#y").val();
+	currentPosition = {x:x, y:y};
+	setPosition({device:device_id}, currentPosition, device_id);
+	updateDistance();
+}
+
+function thingDataChanged(input, thing, key) {
+	if (thing != null) {
+		var value = input.value;
+		if (key == 'volume' || key == 'channel') value = 1.0 * value; // cast as number
+		if (key == 'on' || key == 'open') value = value == 'true'; // cast as number
+        
+		setData({thing:thing}, key, value, device_id);
+		
+		// if (key == 'color') setColor({color: value});
+		// if (key == 'brightness') setColor({brightness: value});
+	}
+}
+
+function deviceAction(action) {
+	performAction({device:device_id}, action, device_id);
+}
+
+function thingAction(thing, action) {
+	if (thing != null) {
+		performAction({thing:thing}, action, device_id);
+	}
+}
+
+function permissionDenied(message) {
+    console.log("Permission denied.");
+    alert("Permission denied.");
+
+    getData({thing:message.thing});
+}
+
+</script>
+<body bgcolor="white">
+
+<table align="center">
+
+<tr>
+	<td align="right">Device:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="id" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Name:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="name" onchange="return update(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Description:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="description" onchange="return update(this);" />
+	</td>
+</tr>
+
+<!-- 
+><tr>
+	<td align="right">Created:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="created" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Modified:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="modified" />
+	</td>
+</tr>
+--> 
+<tr>
+	<td align="right">MAC:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="mac" onchange="return dataChanged(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Angle:</td>
+	<td>
+		<input type="text" size="10" id="angle" onchange="return dataChanged(this);" />
+	</td>
+	<td>
+		<input type="button" id="counterclockwise" onclick="return deviceAction('counterclockwise');" value="Counter-clockwise" />
+		<input type="button" id="clockwise" onclick="return deviceAction('clockwise');" value="Clockwise" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Position:</td>
+	<td>
+		<input type="text" size="4" id="x" onchange="return positionChanged();" />,<input type="text" size="4" id="y" onchange="return positionChanged();" />
+	</td>
+	<td>
+		<input type="button" id="west" onclick="return deviceAction('west');" value="West" />
+		<input type="button" id="east" onclick="return deviceAction('east');" value="East" />
+		<input type="button" id="south" onclick="return deviceAction('south');" value="South" />
+		<input type="button" id="north" onclick="return deviceAction('north');" value="North" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Location:</td>
+	<td colspan="2">
+		<input type="text" size="10" id="latitude" onchange="return updateLocation();" />,<input type="text" size="10" id="longitude" onchange="return updateLocation();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">&nbsp;</td>
+	<td>
+		<input type="button" id="deleteDevice" onclick="return removeDevice();" value="Delete" />
+	</td>
+</tr>
+
+<tr>
+<td>&nbsp;
+</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+	<td align="right">Name:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="thing1name" />
+	</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+	<td align="right">Volume:</td>
+	<td>
+		<input type="text" size="10" id="thingvolume" onchange="return thingDataChanged(this, thing1, 'volume');" />
+	</td>
+	<td>
+		<input type="button" id="volumeDown" onclick="return thingAction(thing1, 'volumeDown');" value="Down" />
+		<input type="button" id="volumeUp" onclick="return thingAction(thing1, 'volumeUp');" value="Up" />
+	</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+    <td align="right">Channel:</td>
+	<td>
+		<input type="text" size="10" id="thingchannel" onchange="return thingDataChanged(this, thing1, 'channel');" />
+	</td>
+	<td>
+		<input type="button" id="channelDown" onclick="return thingAction(thing1, 'channelDown');" value="Down" />
+		<input type="button" id="channelUp" onclick="return thingAction(thing1, 'channelUp');" value="Up" />
+	</td>
+</tr>
+
+<tr>
+<td>&nbsp;
+</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+	<td align="right">Name:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="thing2name" />
+	</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+	<td align="right">Open:</td>
+	<td>
+		<input type="text" size="10" id="thingopen" onchange="return thingDataChanged(this, thing2, 'open');" />
+	</td>
+	<td>
+		<input type="button" id="open" onclick="return thingAction(thing2, 'open');" value="Open" />
+		<input type="button" id="close" onclick="return thingAction(thing2, 'close');" value="Close" />
+	</td>
+</tr>
+
+<tr>
+<td>&nbsp;
+</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+	<td align="right">Name:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="thing3name" />
+	</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
+	<td align="right">On:</td>
+	<td>
+		<input type="text" size="10" id="thingon" onchange="return thingDataChanged(this, thing3, 'on');" />
+	</td>
+	<td>
+		<input type="button" id="start" onclick="return thingAction(thing3, 'on');" value="On" />
+		<input type="button" id="stop" onclick="return thingAction(thing3, 'off');" value="Off" />
+	</td>
+</tr>
+
+</table>
+
+</body>
+</html>

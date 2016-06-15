@@ -565,7 +565,7 @@ io.sockets.on('connection', function (socket) {
 	
   	socket.on('setData', function (message) {
 		console.log("setData " + JSON.stringify(message));
-		setData(message, function(result, object) {
+		setData(socket, message, function(result, object) {
 			broadcast(socket, getId(message), 'data', {data: result}, parentIds(object, false), message.sender);
 		});
 		
@@ -751,34 +751,41 @@ function getData(message, callback) {
 
 // setData {zone: 456, key: "product", value: "kallax"}
 // sets the product data value for zone 456 to "kallax"
-function setData(message, callback) {
+function setData(socket, message, callback) {
 	getObjectForMessage(message, function(object) {
 		if (object == undefined) {
 			callback(null); // ERROR object not found
 			return;
 		}
+		
+		getObjectWithId(message.sender, 'device', function(sender) {
+			var data = object.data;
+			if (data == undefined) {
+				data = {};
+				object.data = data;
+			}
 	
-		var data = object.data;
-		if (data == undefined) {
-			data = {};
-			object.data = data;
-		}
+			var key = message.key;
+			if (key == undefined) return; // ERROR no key
 	
-		var key = message.key;
-		if (key == undefined) return; // ERROR no key
+			var value = message.value;
+			if (value == undefined) return; // ERROR no value
 	
-		var value = message.value;
-		if (value == undefined) return; // ERROR no value
-	
-		object.set("data." + key, value); // must use set() because data is a mixed type
-		object.set("modified", new Date());
-		object.save(function (err, object) {
-			if (err) console.error("Error saving data.");
-			// else console.log("Saved: " + JSON.stringify(object));
+			if (sender == null || canSetData(sender, object, key)) {
+				object.set("data." + key, value); // must use set() because data is a mixed type
+				object.set("modified", new Date());
+				object.save(function (err, object) {
+					if (err) console.error("Error saving data.");
+					// else console.log("Saved: " + JSON.stringify(object));
 
-			var result = {};
-			result[key] = value;
-			callback(result, object);
+					var result = {};
+					result[key] = value;
+					callback(result, object);
+				});
+			} else {
+				reply(socket, getId(message), 'permissionDenied', {error: "Set data not allowed."});
+				console.log("Permission denied.");
+			}
 		});
 	});
 }
@@ -979,30 +986,38 @@ function performAction(socket, message) {
 			return;
 		}
 		
-		var data = object.data;
-		if (data == undefined) {
-			data = {};
-			object.data = data;
-		}
+		getObjectWithId(message.sender, 'device', function(sender) {
+			var data = object.data;
+			if (data == undefined) {
+				data = {};
+				object.data = data;
+			}
 		
-		var action = message.action;
-		if (action == undefined) return false; // ERROR no action in message
+			var action = message.action;
+			if (action == undefined) return false; // ERROR no action in message
 	
-		// look for action handlers
-		var handler = actions.handlers[action];
-		var handled = false;
+			// types are an issue here. we are making assumptions that object is a thing and sender is a device!!
+			if (sender == null || canPerformAction(sender, object, action)) {
+				// look for action handlers
+				var handler = actions.handlers[action];
+				var handled = false;
 		
-		if (handler != undefined) {
-			console.log('Performing action: ' + action);
-			handler(socket, message, object);
-			handled = true;
-		} 
+				if (handler != undefined) {
+					console.log('Performing action: ' + action);
+					handler(socket, message, object);
+					handled = true;
+				} 
 		
-		// if not handled by the server, or broadcastHandledActions is true, broadcast message to all observers of the object
-		if (!handled || broadcastHandledActions) {
-			console.log('Broadcasting action: ' + action);
-			broadcast(socket, getId(message), 'handleAction', {action: action}, parentIds(object, false), message.sender);
-		}
+				// if not handled by the server, or broadcastHandledActions is true, broadcast message to all observers of the object
+				if (!handled || broadcastHandledActions) {
+					console.log('Broadcasting action: ' + action);
+					broadcast(socket, getId(message), 'handleAction', {action: action}, parentIds(object, false), message.sender);
+				}
+			} else {
+				reply(socket, getId(message), 'permissionDenied', {error: "Perform action not allowed."});
+				console.log("Permission denied.");
+			}
+		});
 	});
 }
 
@@ -1011,18 +1026,32 @@ function performAction(socket, message) {
 function canSeeThing(device, thing) {
 	// return distanceBetween(device.position, thing.position) < 6;
 	return inSameZone(device, thing);
+
+	var allowed = false;
+	console.log('Can see thing: ' + allowed);
+	return allowed;
 }
 
 function canGetData(device, thing, key) {
-	return distanceBetween(device.position, thing.position) < 4;
+	// return distanceBetween(device.position, thing.position) < 4;
+
+	var allowed = false;
+	console.log('Can get data: ' + allowed);
+	return allowed;
 }
 
 function canSetData(device, thing, key) {
-	return distanceBetween(device.position, thing.position) < 2;
+	// return distanceBetween(device.position, thing.position) < 2;
+
+	var allowed = inSameZone(device, thing);
+	console.log('Can set data: ' + allowed);
+	return allowed;
 }
 
 function canPerformAction(device, thing, action) {
-	return true;
+	var allowed = inSameZone(device, thing);
+	console.log('Can perform action: ' + allowed);
+	return allowed;
 }
 
 function inSameZone(device, thing) {

@@ -96,3 +96,41 @@ exports.handlers['off'] = function(socket, message, object) {
 	exports.notifications.notifyData(socket, message, object, 'on');
 };
 
+exports.handlers['open'] = function(socket, message, object) {
+	object.set('data.open', true);
+	exports.notifications.notifyData(socket, message, object, 'open');
+};
+
+exports.handlers['close'] = function(socket, message, object) {
+	object.set('data.open', false);
+	exports.notifications.notifyData(socket, message, object, 'open');
+};
+
+exports.handlers['channelDown'] = function(socket, message, object) {
+	var channel = object.data.channel - 1;
+	if (channel < 1) channel += 100;
+	object.set('data.channel', channel); 
+	exports.notifications.notifyData(socket, message, object, 'channel');
+};
+
+exports.handlers['channelUp'] = function(socket, message, object) {
+	var channel = object.data.channel + 1;
+	if (channel > 100) channel -= 100;
+	object.set('data.channel', channel); 
+	exports.notifications.notifyData(socket, message, object, 'channel');
+};
+
+exports.handlers['volumeDown'] = function(socket, message, object) {
+	var volume = object.data.volume - 1;
+	if (volume <= 0) volume = 0;
+	object.set('data.volume', volume); 
+	exports.notifications.notifyData(socket, message, object, 'volume');
+};
+
+exports.handlers['volumeUp'] = function(socket, message, object) {
+	var volume = object.data.volume + 1;
+	if (volume > 10) volume = 10;
+	object.set('data.volume', volume); 
+	exports.notifications.notifyData(socket, message, object, 'volume');
+};
+
