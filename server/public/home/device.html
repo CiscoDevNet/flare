@@ -410,6 +410,17 @@ function permissionDenied(message) {
 </tr>
 
 <tr class="nearby" style="visibility: hidden">
+	<td align="right">Locked:</td>
+	<td>
+		<input type="text" size="10" id="thinglocked" onchange="return thingDataChanged(this, thing2, 'locked');" />
+	</td>
+	<td>
+		<input type="button" id="lock" onclick="return thingAction(thing2, 'lock');" value="Lock" />
+		<input type="button" id="unlock" onclick="return thingAction(thing2, 'unlock');" value="Unlock" />
+	</td>
+</tr>
+
+<tr class="nearby" style="visibility: hidden">
 	<td align="right">Open:</td>
 	<td>
 		<input type="text" size="10" id="thingopen" onchange="return thingDataChanged(this, thing2, 'open');" />
