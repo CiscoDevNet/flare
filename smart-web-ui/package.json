@@ -1,6 +1,5 @@
 {
-  "name": "web-app-template",
-  "description": "Web app template using Grunt, Bootstrap, AngularJS, AngularStrap, LESS.js and GreenSock",
+  "description": "Smart Home Control Panel using Grunt, Bootstrap, AngularJS, AngularStrap, LESS.js and GreenSock",
   "scripts": {
     "start": "grunt serve"
   },

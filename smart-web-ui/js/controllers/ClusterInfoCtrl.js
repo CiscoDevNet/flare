@@ -7,7 +7,7 @@ angular.module('appControllers').controller('ClusterInfoCtrl', ['$scope', 'Confi
   function($scope, ConfigService) {
 
 //    $scope.clustername = ConfigService.clustername;
-    $scope.title = "web-app-template (" + ConfigService.version + ")";
+    $scope.title = "Smart Home Control Panel (" + ConfigService.version + ")";
 
   }]
 );

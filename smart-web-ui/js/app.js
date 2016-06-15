@@ -38,6 +38,10 @@ var myWebApp = angular.module('myWebApp', [
           templateUrl: 'partials/flare.html',
           controller: 'FlareCtrl'
         }).
+        when('/control', {
+          templateUrl: 'partials/control.html',
+          controller: 'FlareFakeCtrl'
+        }).
         otherwise({
           redirectTo: '/'
         });

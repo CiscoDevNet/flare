@@ -1,5 +1,5 @@
-angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareService', 'ConfigService', 'socket',
-  '$filter', function($scope, FlareService, ConfigService, socket) {
+angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareService', 'socket',
+  '$filter', function($scope, FlareService, socket) {
 
     $scope.environmentId = "57603ea3e7829cf86f8f0dd5"; // Home
     $scope.deviceId = "576040ace7829cf86f8f0dde"; // Andrew's phone
