@@ -770,7 +770,8 @@ function setData(socket, message, callback) {
 			var value = message.value;
 			if (value == undefined) return; // ERROR no value
 	
-			if (sender == null || canSetData(sender, object, key)) {
+			var allowed = canSetData(sender, object, key);
+			if (allowed === true) {
 				object.set("data." + key, value); // must use set() because data is a mixed type
 				object.set("modified", new Date());
 				object.save(function (err, object) {
@@ -784,8 +785,8 @@ function setData(socket, message, callback) {
 				
 				evaluateDataTriggers(socket, object);
 			} else {
-				reply(socket, getId(message), 'permissionDenied', {error: "Set data not allowed."});
-				console.log("Permission denied.");
+				reply(socket, getId(message), 'permissionDenied', {error: allowed});
+				console.log(allowed);
 			}
 		});
 	});
@@ -998,7 +999,8 @@ function performAction(socket, message) {
 			if (action == undefined) return false; // ERROR no action in message
 	
 			// types are an issue here. we are making assumptions that object is a thing and sender is a device!!
-			if (sender == null || canPerformAction(sender, object, action)) {
+			var allowed = canPerformAction(sender, object, action);
+			if (allowed === true) {
 				// look for action handlers
 				var handler = actions.handlers[action];
 				var handled = false;
@@ -1017,8 +1019,8 @@ function performAction(socket, message) {
 					broadcast(socket, getId(message), 'handleAction', {action: action}, parentIds(object, false), message.sender);
 				}
 			} else {
-				reply(socket, getId(message), 'permissionDenied', {error: "Perform action not allowed."});
-				console.log("Permission denied.");
+				reply(socket, getId(message), 'permissionDenied', {error: allowed});
+				console.log(allowed);
 			}
 		});
 	});
@@ -1048,6 +1050,7 @@ function canSetData(device, thing, key) {
 	return canPerformAction(device, thing, key);
 }
 
+// returns true if the action is allowed, or an error string 
 function canPerformAction(device, thing, action) {
 	var accessControl = thing.data.accessControl;
 	if (accessControl === undefined) return true;
@@ -1055,24 +1058,28 @@ function canPerformAction(device, thing, action) {
 	if (actionInfo === undefined) return true;
 	var policy = actionInfo.policy;
 	var allowed = true;
+	var error = null;
 	
 	if (policy == 'allow') {
 		allowed = true;
-	} else if (policy == 'sameZone') {
+	} else if (policy == 'sameZone' && device != undefined) {
 		allowed = inSameZone(device, thing);
-	} else if (policy == 'distance') {
+		if (!allowed) error = device.name + " is not in the same zone as " + thing.name + ".";
+	} else if (policy == 'distance' && device != undefined) {
 		var value = actionInfo.value;
 		allowed = distanceBetween(device.position, thing.position) < value;
+		if (!allowed) error = device.name + " is further than " + value + " meters from " + thing.name + ".";
 	} else if (policy == 'unlocked') {
 		allowed = unlocked(thing);
+		if (!allowed) error = thing.name + " is locked.";
 	} else if (policy == 'deny') {
 		allowed = false;
+		if (!allowed) error = "Access is denied.";
 	} else {
 		console.log('Unknown policy: ' + policy);
 	}
 	
-	console.log('Allowed: ' + allowed);
-	return allowed;
+	return allowed ? true : error;
 }
 
 function unlocked(thing) {
