@@ -553,7 +553,6 @@ io.sockets.on('connection', function (socket) {
 		setData(socket, message, function(result, object) {
 			broadcast(socket, getId(message), 'data', {data: result}, parentIds(object, false), message.sender);
 		});
-		
   	});
 	
   	socket.on('getPosition', function (message) {
@@ -767,6 +766,8 @@ function setData(socket, message, callback) {
 					result[key] = value;
 					callback(result, object);
 				});
+				
+				evaluateDataTriggers(socket, object);
 			} else {
 				reply(socket, getId(message), 'permissionDenied', {error: "Set data not allowed."});
 				console.log("Permission denied.");
@@ -993,6 +994,8 @@ function performAction(socket, message) {
 					handled = true;
 				} 
 		
+				evaluateActionTriggers(socket, object, action);
+
 				// if not handled by the server, or broadcastHandledActions is true, broadcast message to all observers of the object
 				if (!handled || broadcastHandledActions) {
 					console.log('Broadcasting action: ' + action);
@@ -1026,6 +1029,7 @@ function canGetData(device, thing, key) {
 }
 
 function canSetData(device, thing, key) {
+	return true;
 	// return distanceBetween(device.position, thing.position) < 2;
 
 	var allowed = inSameZone(device, thing);
@@ -1034,6 +1038,8 @@ function canSetData(device, thing, key) {
 }
 
 function canPerformAction(device, thing, action) {
+	return true;
+	
 	var allowed = inSameZone(device, thing);
 	console.log('Can perform action: ' + allowed);
 	return allowed;
@@ -1066,4 +1072,65 @@ function closeTo(value, target, tolerance) {
 	return target - tolerance <= value && value <= target + tolerance;
 }
 
+function evaluateDataTriggers(socket, object) {
+	var triggers = object.data.triggers;
+	if (triggers === undefined) return;
+	for (var i = 0; i < triggers.length; i++) {
+		var trigger = triggers[i];
+		if (evaluatePredicate(object, trigger.if)) {
+			pullTrigger(socket, object, trigger);
+		} 
+	}
+}
 
+function evaluateActionTriggers(socket, object, action) {
+	var triggers = object.data.triggers;
+	if (triggers === undefined) return;
+	console.log("evaluating triggers: " + JSON.stringify(triggers));
+	for (var i = 0; i < triggers.length; i++) {
+		var trigger = triggers[i];
+		if (trigger.on == action) {
+			pullTrigger(socket, object, trigger);
+		} 
+	}
+}
+
+function pullTrigger(socket, object, trigger) {
+	if (trigger.performAction !== undefined) {
+		var message = trigger.performAction;
+		console.log("Trigger performAction: " + JSON.stringify(message));
+		performAction(socket, message);
+	} else if (trigger.setData !== undefined) {
+		var message = trigger.setData;
+		console.log("Trigger setData: " + JSON.stringify(message));
+		setData(socket, message, function(result, object) {
+			notify(socket, getId(message), 'data', {data: result}, parentIds(object, false), message.sender);
+		});
+	} 
+}
+
+// if should be an object like {"key": "temperature", "operator": ">=", "value": 80}
+function evaluatePredicate(object, predicate) {
+	if (predicate === undefined) return false;
+	var lhs = object.data[predicate.key];
+	var operator = predicate.operator;
+	var rhs = predicate.value;
+	
+	if (lhs === undefined || rhs === undefined) {
+		return false;
+	} else if (operator == "==") {
+		return lhs == rhs;
+	} else if (operator == "!=") {
+		return lhs != rhs;
+	} else if (operator == "<") {
+		return lhs < rhs;
+	} else if (operator == ">") {
+		return lhs > rhs;
+	} else if (operator == "<=") {
+		return lhs <= rhs;
+	} else if (operator == ">=") {
+		return lhs >= rhs;
+	} else {
+		return false;
+	}
+}
