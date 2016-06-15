@@ -1,12 +1,20 @@
-angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareService', 'ConfigService', 'socket',
-  '$filter', function($scope, FlareService, ConfigService, socket) {
+angular.module('appControllers').controller('FlareCtrl', ['$scope','$timeout', 'FlareService', 'ConfigService', 'socket',
+  '$filter', function($scope,$timeout, FlareService, ConfigService, socket) {
 
     $scope.environmentId = "57603ea3e7829cf86f8f0dd5"; // Home
     $scope.deviceId = "576040ace7829cf86f8f0dde"; // Andrew's phone
 
+    //send the updated object
+    FlareService.setEnviromentCallback(function(){
+        $scope.environment = Object.assign({},$scope.environment);
+    });
+
+
+
     $scope.getEnvironmentInfo = function() {
       FlareService.getEnvironmentInfo($scope.environmentId).then(function(data) {
-        $scope.environment = data;
+          console.log("New Data",Object.keys(data.zones[0]));
+          $scope.environment = data;
       });
     };
 
