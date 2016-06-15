@@ -227,6 +227,13 @@ socket.on('handleAction', function (message) {
 	}
 });
 
+// implement the permissionDenied() function to be notified when there is an error
+socket.on('permissionDenied', function (message) {
+	if (typeof(permissionDenied) == 'function') {
+		permissionDenied(message);
+	}
+});
+
 // implement the near() function to be notified when a device becomes near to a thing
 socket.on('near', function (message) {
 	if (typeof(near) == 'function') {

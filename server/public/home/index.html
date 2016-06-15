@@ -1,0 +1,122 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare Explorer</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var outline;
+
+function outlineItem(object, type, target, params) {
+	var name = object.name;
+	if (name == undefined) name = "Untitled"; 
+	return ($('<li>').append($('<a>').attr('href', type + '.html?' + $.param(params)).attr('target', target).append(name))/*.append('<span class="gray"> - ' + target + '</span>')*/);
+}
+
+$(function() {
+	outline = $('ul#outline');
+	appendEnvironments(outline);
+	
+	function appendEnvironments(environmentsList) {
+		getEnvironments(function(environments) {
+			for (var i = 0; i < environments.length; i++) {
+				var environment = environments[i];
+				var environmentItem = outlineItem(environment, 'environment', environment._id, {environment:environment._id});
+				environmentsList.append(environmentItem);    
+				var zonesList = $('<ul/>');
+				environmentItem.append(zonesList);
+				
+				appendZones(environment._id, zonesList);
+				appendDevices(environment._id, zonesList);
+			}
+		});
+	}
+	
+	function appendZones(environment_id, zonesList) {
+		getZones(environment_id, function(zones) {
+			for (var i = 0; i < zones.length; i++) {
+				var zone = zones[i];
+				var zoneItem = outlineItem(zone, 'zone', zone._id, {environment:environment_id, zone:zone._id});
+				zonesList.append(zoneItem);    
+				var thingsList = $('<ul/>');
+				zoneItem.append(thingsList);
+				appendThings(environment_id, zone._id, thingsList);
+			}
+		});
+	}
+
+	function appendThings(environment_id, zone_id, thingsList) {
+		getThings(environment_id, zone_id, function(things) {
+			for (var i = 0; i < things.length; i++) {
+				var thing = things[i];
+				var thingItem = outlineItem(thing, 'thing', thing._id, {environment:environment_id, zone:zone_id, thing:thing._id});
+				thingsList.append(thingItem);    
+			}
+		});
+	}
+
+	function appendDevices(environment_id, devicesList) {
+		getDevices(environment_id, function(devices) {
+			if (devices.length > 0) {
+				var devicesHeader = $('<li>').append('Devices');
+				devicesList.append(devicesHeader);
+			
+				var sublist = $('<ul/>');
+				devicesHeader.append(sublist);
+
+				for (var i = 0; i < devices.length; i++) {
+					var device = devices[i];
+					var deviceItem = outlineItem(device, 'device', device._id, {environment:environment_id, device:device._id});
+					sublist.append(deviceItem);    
+				}
+			}
+		});
+	}
+	
+});
+
+function addEnvironment() {
+	var data = {
+		"angle": 0,
+        "description": "Description",
+        "geofence": {
+            "latitude": 0,
+            "longitude": 0,
+            "radius": 300
+        },
+        "name": "Untitled",
+        "data": {},
+        "perimeter": {
+            "origin": {"x": 0, "y": 0},
+            "size": {"height": 10, "width": 10}
+        }
+	}; 
+	
+	newEnvironment(data, function(environment) {
+		var environmentItem = outlineItem(environment, 'environment', environment._id, {environment:environment._id});
+		outline.append(environmentItem);    
+	});
+}
+
+</script>
+
+<body bgcolor="white">
+
+<h2>Code6 - Home</h2>
+
+<p class="description">This outline shows all the environments, zones, things and devices in the database. Click any object to see more information about an object. (If you use a tabbed browser, it may be helpful to open pages in separate windows so you can see them all at the same time.)</p>
+
+<ul id="outline">
+	
+</ul>
+
+<input type="button" id="newEnvironment" onclick="return addEnvironment();" value="New Environment" />
+
+
+</body>
+</html>

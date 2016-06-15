@@ -1,0 +1,234 @@
+<DOCTYPE html>
+<html>
+  <head>
+	  <title>Flare</title>
+  </head>
+<link href="../styles.css" rel="stylesheet" type="text/css" media="screen" />
+<script src="../js/socket.io-1.0.0.js"></script>
+<script src="../js/jquery-2.1.4.min.js"></script>
+<script src="../js/flare.js"></script>
+
+<script>
+
+var environment_id = getParameterByName('environment');
+
+var environment = null;
+
+$(function() {
+	$("input#id").val(environment_id);
+
+	getEnvironment(environment_id, function(info) {
+		environment = info;
+		document.title = environment.name;
+		$("input#name").val(environment.name);
+		$("input#description").val(environment.description);
+		$("input#latitude").val(environment.geofence.latitude);
+		$("input#longitude").val(environment.geofence.longitude);
+		$("input#radius").val(environment.geofence.radius);
+		$("input#angle").val(environment.angle);
+		$("input#x").val(environment.perimeter.origin.x);
+		$("input#y").val(environment.perimeter.origin.y);
+		$("input#width").val(environment.perimeter.size.width);
+		$("input#height").val(environment.perimeter.size.height);
+	});
+
+	subscribe({environment:environment_id}, true);
+	getData({environment:environment_id});
+	
+});
+
+function gotData(message) {
+	if (message.environment == environment_id) {
+		console.log("data: " + JSON.stringify(message));
+		var data = message.data;
+		
+		for (key in data) {
+			var value = data[key];
+			var input = $("input#" + key);
+			input.val(value);
+		}
+	} else {
+		console.log("ignoring: " + JSON.stringify(message));
+	}
+}
+
+function handleAction(message) {
+	if (message.environment == environment_id) {
+		var action = message.action;
+		
+		if (action == 'rainbow') {
+			// process action client-side
+			console.log('rainbow');
+		}
+	}
+}
+
+function dataChanged(input) {
+	var key = input.id;
+	var value = input.value;
+	
+	setData({environment:environment_id}, key, value, environment_id);
+}
+
+function update(input) {
+	var key = input.id;
+	var value = input.value;
+	
+	var data = {};
+	data[key] = value;
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateEnvironment(environment_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function updatePerimeter() {
+	var data = {perimeter: {
+		origin: {x: 1.0 * $("input#x").val(), y: 1.0 * $("input#y").val()},
+		size: {width: 1.0 * $("input#width").val(), height: 1.0 * $("input#height").val()},
+	}};
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateEnvironment(environment_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function updateAngle() {
+	var data = {angle: 1.0 * $("input#angle").val()};
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateEnvironment(environment_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function updateGeofence() {
+	var data = {geofence: {
+		latitude: 1.0 * $("input#latitude").val(),
+		longitude: 1.0 * $("input#longitude").val(),
+		radius: 1.0 * $("input#radius").val()
+	}};
+	
+	console.log("Update: " + JSON.stringify(data));
+	updateEnvironment(environment_id, data, function(updated) {
+		// console.log("Result: " + JSON.stringify(updated));
+	});
+}
+
+function addZone() {
+	var data = {
+        "description": "Description",
+        "name": "Untitled",
+        "data": {},
+        "perimeter": {
+            "origin": {"x": 0, "y": 0},
+            "size": {"height": 5, "width": 5}
+        }
+	}; 
+	
+	newZone(environment_id, data, function(zone) {
+		var zone_id = zone._id;
+		var link = "zone.html?environment=" + environment_id + "&zone=" + zone_id;
+		myWindow = window.open(link, zone_id, "width=615, height=335");
+	});
+}
+
+function addDevice() {
+	var data = {
+        "description": "Description",
+        "name": "Untitled",
+        "data": {},
+        "position": {"x": 0, "y": 0}
+	}; 
+	
+	newDevice(environment_id, data, function(device) {
+		var device_id = device._id;
+		var link = "device.html?environment=" + environment_id + "&device=" + device_id;
+		myWindow = window.open(link, device_id, "width=615, height=335");
+	});
+}
+
+function removeEnvironment() {
+	deleteEnvironment(environment_id, function(deleted) {
+		// console.log("Result: " + JSON.stringify(deleted));
+		window.close()
+	});
+}
+
+</script>
+<body bgcolor="white">
+
+<table align="center">
+
+<tr>
+	<td align="right">Environment:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="id" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Name:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="name" onchange="return update(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Description:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="description" onchange="return update(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">UUID:</td>
+	<td colspan="2">
+		<input type="text" size="44" id="uuid" onchange="return dataChanged(this);" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Geofence:</td>
+	<td>
+		<input type="text" size="10" id="latitude" onchange="return updateGeofence();" />,<input type="text" size="10" id="longitude" onchange="return updateGeofence();" />,<input type="text" size="4" id="radius" onchange="return updateGeofence();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Angle:</td>
+	<td>
+		<input type="text" size="4" id="angle" onchange="return updateAngle();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Origin:</td>
+	<td>
+		<input type="text" size="4" id="x" onchange="return updatePerimeter();" />,<input type="text" size="4" id="y" onchange="return updatePerimeter();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">Size:</td>
+	<td>
+		<input type="text" size="4" id="width" onchange="return updatePerimeter();" />,<input type="text" size="4" id="height" onchange="return updatePerimeter();" />
+	</td>
+</tr>
+
+<tr>
+	<td align="right">&nbsp;</td>
+	<td>
+		<input type="button" id="newThing" onclick="location.reload();" value="Update" />
+		<input type="button" id="newZone" onclick="return addZone();" value="New Zone" />
+		<input type="button" id="newDevice" onclick="return addDevice();" value="New Device" />
+		<input type="button" id="deleteEnvironment" onclick="return removeEnvironment();" value="Delete" />
+	</td>
+</tr>
+
+</table>
+
+</body>
+</html>
