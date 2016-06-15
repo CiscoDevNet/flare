@@ -44,10 +44,21 @@ app.use(errorHandler({
 	showStack: true
 }));
 
+var cors = require('cors');
+
+var whitelist = ['http://localhost', 'http://' + hostname, 'http://' + hostname + ':8006', 'http://0.0.0.0:8006'];
+
+function verifyOrigin(approvedList) {
+  return function(source, cb) {
+    cb(null, approvedList.indexOf(source) !== -1);
+  };
+}
+
+var corsOptions = { origin: verifyOrigin(whitelist) };
 
 // ENVIRONMENTS
 
-app.get('/environments', function (req, res) {
+app.get('/environments', cors(corsOptions), function (req, res) {
 	flaredb.Environment.find(function (err, list) {
 	    if (err) return res.send(err);
 
@@ -71,7 +82,7 @@ app.get('/environments', function (req, res) {
 	});
 });
 
-app.get('/environments/current', function (req, res) {
+app.get('/environments/current', cors(corsOptions), function (req, res) {
 	flaredb.Environment.find(function (err, list) {
 	    if (err) return res.send(err);
 	    flaredb.Device.findById(req.query.device, function (err2, device) {
@@ -90,7 +101,7 @@ app.get('/environments/current', function (req, res) {
 	});
 });
 
-app.post('/environments', function (req, res) {
+app.post('/environments', cors(corsOptions), function (req, res) {
 	var environment = req.body;
 	environment.created = new Date();
 	environment.modifed = new Date();
@@ -100,28 +111,29 @@ app.post('/environments', function (req, res) {
 	});
 });
 
-app.get('/environments/:environment_id', function (req, res) {
+app.get('/environments/:environment_id', cors(corsOptions), function (req, res) {
 	flaredb.Environment.findById(req.params.environment_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
 	});
 });
 
-app.get('/environments/:environment_id/data', function (req, res) {
+app.get('/environments/:environment_id/data', cors(corsOptions), function (req, res) {
 	flaredb.Environment.findById(req.params.environment_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data);
 	});
 });
 
-app.get('/environments/:environment_id/data/:key', function (req, res) {
+app.get('/environments/:environment_id/data/:key', cors(corsOptions), function (req, res) {
 	flaredb.Environment.findById(req.params.environment_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data[req.params.key]);
 	});
 });
 
-app.put('/environments/:environment_id', function (req, res) {
+app.options('/environments/:environment_id', cors()); // enable pre-flight request for PUT request
+app.put('/environments/:environment_id', cors(), function (req, res) {
 	var info = req.body;
 	info.modified = new Date();
 	flaredb.Environment.findByIdAndUpdate(req.params.environment_id, info, {new: true}, function (err, post) {
@@ -130,7 +142,7 @@ app.put('/environments/:environment_id', function (req, res) {
 	});
 });
 
-app.delete('/environments/:environment_id', function (req, res) {
+app.delete('/environments/:environment_id', cors(), function (req, res) {
 	flaredb.Environment.findByIdAndRemove(req.params.environment_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
@@ -140,7 +152,7 @@ app.delete('/environments/:environment_id', function (req, res) {
 
 // ZONES
 
-app.get('/environments/:environment_id/zones', function (req, res) {
+app.get('/environments/:environment_id/zones', cors(corsOptions), function (req, res) {
 	flaredb.Zone.find({environment:req.params.environment_id}, function (err, list) {
 	    if (err) return res.send(err);
 
@@ -168,7 +180,7 @@ app.get('/environments/:environment_id/zones', function (req, res) {
 	});
 });
 
-app.get('/environments/:environment_id/zones/current', function (req, res) {
+app.get('/environments/:environment_id/zones/current', cors(corsOptions), function (req, res) {
 	flaredb.Zone.find({environment:req.params.environment_id}, function (err, list) {
 		if (err) return res.send(err);
 	    flaredb.Device.findById(req.query.device, function (err2, device) {
@@ -183,7 +195,7 @@ app.get('/environments/:environment_id/zones/current', function (req, res) {
 	});
 });
 
-app.post('/environments/:environment_id/zones', function (req, res) {
+app.post('/environments/:environment_id/zones', cors(corsOptions), function (req, res) {
 	var zone = req.body;
 	zone.environment = req.params.environment_id; // verify that it's a valid object
 	zone.created = new Date();
@@ -194,28 +206,29 @@ app.post('/environments/:environment_id/zones', function (req, res) {
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id', cors(corsOptions), function (req, res) {
 	flaredb.Zone.findById(req.params.zone_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/data', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/data', cors(corsOptions), function (req, res) {
 	flaredb.Zone.findById(req.params.zone_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data);
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/data/:key', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/data/:key', cors(corsOptions), function (req, res) {
 	flaredb.Zone.findById(req.params.zone_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data[req.params.key]);
 	});
 });
 
-app.put('/environments/:environment_id/zones/:zone_id', function (req, res) {
+app.options('/environments/:environment_id/zones/:zone_id', cors()); // enable pre-flight request for PUT request
+app.put('/environments/:environment_id/zones/:zone_id', cors(), function (req, res) {
 	var info = req.body;
 	info.modified = new Date();
 	flaredb.Zone.findByIdAndUpdate(req.params.zone_id, info, {new: true}, function (err, post) {
@@ -224,7 +237,7 @@ app.put('/environments/:environment_id/zones/:zone_id', function (req, res) {
 	});
 });
 
-app.delete('/environments/:environment_id/zones/:zone_id', function (req, res) {
+app.delete('/environments/:environment_id/zones/:zone_id', cors(), function (req, res) {
 	flaredb.Zone.findByIdAndRemove(req.params.zone_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
@@ -234,7 +247,7 @@ app.delete('/environments/:environment_id/zones/:zone_id', function (req, res) {
 
 // THINGS
 
-app.get('/environments/:environment_id/zones/:zone_id/things', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/things', cors(corsOptions), function (req, res) {
 	flaredb.Thing.find({zone:req.params.zone_id}, function (err, list) {
 		if (err) return res.send(err);
 
@@ -263,7 +276,7 @@ app.get('/environments/:environment_id/zones/:zone_id/things', function (req, re
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/things/nearby', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/things/nearby', cors(corsOptions), function (req, res) {
 	flaredb.Thing.find({zone:req.params.zone_id}, function (err, list) {
 		if (err) return res.send(err);
 	    flaredb.Device.findById(req.query.device, function (err2, device) {
@@ -278,14 +291,14 @@ app.get('/environments/:environment_id/zones/:zone_id/things/nearby', function (
 	});
 });
 
-app.get('/environments/:environment_id/things', function (req, res) {
+app.get('/environments/:environment_id/things', cors(corsOptions), function (req, res) {
 	flaredb.Thing.find({environment:req.params.environment_id}, function (err, list) {
 	    if (err) return res.send(err);
 	    res.json(list);
 	});
 });
 
-app.post('/environments/:environment_id/zones/:zone_id/things', function (req, res) {
+app.post('/environments/:environment_id/zones/:zone_id/things', cors(corsOptions), function (req, res) {
 	var thing = req.body;
 	thing.environment = req.params.environment_id; // verify that it's a valid object
 	thing.zone = req.params.zone_id; // verify that it's a valid object
@@ -297,35 +310,36 @@ app.post('/environments/:environment_id/zones/:zone_id/things', function (req, r
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id', cors(corsOptions), function (req, res) {
 	flaredb.Thing.findById(req.params.thing_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id/data', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id/data', cors(corsOptions), function (req, res) {
 	flaredb.Thing.findById(req.params.thing_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data);
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id/data/:key', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id/data/:key', cors(corsOptions), function (req, res) {
 	flaredb.Thing.findById(req.params.thing_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data[req.params.key]);
 	});
 });
 
-app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id/position', function (req, res) {
+app.get('/environments/:environment_id/zones/:zone_id/things/:thing_id/position', cors(corsOptions), function (req, res) {
 	flaredb.Thing.findById(req.params.thing_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.position);
 	});
 });
 
-app.put('/environments/:environment_id/zones/:zone_id/things/:thing_id', function (req, res) {
+app.options('/environments/:environment_id/zones/:zone_id/things/:thing_id', cors()); // enable pre-flight request for PUT request
+app.put('/environments/:environment_id/zones/:zone_id/things/:thing_id', cors(), function (req, res) {
 	var info = req.body;
 	info.modified = new Date();
 	flaredb.Thing.findByIdAndUpdate(req.params.thing_id, info, {new: true}, function (err, post) {
@@ -334,7 +348,7 @@ app.put('/environments/:environment_id/zones/:zone_id/things/:thing_id', functio
 	});
 });
 
-app.delete('/environments/:environment_id/zones/:zone_id/things/:thing_id', function (req, res) {
+app.delete('/environments/:environment_id/zones/:zone_id/things/:thing_id', cors(), function (req, res) {
 	flaredb.Thing.findByIdAndRemove(req.params.thing_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
@@ -344,7 +358,7 @@ app.delete('/environments/:environment_id/zones/:zone_id/things/:thing_id', func
 
 // DEVICES
 
-app.get('/environments/:environment_id/devices', function (req, res) {
+app.get('/environments/:environment_id/devices', cors(corsOptions), function (req, res) {
 	flaredb.Device.find({environment:req.params.environment_id}, function (err, list) {
 	    if (err) return res.send(err);
 		
@@ -372,7 +386,7 @@ app.get('/environments/:environment_id/devices', function (req, res) {
 	});
 });
 
-app.post('/environments/:environment_id/devices', function (req, res) {
+app.post('/environments/:environment_id/devices', cors(corsOptions), function (req, res) {
 	var device = req.body;
 	device.environment = req.params.environment_id; // verify that it's a valid object
 	device.created = new Date();
@@ -407,7 +421,7 @@ app.post('/environments/:environment_id/devices', function (req, res) {
 });
 
 // CMX notification
-app.post('/environments/:environment_id/devices/position', function (req, res) {
+app.post('/environments/:environment_id/devices/position', cors(corsOptions), function (req, res) {
 	var ignoreNull = true;
 	var error = null;
 	var notifications = req.body.notifications;
@@ -456,35 +470,36 @@ app.post('/environments/:environment_id/devices/position', function (req, res) {
 	}
 });
 
-app.get('/environments/:environment_id/devices/:device_id', function (req, res) {
+app.get('/environments/:environment_id/devices/:device_id', cors(corsOptions), function (req, res) {
 	flaredb.Device.findById(req.params.device_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);
 	});
 });
 
-app.get('/environments/:environment_id/devices/:device_id/data', function (req, res) {
+app.get('/environments/:environment_id/devices/:device_id/data', cors(corsOptions), function (req, res) {
 	flaredb.Device.findById(req.params.device_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data);
 	});
 });
 
-app.get('/environments/:environment_id/devices/:device_id/data/:key', function (req, res) {
+app.get('/environments/:environment_id/devices/:device_id/data/:key', cors(corsOptions), function (req, res) {
 	flaredb.Device.findById(req.params.device_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.data[req.params.key]);
 	});
 });
 
-app.get('/environments/:environment_id/devices/:device_id/position', function (req, res) {
+app.get('/environments/:environment_id/devices/:device_id/position', cors(corsOptions), function (req, res) {
 	flaredb.Device.findById(req.params.device_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post.position);
 	});
 });
 
-app.put('/environments/:environment_id/devices/:device_id', function (req, res) {
+app.options('/environments/:environment_id/devices/:device_id', cors()); // enable pre-flight request for PUT request
+app.put('/environments/:environment_id/devices/:device_id', cors(), function (req, res) {
 	var info = req.body;
 	info.modified = new Date();
 	flaredb.Device.findByIdAndUpdate(req.params.device_id, info, {new: true}, function (err, post) {
@@ -493,7 +508,7 @@ app.put('/environments/:environment_id/devices/:device_id', function (req, res) 
 	});
 });
 
-app.delete('/environments/:environment_id/devices/:device_id', function (req, res) {
+app.delete('/environments/:environment_id/devices/:device_id', cors(), function (req, res) {
 	flaredb.Device.findByIdAndRemove(req.params.device_id, function (err, post) {
 		if (err) return res.send(err);
 		res.json(post);

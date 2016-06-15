@@ -134,3 +134,22 @@ exports.handlers['volumeUp'] = function(socket, message, object) {
 	exports.notifications.notifyData(socket, message, object, 'volume');
 };
 
+exports.handlers['start'] = function(socket, message, object) {
+  object.set('data.on', true);
+  exports.notifications.notifyData(socket, message, object, 'on');
+};
+
+exports.handlers['stop'] = function(socket, message, object) {
+  object.set('data.on', false);
+  exports.notifications.notifyData(socket, message, object, 'on');
+};
+
+exports.handlers['play'] = function(socket, message, object) {
+  object.set('data.on', true);
+  exports.notifications.notifyData(socket, message, object, 'on');
+};
+
+exports.handlers['pause'] = function(socket, message, object) {
+  object.set('data.on', false);
+  exports.notifications.notifyData(socket, message, object, 'on');
+};

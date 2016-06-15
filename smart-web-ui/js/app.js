@@ -34,6 +34,10 @@ var myWebApp = angular.module('myWebApp', [
           templateUrl: 'partials/page2.html',
           controller: 'AnotherSampleCtrl'
         }).
+        when('/flare', {
+          templateUrl: 'partials/flare.html',
+          controller: 'FlareCtrl'
+        }).
         otherwise({
           redirectTo: '/'
         });
@@ -60,16 +64,6 @@ function bootstrapApplication() {
         ConfigServiceProvider.config(json.data);
 
 //        console.log("conf/config.json loaded successfully", json.data);
-      }]);
-
-      return $http.get('conf/config2.json');
-    })
-    .then(function(json) {
-
-      myWebApp.config(['ConfigServiceProvider', function (ConfigServiceProvider) {
-        ConfigServiceProvider.config(json.data);
-
-//        console.log("conf/config2.json loaded successfully", json.data);
       }]);
 
       bootstrapApplication();

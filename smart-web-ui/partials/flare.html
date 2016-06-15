@@ -1,0 +1,61 @@
+<h1>Flare</h1>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          Environment
+      </div>
+      <div class="panel-body">
+        <p>
+          <h3>Environment ID</h3>
+          {{environmentId}}
+        </p>
+        <p>
+          <h3>Zones</h3>
+        </p>
+        <table id="users" class="table table-hover table-condensed">
+          <thead>
+          <tr>
+            <th class="col-md-2 col-sm-6">ID</th>
+            <th class="col-md-2 col-sm-6">Name</th>
+            <th class="col-md-6 col-sm-12">Things</th>
+          </tr>
+          </thead>
+          <tr ng-repeat="zone in environment.zones">
+            <td>{{zone._id}}</td>
+            <td>{{zone.name}}</td>
+            <td ng-if="zone.things.length > 0">
+              <div class="row">
+                <div class="col-sm-4" ng-repeat="thing in zone.things">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      {{thing.name}}
+                    </div>
+                    <div class="panel-body">
+                      <table class="table-condensed">
+                        <tr>
+                          <th>position</th>
+                          <td>({{thing.position.x}}, {{thing.position.y}})</td>
+                        </tr>
+                        <div ng-if="thing.data !== undefined">
+                          <tr ng-repeat="(key, val) in thing.data">
+                            <th>{{key}}</th>
+                            <td>{{val}}</td>
+                          </tr>
+                        </div>
+                      </table>
+                      <p ng-if="thing.actions.length > 0">
+                        <button class="button btn btn-default" ng-repeat="action in thing.actions" ng-click="performAction(thing._id, action)">{{action}}</button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

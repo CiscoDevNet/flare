@@ -13,5 +13,8 @@
       "name": "Complex responsive animations",
       "link": "http://slides.com/sdrasner/cssconf#/"
     }
-  ]
+  ],
+  "flare": {
+    "host": "http://localhost:1234"
+  }
 }
