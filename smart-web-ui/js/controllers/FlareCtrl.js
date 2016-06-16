@@ -126,56 +126,73 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
     socket.on('broadcast-message', function(msg) {
       console.log("broadcast-message", msg);
 
-      if (msg.type === "audio") {
+      if (msg.type === "audio" || msg.type === "reminder") {
         $scope.audioMessageOn = true;
-        var words = msg.text.split(" ");
-        var wordIndex = 0;
-        $scope.searchText = "";
-        function displayNextWord() {
-          if (wordIndex >= words.length)
-            return;
-          $scope.searchText += words[wordIndex] + " ";
-          console.log("search", $scope.searchText);
-          // move the caret to the end of the line
-  //        $('#searchText').focus(function() {
-  //          $(this).val($(this).val());
-  //        }).focus();
+        if (msg.type === "reminder") {
+          $scope.searchText = msg.text;
 
-//          var txt = $('#searchText');
-//          txt.focus();
-//          var length = $scope.searchText.length;
-//          txt.setSelectionRange(length, length);
+          // execute command
+          timer = $timeout(function() {
+            if (!msg.command.allowed) {
+              $scope.commandResult = "Sorry, I can't do that";
+              $scope.alert = "danger";
+              $scope.icon = "fa-exclamation-triangle";
+            } else {
+              $scope.commandResult = "Done!";
+              $scope.alert = "success";
+              $scope.icon = "fa-check";
 
-          wordIndex++;
-          if (wordIndex < words.length) {
-            timer = $timeout(displayNextWord, 150+Math.random()*200);
-          } else {
-            // else finish by running the command
+              // do it
+            }
+
             timer = $timeout(function() {
+              $scope.searchText = "";
+              $scope.commandResult = "";
+              $scope.audioMessageOn = false;
+              $scope.alert = undefined;
+            }, 1500);
+          }, 3000);
+        } else {
+          var words = msg.text.split(" ");
+          var wordIndex = 0;
+          $scope.searchText = "";
+          function displayNextWord() {
+            if (wordIndex >= words.length)
+              return;
+            $scope.searchText += words[wordIndex] + " ";
+            console.log("search", $scope.searchText);
 
-              // execute command
-              if (!msg.command.allowed) {
-                $scope.commandResult = "Sorry, I can't do that";
-                $scope.alert = "danger";
-                $scope.icon = "fa-exclamation-triangle";
-              } else {
-                $scope.commandResult = "Done!";
-                $scope.alert = "success";
-                $scope.icon = "fa-check";
-
-                // do it
-              }
-
+            wordIndex++;
+            if (wordIndex < words.length) {
+              timer = $timeout(displayNextWord, 150+Math.random()*200);
+            } else {
+              // else finish by running the command
               timer = $timeout(function() {
-                $scope.searchText = "";
-                $scope.commandResult = "";
-                $scope.audioMessageOn = false;
-                $scope.alert = undefined;
-              }, 1500);
-            }, 1000);
+
+                // execute command
+                if (!msg.command.allowed) {
+                  $scope.commandResult = "Sorry, I can't do that";
+                  $scope.alert = "danger";
+                  $scope.icon = "fa-exclamation-triangle";
+                } else {
+                  $scope.commandResult = "Done!";
+                  $scope.alert = "success";
+                  $scope.icon = "fa-check";
+
+                  // do it
+                }
+
+                timer = $timeout(function() {
+                  $scope.searchText = "";
+                  $scope.commandResult = "";
+                  $scope.audioMessageOn = false;
+                  $scope.alert = undefined;
+                }, 1500);
+              }, 1000);
+            }
           }
+          timer = $timeout(displayNextWord, 500);
         }
-        timer = $timeout(displayNextWord, 500);
       } else if (msg.type === "reveal") {
         $(msg.command.target).css("display", "initial");
       }

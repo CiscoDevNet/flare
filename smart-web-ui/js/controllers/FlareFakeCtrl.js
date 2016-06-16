@@ -11,6 +11,16 @@ angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket'
       socket.emit('broadcast-message', message);
     }
 
+    function reminder(text, command) {
+      console.log("emit", text, command);
+      var message = {
+        type: "reminder",
+        text: text,
+        command: command
+      }
+      socket.emit('broadcast-message', message);
+    }
+
     function reveal(text, command) {
       console.log("emit", command);
       var message = {
@@ -42,6 +52,18 @@ angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket'
             target: '576276cd28c5cad47d5ce51c',
             action: 'close',
             allowed: false
+          }
+        }
+      },
+      {
+        text: "confirm closing window",
+        callback: {
+          fn: reminder,
+          msg: 'do you still want to close the window in the living room?',
+          command: {
+            target: '576276cd28c5cad47d5ce51c',
+            action: 'close',
+            allowed: true
           }
         }
       },
