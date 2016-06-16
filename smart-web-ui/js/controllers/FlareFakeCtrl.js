@@ -1,23 +1,38 @@
 angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket',
   function($scope, socket) {
 
-    function fakeAudioDiction(text) {
-      console.log("emit", text);
-      socket.emit('broadcast-message', text);
+    function audioCommand(text, command) {
+      console.log("emit", text, command);
+      var message = {
+        type: "audio",
+        text: text,
+        command: command
+      }
+      socket.emit('broadcast-message', message);
     }
     $scope.buttons = [
       {
-        text: "open window",
+        text: "start the kettle",
         callback: {
-          fn: fakeAudioDiction,
-          msg: 'can you open the window?'
+          fn: audioCommand,
+          msg: 'pop the kettle on',
+          command: {
+            target: '57603f47e7829cf86f8f0ddb',
+            action: 'on',
+            allowed: true
+          }
         }
       },
       {
-        text: "show all devices",
+        text: "close the window",
         callback: {
-          fn: fakeAudioDiction,
-          msg: 'show all devices'
+          fn: audioCommand,
+          msg: 'close the window in the living room',
+          command: {
+            target: '576276cd28c5cad47d5ce51c',
+            action: 'close',
+            allowed: false
+          }
         }
       }
     ];

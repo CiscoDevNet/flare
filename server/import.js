@@ -3,7 +3,7 @@
 
 var flare = this;
 var flaredb = require("./flaredb");
-var modelPath = process.argv[2] || 'data/db/Home.json';
+var modelPath = process.argv[2] || 'public/home/Home.json';
 var model = require('./' + modelPath);
 var tasks = 0;
 

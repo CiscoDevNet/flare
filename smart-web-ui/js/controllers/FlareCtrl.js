@@ -118,6 +118,7 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
 
     $scope.audioMessageOn = false;
     $scope.searchText = "";
+    $scope.commandResult = "";
 
     var timer;
 
@@ -126,30 +127,57 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
       console.log("broadcast-message", msg);
       $scope.audioMessageOn = true;
 
-      var words = msg.split(" ");
-      var wordIndex = 0;
-      $scope.searchText = "";
-      function displayNextWord() {
-        if (wordIndex >= words.length)
-          return;
-        $scope.searchText += words[wordIndex] + " ";
-        console.log("search", $scope.searchText);
-        // move the caret to the end of the line
-//        $('#searchText').focus(function() {
-//          $(this).val($(this).val());
-//        }).focus();
-
-        wordIndex++;
-        if (wordIndex < words.length) {
-          timer = $timeout(displayNextWord, 250+Math.random()*200);
-        }
-      }
-      timer = $timeout(displayNextWord, 500);
-
-      timer = $timeout(function() {
-        $scope.audioMessageOn = false;
+      if (msg.type === "audio") {
+        var words = msg.text.split(" ");
+        var wordIndex = 0;
         $scope.searchText = "";
-      }, 5000);
+        function displayNextWord() {
+          if (wordIndex >= words.length)
+            return;
+          $scope.searchText += words[wordIndex] + " ";
+          console.log("search", $scope.searchText);
+          // move the caret to the end of the line
+  //        $('#searchText').focus(function() {
+  //          $(this).val($(this).val());
+  //        }).focus();
+
+//          var txt = $('#searchText');
+//          txt.focus();
+//          var length = $scope.searchText.length;
+//          txt.setSelectionRange(length, length);
+
+          wordIndex++;
+          if (wordIndex < words.length) {
+            timer = $timeout(displayNextWord, 150+Math.random()*200);
+          } else {
+            // else finish by running the command
+            timer = $timeout(function() {
+
+              // execute command
+              if (!msg.command.allowed) {
+                $scope.commandResult = "Sorry, I can't do that";
+                $scope.alert = "danger";
+                $scope.icon = "fa-exclamation-triangle";
+              } else {
+                $scope.commandResult = "Done!";
+                $scope.alert = "success";
+                $scope.icon = "fa-check";
+
+                // do it
+              }
+
+              timer = $timeout(function() {
+                $scope.searchText = "";
+                $scope.commandResult = "";
+                $scope.audioMessageOn = false;
+                $scope.alert = undefined;
+              }, 1500);
+            }, 1000);
+          }
+        }
+        timer = $timeout(displayNextWord, 500);
+
+      }
     });
 
     // when the scope of the controller gets destroyed, do some clean up

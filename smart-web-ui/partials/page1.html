@@ -20,4 +20,10 @@
   <h2>Search</h2>
   <input type="text" id="searchText" name="searchText" ng-value="searchText"
          class="form-control"autofocus />
+  <div ng-if="alert !== undefined" id="command-feedback">
+    <div class="alert alert-{{alert}}" role="alert">
+      <i class="fa {{icon}}" aria-hidden="true"></i>
+      {{commandResult}}
+    </div>
+  </div>
 </div>
