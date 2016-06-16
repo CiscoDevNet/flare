@@ -271,8 +271,8 @@ function thingAction(thing, action) {
 }
 
 function permissionDenied(message) {
-    console.log("Permission denied.");
-    alert("Permission denied.");
+    console.log(message.error);
+    alert(message.error);
 
     getData({thing:message.thing});
 }
