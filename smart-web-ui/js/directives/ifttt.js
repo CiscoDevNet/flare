@@ -11,7 +11,8 @@ angular.module('appControllers').directive("ifttt",["$animate",
                 mthis: "=",
                 mthat: "=",
                 cancel: "=",
-                create: "="
+                create: "=",
+                mparam: "="
 
             }
         });
@@ -38,7 +39,7 @@ angular.module('appControllers').directive("ifttt",["$animate",
                 if(scope.create==true){
 
                    // jsP.detach(connectionInProgress);
-                    addOverlay(connectionInProgress.connection, scope.mthis, scope.mthat, "example");
+                    addOverlay(connectionInProgress.connection, scope.mthis, scope.mthat, scope.mparam);
                     scope.create = false;
 
 
@@ -98,16 +99,15 @@ angular.module('appControllers').directive("ifttt",["$animate",
 
                                 if(thing._id != "5762774b28c5cad47d5ce51d") {
                                     addDevice(thing, zone, true);
-                                    deviceList.push(thing);
-
                                 }else{
-                                    tmpSensor = {"thing":thing,"zone":zone} ;
+                                    if (thing!=undefined){tmpSensor = {"thing":thing,"zone":zone} ;}
                                 }
+                                deviceList.push(thing);
                             });
                         }
 
                     });
-                    addDevice(tmpSensor.thing, tmpSensor.zone, false);
+                    if(tmpSensor != undefined){addDevice(tmpSensor.thing, tmpSensor.zone, false);}
 
 
                     var conn = jsP.connect({source:"57626b6c28c5cad47d5ce51a", target:"57626c2528c5cad47d5ce51b"});
