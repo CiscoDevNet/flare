@@ -280,7 +280,7 @@
               "data": {
                 "minor": 0,
                 "color": "white",
-                "closed": false,
+                "open": false,
                 "accessControl": {
                   "open": {"policy": "sameZone"},
                   "close": {"policy": "sameZone"}
