@@ -66,7 +66,7 @@ var exampleObj = {
             }
         }
     ]
-}
+};
 
 jsPlumb.ready(function() {
     var jsP = jsPlumb.getInstance();

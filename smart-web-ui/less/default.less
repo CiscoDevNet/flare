@@ -27,6 +27,10 @@ body {
     }
 }
 
+h1 {
+    color: #fff;
+    opacity: 0.9;
+}
 
 th {
     .font-bold;
@@ -101,4 +105,40 @@ button {
 
 .grey {
     background-color: grey;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding-left: 30px;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    opacity: 1;
+    transition: opacity .2s ease-in-out;
+    h2 {
+        font-family: OpenSans Light;
+        margin: 30px 0 10px;
+    }
+    textarea, input, input:focus {
+        outline: none;
+        .box-shadow(none);
+    }
+    input {
+        @fontSize: 64px;
+        font-size: @fontSize;
+        line-height: @fontSize;
+        height: @fontSize;
+        font-family: OpenSans;
+        border: none;
+        background-color: transparent;
+        color: #fff;
+        padding-left: 0px;
+    }
+}
+.no-overlay {
+    opacity: 0;
 }

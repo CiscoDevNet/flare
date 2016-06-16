@@ -7,6 +7,8 @@
         Actions
       </div>
       <div class="panel-body">
+        <button class="button btn btn-default" ng-repeat="button in buttons"
+                ng-click="button.callback.fn(button.callback.msg)">{{button.text}}</button>
       </div>
     </div>
   </div>

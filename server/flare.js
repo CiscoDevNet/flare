@@ -594,6 +594,10 @@ io.sockets.on('connection', function (socket) {
   	socket.on('performAction', function (message) {
 		performAction(socket, message);
   	});
+
+  socket.on('broadcast-message', function (message) {
+    socket.broadcast.emit('broadcast-message', message);
+  });
 });
 
 // replies to the sender only
