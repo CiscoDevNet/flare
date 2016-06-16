@@ -38,42 +38,51 @@ angular.module('appControllers').directive("ifttt",["$animate",
                 if(scope.create==true){
 
                    // jsP.detach(connectionInProgress);
+                    addOverlay(connectionInProgress.connection, scope.mthis, scope.mthat, "example");
                     scope.create = false;
-                    connectionInProgress.connection.addOverlay(
-                        ["Label", {
-                            label:scope.mthis,
-                            location:0.1,
-                            cssClass: 'aLabel',
-                            events:{
-                                dblclick:function(labelOverlay, originalEvent) {
-                                    alert("Double on label overlay for :" + labelOverlay.component);
-                                }
-                            }
-                        }]
-                    );
-                    connectionInProgress.connection.addOverlay(
-                        ["Label", {
-                            label:"test",
-                            location:0.5,
-                            cssClass: 'aLabel',
-                            events:{
-                                dblclick:function(labelOverlay, originalEvent) {
-                                    alert("Double on label overlay for :" + labelOverlay.component);
-                                }
-                            }
-                        }]
-                    );
-                    connectionInProgress.connection.addOverlay(
-                        ["Label", {
-                            label:scope.mthat,
-                            location:0.9,
-                            cssClass: 'aLabel',
 
-                        }]
-                    );
 
                 }
             });
+
+            function addOverlay(conn, mthis,mthat,maction){
+                if(conn == undefined){return};
+                conn.addOverlay(
+                    ["Label", {
+                        label:mthis,
+                        location:0.1,
+                        cssClass: 'aLabel',
+                        events:{
+                            dblclick:function(labelOverlay, originalEvent) {
+                                alert("Double on label overlay for :" + labelOverlay.component);
+                            }
+                        }
+                    }]
+                );
+                conn.addOverlay(
+                    ["Label", {
+                        label:maction,
+                        location:0.5,
+                        cssClass: 'aLabel',
+                        events:{
+                            dblclick:function(labelOverlay, originalEvent) {
+                                alert("Double on label overlay for :" + labelOverlay.component);
+                            }
+                        }
+                    }]
+                );
+                conn.addOverlay(
+                    ["Label", {
+                        label:mthat,
+                        location:0.9,
+                        cssClass: 'aLabel',
+
+                    }]
+                );
+
+            }
+
+
 
             scope.$watch('env', function(newValue, oldValue) {
                 //alert("newData");
@@ -81,6 +90,7 @@ angular.module('appControllers').directive("ifttt",["$animate",
                 numberOfElements=0;
                 if(newValue){
                     deviceList = [];
+                    var tmpSensor;
                     newValue.zones.forEach(function(zone){
                         //console.log(zone.things);
                         if(zone.things){
@@ -88,28 +98,38 @@ angular.module('appControllers').directive("ifttt",["$animate",
 
                                 if(thing._id != "5762774b28c5cad47d5ce51d") {
                                     addDevice(thing, zone, true);
+                                    deviceList.push(thing);
 
                                 }else{
-                                    deviceList.push({"thing":thing,"zone":zone});
+                                    tmpSensor = {"thing":thing,"zone":zone} ;
                                 }
                             });
                         }
 
                     });
-                    deviceList.forEach(function(dev){
-                        addDevice(dev.thing, dev.zone, false);
-                    })
+                    addDevice(tmpSensor.thing, tmpSensor.zone, false);
+
+
+                    var conn = jsP.connect({source:"57626b6c28c5cad47d5ce51a", target:"57626c2528c5cad47d5ce51b"});
+                    console.log(conn);
+                    addOverlay(conn, "ON", "Make Coffee", "Ring");
+
+                    var conn2 = jsP.connect({source:"57626b6c28c5cad47d5ce51a", target:"57626b6c28c5cad47d5ce51a"});
+                    console.log(conn2);
+                    addOverlay(conn2, "ON", "Alarm", "Ring");
 
                 }
 
             });
 
 
-            jsP.Defaults.Connector = ["Straight"],
+                jsP.Defaults.Connector = ["StateMachine"],
+                jsP.Defaults.Anchor = "TopCenter";
                 jsP.Defaults.ConnectorStyle = {
-                    lineWidth: 3,
-                    strokeStyle: "#5b9ada"
-                },
+                    lineWidth: 5,
+                    strokeStyle: "#FFF"
+                };
+                jsP.Defaults.PaintStyle = { lineWidth : 5, strokeStyle : "#fff" },
 
 
                 jsP.setContainer($('#'+htmlBase));
@@ -149,67 +169,53 @@ angular.module('appControllers').directive("ifttt",["$animate",
             function addDevice(device, zone, isVisible){
                 var id = device["_id"];//.replace(/\W/g,'_');
                 var cssDisplay;
+                var cssTop;
                 if(isVisible){
                     cssDisplay = "block";
                 }else{
                     cssDisplay = "none";
                 }
 
+                if (numberOfElements%2 == 0){
+                    cssTop = 50;
+                }else{
+                    cssTop = 250;
+                }
+
+
+
+
                 $('#'+htmlBase).append(
                     '<div class="window decision node" id="' + id + '" style="display:'+cssDisplay+
-                '; top:10px; left:'+(200)*numberOfElements+'px"><p style="text-align: center">'+device.name+'</p></div>'
+                '; top:'+cssTop+'px; left:'+(200)*numberOfElements+'px"><p style="text-align: center">'+device.name+'</p></div>'
                 );
 
                 $('#'+id).append('<p style="text-align: center">'+zone.name+'</p>');
 
                 var numActions = 0;
-
-                var sourceAnchors = [
-                    [ 0, 0, 0, 1 ],
-                    [ 0.25, 1, 0, 1 ],
-                    [ 0.5, 1, 0, 1 ],
-                    [ 0.75, 1, 0, 1 ],
-                    [ 1, 1, 0, 1 ],
-                    [ 0, 0, 0, 1 ],
-                    [ 0, 0.25, 0, 1 ],
-                    [ 0, 0.5, 0, 1 ],
-                    [ 0, 0.75, 0, 1 ],
-                    [ 1, 1, 0, 1 ],
-                    [ 0, 1, 0, 1 ],
-                    [ 0.25, 0, 0, 1 ],
-                    [ 0.5, 0, 0, 1 ],
-                    [ 0.75, 0, 0, 1 ],
-                    [ 1, 0, 0, 1 ],
-                    [ 1, 0, 0, 1 ],
-                    [ 1, 0.25, 0, 1 ],
-                    [ 1, 0.5, 0, 1 ],
-                    [ 1, 0.75, 0, 1 ],
-                    [ 0, 0, 0, 0 ],
-                ];
+                jsP.addEndpoint(
+                    $('#'+id),
+                    {
+                        isSource: true,
+                        isTarget: true,
+                        maxConnections: 3,
+                        //anchor:sourceAnchors
+                        //anchor:[ 1, (0.38)+(0.2*numActions), 0, 1, "upper_dec_end endpoint" ],
+                         paintStyle: { fillStyle: '#445' },
+                         endpoint: ["Rectangle", {width:12, height:12}]
+                    }
+                );
 
                // device.actions.forEach(function(action){
                     //$('#'+id).append('<p style="text-align: center; background-color: #0b97c4; padding: 5px;">'+action+'</p>');
-                    jsP.addEndpoint(
-                        $('#'+id),
-                        {
-                            isSource: true,
-                            isTarget: true,
-                            maxConnections: 3,
-                            anchor:sourceAnchors
-                            //anchor:[ 1, (0.38)+(0.2*numActions), 0, 1, "upper_dec_end endpoint" ],
-                           // paintStyle: { fillStyle: 'red' },
-                            //endpoint: ["Rectangle", {width:12, height:12}]
-                        }
-                    );
+
 
                     numActions++;
 
 
 
 
-                sourceAnchors.forEach(function(anch){
 
-                });
                 jsP.draggable($('#' + id), {
                     containment:"parent"
                 });
