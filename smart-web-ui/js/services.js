@@ -1,9 +1,9 @@
 
 var myServices = angular.module('appServices', ['ngResource']);
 
-myServices.factory('socket', function ($rootScope) {
-  var host = "localhost", port = 1234;
-  var socket = io.connect('http://' + host + ':' + port);
+myServices.factory('socket', ['$rootScope', 'ConfigService', function ($rootScope, ConfigService) {
+  console.log("socket.io", ConfigService.flare.host);
+  var socket = io.connect(ConfigService.flare.host);
   return {
     on: function (eventName, callback) {
       socket.on(eventName, function () {
@@ -24,4 +24,4 @@ myServices.factory('socket', function ($rootScope) {
       });
     }
   };
-});
+}]);
