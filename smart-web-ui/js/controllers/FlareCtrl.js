@@ -143,6 +143,11 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
               $scope.icon = "fa-check";
 
               // do it
+              var action = {
+                action: msg.command.action,
+                thing: msg.command.target
+              }
+              socket.emit("performAction", action);
             }
 
             timer = $timeout(function() {
@@ -180,6 +185,11 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
                   $scope.icon = "fa-check";
 
                   // do it
+                  var action = {
+                    action: msg.command.action,
+                    thing: msg.command.target
+                  }
+                  socket.emit("performAction", action);
                 }
 
                 timer = $timeout(function() {
@@ -195,6 +205,12 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
         }
       } else if (msg.type === "reveal") {
         $(msg.command.target).css("display", "initial");
+      } else if (msg.type === "performAction") {
+        var action = {
+          action: msg.command.action,
+          thing: msg.command.target
+        }
+        socket.emit("performAction", action);
       }
     });
 

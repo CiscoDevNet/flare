@@ -30,6 +30,15 @@ angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket'
       socket.emit('broadcast-message', message);
     }
 
+    function performAction(text, command) {
+      console.log("emit", text, command);
+      var message = {
+        type: "performAction",
+        command: command
+      }
+      socket.emit('broadcast-message', message);
+    }
+
     $scope.buttons = [
       {
         text: "start the kettle",
@@ -44,7 +53,18 @@ angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket'
         }
       },
       {
-        text: "close the window",
+        text: "open window",
+        callback: {
+          fn: performAction,
+          command: {
+            target: '576276cd28c5cad47d5ce51c',
+            action: 'open',
+            allowed: true
+          }
+        }
+      },
+      {
+        text: "close window NOT ALLOWED",
         callback: {
           fn: audioCommand,
           msg: 'close the window in the living room',
