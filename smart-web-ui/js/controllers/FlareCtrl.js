@@ -125,9 +125,9 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
     // handle messages from FlareFakeCtrl
     socket.on('broadcast-message', function(msg) {
       console.log("broadcast-message", msg);
-      $scope.audioMessageOn = true;
 
       if (msg.type === "audio") {
+        $scope.audioMessageOn = true;
         var words = msg.text.split(" ");
         var wordIndex = 0;
         $scope.searchText = "";
@@ -176,7 +176,8 @@ angular.module('appControllers').controller('FlareCtrl', ['$scope', 'FlareServic
           }
         }
         timer = $timeout(displayNextWord, 500);
-
+      } else if (msg.type === "reveal") {
+        $(msg.command.target).css("display", "initial");
       }
     });
 
