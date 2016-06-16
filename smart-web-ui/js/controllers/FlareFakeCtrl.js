@@ -10,6 +10,16 @@ angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket'
       }
       socket.emit('broadcast-message', message);
     }
+
+    function reveal(text, command) {
+      console.log("emit", command);
+      var message = {
+        type: "reveal",
+        command: command
+      }
+      socket.emit('broadcast-message', message);
+    }
+
     $scope.buttons = [
       {
         text: "start the kettle",
@@ -32,6 +42,15 @@ angular.module('appControllers').controller('FlareFakeCtrl', ['$scope', 'socket'
             target: '576276cd28c5cad47d5ce51c',
             action: 'close',
             allowed: false
+          }
+        }
+      },
+      {
+        text: "temperature sensor",
+        callback: {
+          fn: reveal,
+          command: {
+            target: '#5762774b28c5cad47d5ce51d'
           }
         }
       }
