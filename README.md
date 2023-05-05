@@ -1,4 +1,4 @@
-# Flare
+# This project has been deprecated and the repository will no longer be updated
 
 Flare allows users with mobile devices to discover and interact with things in an environment. It combines multiple location technologies with a realtime communications architecture, to enable new kinds of user interactions. 
 
